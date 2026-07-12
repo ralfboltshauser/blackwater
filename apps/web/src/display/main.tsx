@@ -100,6 +100,9 @@ function DisplayApp() {
   const readyCount = projection.expeditions.filter(
     (expedition) => expedition.ready,
   ).length;
+  const railSplit = Math.ceil(projection.expeditions.length / 2);
+  const leftExpeditions = projection.expeditions.slice(0, railSplit);
+  const rightExpeditions = projection.expeditions.slice(railSplit);
 
   return (
     <>
@@ -193,7 +196,7 @@ function DisplayApp() {
 
         <section className="display-body">
           <aside className="display-rail display-rail--left">
-            {projection.expeditions.slice(0, 3).map((expedition, index) => (
+            {leftExpeditions.map((expedition, index) => (
               <ExpeditionCard
                 key={expedition.seatId}
                 expedition={expedition}
@@ -223,14 +226,14 @@ function DisplayApp() {
             )}
           </section>
           <aside className="display-rail display-rail--right">
-            {projection.expeditions.slice(3, 6).map((expedition, index) => (
+            {rightExpeditions.map((expedition, index) => (
               <ExpeditionCard
                 key={expedition.seatId}
                 expedition={expedition}
                 platforms={projection.platforms.filter(
                   (platform) => platform.ownerSeatId === expedition.seatId,
                 )}
-                seat={index + 4}
+                seat={railSplit + index + 1}
               />
             ))}
           </aside>

@@ -69,7 +69,6 @@ type ReportField = IntelReport["redactedFields"][number];
 type Settings = {
   reducedMotion: boolean;
   highContrast: boolean;
-  autoPrivacy: boolean;
   sound: boolean;
 };
 
@@ -185,14 +184,12 @@ function loadSettings(): Settings {
         saved.reducedMotion ??
         matchMedia("(prefers-reduced-motion: reduce)").matches,
       highContrast: saved.highContrast ?? false,
-      autoPrivacy: saved.autoPrivacy ?? true,
       sound: isSoundEnabled(),
     };
   } catch {
     return {
       reducedMotion: false,
       highContrast: false,
-      autoPrivacy: true,
       sound: true,
     };
   }
@@ -932,28 +929,6 @@ function FieldConsole({
     }
   }, [projection.public.lifecycle, projection.public.phase.kind]);
 
-  useEffect(() => {
-    if (!settings.autoPrivacy) return;
-    let timer = window.setTimeout(() => setPrivacy(true), 8_000);
-    const reset = () => {
-      window.clearTimeout(timer);
-      timer = window.setTimeout(() => setPrivacy(true), 8_000);
-    };
-    const hidden = () => {
-      if (document.hidden) setPrivacy(true);
-      else reset();
-    };
-    window.addEventListener("pointerdown", reset, { passive: true });
-    window.addEventListener("keydown", reset);
-    document.addEventListener("visibilitychange", hidden);
-    return () => {
-      window.clearTimeout(timer);
-      window.removeEventListener("pointerdown", reset);
-      window.removeEventListener("keydown", reset);
-      document.removeEventListener("visibilitychange", hidden);
-    };
-  }, [settings.autoPrivacy]);
-
   const showToast = useCallback((kind: "ok" | "error", message: string) => {
     setToast({ kind, message });
     window.setTimeout(() => setToast(null), 3_600);
@@ -1086,9 +1061,12 @@ function FieldConsole({
         <button
           className="icon-button"
           onClick={() => setPrivacy(true)}
-          aria-label="Hide private information"
+          aria-label="Lock private console"
+          title="Lock private console"
         >
-          ◉
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7.5 10V7a4.5 4.5 0 0 1 9 0v3M6 10h12v10H6z" />
+          </svg>
         </button>
         <button
           className="icon-button"
@@ -4119,14 +4097,6 @@ function ReferenceSheet({
                 onSettings({ ...settings, sound });
                 if (sound) void primeAudio();
               }}
-            />
-            <ToggleRow
-              label="Automatic privacy veil"
-              detail="Cover private detail after eight idle seconds"
-              checked={settings.autoPrivacy}
-              onChange={(autoPrivacy) =>
-                onSettings({ ...settings, autoPrivacy })
-              }
             />
             <ToggleRow
               label="Reduced motion"

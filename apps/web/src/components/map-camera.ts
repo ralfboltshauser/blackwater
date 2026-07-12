@@ -3,6 +3,7 @@ export const BASIN_HEIGHT = 640;
 export const MIN_MAP_ZOOM = 1;
 export const MAX_MAP_ZOOM = 2.4;
 export const COMPACT_FOCUS_ZOOM = 1.68;
+export const MAP_EDGE_MARGIN = 48;
 
 export type Point = { x: number; y: number };
 
@@ -34,9 +35,17 @@ export function cameraMetrics(width: number, height: number): CameraMetrics {
 function axisBounds(container: number, content: number) {
   if (content <= container) {
     const center = (container - content) / 2;
-    return { min: center, max: center };
+    if (container - content >= MAP_EDGE_MARGIN * 2)
+      return { min: center, max: center };
+    return {
+      min: container - content - MAP_EDGE_MARGIN,
+      max: MAP_EDGE_MARGIN,
+    };
   }
-  return { min: container - content, max: 0 };
+  return {
+    min: container - content - MAP_EDGE_MARGIN,
+    max: MAP_EDGE_MARGIN,
+  };
 }
 
 export function cameraBounds(metrics: CameraMetrics, zoom: number) {

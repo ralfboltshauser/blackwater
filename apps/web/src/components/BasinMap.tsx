@@ -241,6 +241,21 @@ export function BasinMap({
     ? sectorsById.get(focusSectorId)
     : undefined;
   const focusPoint = cameraSector ? toCanvas(cameraSector) : null;
+  const overviewPoint = useMemo(() => {
+    if (basin.sectors.length === 0)
+      return { x: BASIN_WIDTH / 2, y: BASIN_HEIGHT / 2 };
+    const points = basin.sectors.map(toCanvas);
+    return {
+      x:
+        (Math.min(...points.map((point) => point.x)) +
+          Math.max(...points.map((point) => point.x))) /
+        2,
+      y:
+        (Math.min(...points.map((point) => point.y)) +
+          Math.max(...points.map((point) => point.y))) /
+        2,
+    };
+  }, [basin.sectors]);
 
   const commitPose = useCallback((next: CameraPose) => {
     poseRef.current = next;
@@ -251,10 +266,10 @@ export function BasinMap({
     (nextMetrics: CameraMetrics) =>
       centeredCamera(
         nextMetrics,
-        compact ? focusPoint : null,
+        compact && focusPoint ? focusPoint : overviewPoint,
         compact && focusPoint ? undefined : MIN_MAP_ZOOM,
       ),
-    [compact, focusPoint?.x, focusPoint?.y],
+    [compact, focusPoint?.x, focusPoint?.y, overviewPoint.x, overviewPoint.y],
   );
 
   const stopSettling = useCallback(() => {

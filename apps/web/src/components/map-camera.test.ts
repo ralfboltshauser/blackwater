@@ -3,6 +3,7 @@ import {
   BASIN_HEIGHT,
   BASIN_WIDTH,
   MAX_MAP_ZOOM,
+  MAP_EDGE_MARGIN,
   cameraBounds,
   cameraMetrics,
   centeredCamera,
@@ -57,6 +58,13 @@ describe("basin map camera geometry", () => {
     expect(resisted.x).toBeLessThan(raw.x);
     expect(resisted.y).toBeLessThan(bounds.y.min);
     expect(resisted.y).toBeGreaterThan(raw.y);
+  });
+
+  it("keeps a screen-space margin beyond maps that touch the viewport edge", () => {
+    const metrics = cameraMetrics(BASIN_WIDTH, BASIN_HEIGHT);
+    const bounds = cameraBounds(metrics, 1);
+    expect(bounds.x).toEqual({ min: -MAP_EDGE_MARGIN, max: MAP_EDGE_MARGIN });
+    expect(bounds.y).toEqual({ min: -MAP_EDGE_MARGIN, max: MAP_EDGE_MARGIN });
   });
 
   it("preserves the viewed world center through resize", () => {
