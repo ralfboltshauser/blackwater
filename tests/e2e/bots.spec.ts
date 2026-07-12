@@ -17,6 +17,18 @@ async function configurePhone(context: BrowserContext): Promise<void> {
   });
 }
 
+async function submitAllPulses(page: import("@playwright/test").Page) {
+  const ready = page.getByRole("button", { name: "Lock & ready" });
+  await expect(ready).toBeDisabled();
+  for (const pulse of [1, 2, 3]) {
+    await page
+      .getByRole("button", { name: `Save Pulse ${pulse}`, exact: true })
+      .click();
+    if (pulse < 3) await expect(ready).toBeDisabled();
+  }
+  await expect(ready).toBeEnabled();
+}
+
 test.describe("server-controlled rivals", () => {
   test("the host can remove a joined human while assembling the crew", async ({
     browser,
@@ -135,6 +147,7 @@ test.describe("server-controlled rivals", () => {
       await expect(
         phone.getByRole("button", { name: "Lock & ready" }),
       ).toBeVisible();
+      await submitAllPulses(phone);
       await phone.getByRole("button", { name: "Lock & ready" }).click();
       await expect(
         display
@@ -214,6 +227,7 @@ test.describe("server-controlled rivals", () => {
       await expect(
         display.locator(".expedition-card", { hasText: "Lantern" }),
       ).toContainText("Locked");
+      await submitAllPulses(phone);
       await phone.getByRole("button", { name: "Lock & ready" }).click();
       await expect(
         display

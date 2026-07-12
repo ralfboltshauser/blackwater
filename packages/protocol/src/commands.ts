@@ -246,6 +246,13 @@ export const DraftPlanSchema = z
     });
   });
 
+export const SubmittedPulsesSchema = z
+  .array(PulseNumberSchema)
+  .max(3)
+  .refine((pulses) => new Set(pulses).size === pulses.length, {
+    message: "Submitted Pulse markers must be unique",
+  });
+
 export const DraftExpectedSchema = z
   .object({
     kind: z.literal("draft"),
@@ -327,7 +334,12 @@ const hostCommand = <T extends string, P extends z.ZodType>(
 
 export const ReplaceDraftCommandSchema = seatCommand(
   "draft.replace",
-  z.object({ plan: DraftPlanSchema }).strict(),
+  z
+    .object({
+      plan: DraftPlanSchema,
+      submittedPulse: PulseNumberSchema,
+    })
+    .strict(),
   DraftExpectedSchema,
 );
 export const LockDraftCommandSchema = seatCommand(

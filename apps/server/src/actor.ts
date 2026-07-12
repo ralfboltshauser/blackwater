@@ -410,6 +410,7 @@ export class MatchActor {
         plan: emptyPlan(),
         valid: true,
         invalidReasons: [],
+        submittedPulses: [],
         reservedSupply: 0,
         reservedSignal: 0,
       };
@@ -561,6 +562,7 @@ export class MatchActor {
           plan: emptyPlan(),
           valid: true,
           invalidReasons: [],
+          submittedPulses: [],
           reservedSupply: 0,
           reservedSignal: 0,
         };
@@ -815,6 +817,14 @@ export class MatchActor {
       nextDraft.plan = command.payload.plan;
       nextDraft.valid = true;
       nextDraft.invalidReasons = [];
+      if (command.type === "draft.replace") {
+        nextDraft.submittedPulses = [
+          ...new Set([
+            ...nextDraft.submittedPulses,
+            command.payload.submittedPulse,
+          ]),
+        ].sort();
+      }
       nextDraft.reservedSupply = validation.reservedSupply;
       nextDraft.reservedSignal = validation.reservedSignal;
       nextDraft.locked = command.type === "draft.lock";
@@ -1305,6 +1315,7 @@ export class MatchActor {
         plan: emptyPlan(),
         valid: true,
         invalidReasons: [],
+        submittedPulses: [],
         reservedSupply: 0,
         reservedSignal: 0,
       };
@@ -1564,6 +1575,7 @@ export class MatchActor {
       draft.plan = selectedPlan;
       draft.valid = true;
       draft.invalidReasons = [];
+      draft.submittedPulses = [1, 2, 3];
       draft.reservedSupply = validation.reservedSupply;
       draft.reservedSignal = validation.reservedSignal;
       draft.locked = true;

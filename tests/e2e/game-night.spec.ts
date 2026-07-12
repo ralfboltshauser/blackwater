@@ -70,6 +70,18 @@ async function finishCalibration(page: Page): Promise<void> {
   ).toBeHidden();
 }
 
+async function submitAllPulses(page: Page): Promise<void> {
+  const ready = page.getByRole("button", { name: "Lock & ready" });
+  await expect(ready).toBeDisabled();
+  for (const pulse of [1, 2, 3]) {
+    await page
+      .getByRole("button", { name: `Save Pulse ${pulse}`, exact: true })
+      .click();
+    if (pulse < 3) await expect(ready).toBeDisabled();
+  }
+  await expect(ready).toBeEnabled();
+}
+
 async function joinPrivatePhone(
   browser: Browser,
   baseURL: string,
@@ -185,7 +197,7 @@ test.describe("one-screen game night", () => {
     baseURL,
   }, testInfo) => {
     test.skip(testInfo.project.name !== "desktop-chromium");
-    test.setTimeout(120_000);
+    test.setTimeout(180_000);
     const origin = baseURL ?? "http://127.0.0.1:8787";
     const ownedContexts: BrowserContext[] = [];
     const diagnosticPages: Array<{ label: string; page: Page }> = [
@@ -319,6 +331,7 @@ test.describe("one-screen game night", () => {
       );
 
       for (const [index, phone] of phones.entries()) {
+        await submitAllPulses(phone.page);
         await phone.page.getByRole("button", { name: "Lock & ready" }).click();
         await expect(
           phone.page.getByRole("button", { name: "Reveal private console" }),
@@ -388,6 +401,7 @@ test.describe("one-screen game night", () => {
             name: "Reveal private console",
           });
           if (await veil.isVisible()) await veil.click();
+          await submitAllPulses(phone.page);
           await phone.page
             .getByRole("button", { name: "Lock & ready" })
             .click();

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { BriefingStateSchema } from "./briefing";
-import { DraftPlanSchema } from "./commands";
+import { DraftPlanSchema, SubmittedPulsesSchema } from "./commands";
 import { BotStrategySchema, SeatControllerSchema } from "./lobby";
 import { PresentationClockSchema } from "./presentation";
 import {
@@ -515,6 +515,7 @@ export const PlayerProjectionSchema = z
         reservedSignal: z.number().int().min(0).max(99),
         valid: z.boolean(),
         invalidReasons: z.array(z.string().trim().min(1).max(160)).max(12),
+        submittedPulses: SubmittedPulsesSchema,
       })
       .strict(),
     deals: z.array(PrivateDealSchema).max(32),

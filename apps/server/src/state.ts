@@ -8,6 +8,7 @@ import {
   BotStrategySchema,
   DEFAULT_BRIEFING_STATE,
   DraftPlanSchema,
+  SubmittedPulsesSchema,
   PhaseIdSchema,
   PlayerColorSchema,
   PlayerPatternSchema,
@@ -74,6 +75,7 @@ const DraftStateSchema = z
     plan: DraftPlanSchema,
     valid: z.boolean(),
     invalidReasons: z.array(z.string().min(1).max(160)).max(12),
+    submittedPulses: SubmittedPulsesSchema.default([]),
     reservedSupply: z.number().int().nonnegative(),
     reservedSignal: z.number().int().nonnegative(),
   })

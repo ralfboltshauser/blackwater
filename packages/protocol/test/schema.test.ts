@@ -176,6 +176,7 @@ describe("protocol schemas", () => {
       ...baseSeatCommand,
       type: "draft.replace",
       payload: {
+        submittedPulse: 1,
         plan: {
           operations: [
             { pulse: 1, kind: "hold" },

@@ -63,6 +63,7 @@ function projection(): PlayerProjection {
       reservedSignal: 0,
       valid: true,
       invalidReasons: [],
+      submittedPulses: [],
     },
     public: {
       matchId: "match_test",

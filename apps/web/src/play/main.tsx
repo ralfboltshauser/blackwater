@@ -1520,6 +1520,9 @@ function PlanningWorkspace({
   const assets = useMemo(() => playableAssets(projection), [projection]);
   const [plan, setPlan] = useState<DraftPlan>(projection.draft.plan);
   const [draftRevision, setDraftRevision] = useState(projection.draft.revision);
+  const [submittedPulses, setSubmittedPulses] = useState<Pulse[]>(
+    projection.draft.submittedPulses as Pulse[],
+  );
   const [pulse, setPulse] = useState<Pulse>(1);
   const [selectedAssetId, setSelectedAssetId] = useState(
     () => projection.draft.plan.operations[0].assetId ?? assets[0]?.id ?? "",
@@ -1584,6 +1587,7 @@ function PlanningWorkspace({
     if (projection.draft.revision < revisionRef.current) return;
     revisionRef.current = projection.draft.revision;
     setDraftRevision(projection.draft.revision);
+    setSubmittedPulses(projection.draft.submittedPulses as Pulse[]);
     setPlan(projection.draft.plan);
     if (!editorDirtyRef.current) loadPulseEditor(projection.draft.plan, pulse);
   }, [projection.draft.revision]);
@@ -1732,11 +1736,16 @@ function PlanningWorkspace({
       const result = await sendIntent({
         type: "draft.replace",
         expected: { kind: "draft", revision: draftRevision },
-        payload: { plan: parsed.data },
+        payload: { plan: parsed.data, submittedPulse: pulse },
       });
       if (result.status !== "rejected" && result.applied?.kind === "draft") {
         revisionRef.current = result.applied.revision;
         setDraftRevision(result.applied.revision);
+        setSubmittedPulses((current) =>
+          current.includes(pulse)
+            ? current
+            : ([...current, pulse].sort() as Pulse[]),
+        );
       }
       setPlan(parsed.data);
       editorDirtyRef.current = false;
@@ -1759,6 +1768,16 @@ function PlanningWorkspace({
   };
 
   const lock = async () => {
+    if (submittedPulses.length < 3 || editorDirty) {
+      playFeedback("warning");
+      showToast(
+        "error",
+        editorDirty
+          ? `Pulse ${pulse} has unsaved changes. Save it before locking the plan.`
+          : `Save all three Pulses before locking. ${submittedPulses.length} of 3 are submitted.`,
+      );
+      return;
+    }
     const built = buildOperation(projection, plan, pulse, editor);
     if (!built.operation) {
       playFeedback("warning");
@@ -1920,7 +1939,7 @@ function PlanningWorkspace({
             <button
               key={operation.pulse}
               disabled={editorDirty && pulse !== operation.pulse}
-              className={`${pulse === operation.pulse ? "is-active" : ""} ${operation.kind !== "hold" ? "is-filled" : ""}`}
+              className={`${pulse === operation.pulse ? "is-active" : ""} ${operation.kind !== "hold" ? "is-filled" : ""} ${submittedPulses.includes(operation.pulse as Pulse) ? "is-submitted" : "is-unsubmitted"}`}
               aria-pressed={pulse === operation.pulse}
               onClick={() => {
                 setPulse(operation.pulse as Pulse);
@@ -1930,9 +1949,11 @@ function PlanningWorkspace({
               <b>P{operation.pulse}</b>
               <span>{OPERATION_META[operation.kind].label}</span>
               <small>
-                {operation.kind === "hold"
-                  ? "Hold position"
-                  : operationSummary(operation, projection)}
+                {submittedPulses.includes(operation.pulse as Pulse)
+                  ? operation.kind === "hold"
+                    ? "✓ Submitted · Hold"
+                    : `✓ ${operationSummary(operation, projection)}`
+                  : "Not submitted"}
               </small>
             </button>
           ))}
@@ -2143,7 +2164,9 @@ function PlanningWorkspace({
             disabled={!connected || saving}
             onClick={() => void savePulse()}
           >
-            {saving ? "Saving…" : `Save Pulse ${pulse}`}
+            {saving
+              ? "Saving…"
+              : `${submittedPulses.includes(pulse) ? "Resave" : "Save"} Pulse ${pulse}`}
           </button>
         </div>
       </section>
@@ -2165,25 +2188,37 @@ function PlanningWorkspace({
             )}
           </p>
         </div>
-        <div className={projection.draft.valid ? "" : "is-warning"}>
-          <span className="eyebrow">Exposure & validation</span>
+        <div
+          className={
+            projection.draft.valid && submittedPulses.length === 3
+              ? ""
+              : "is-warning"
+          }
+        >
+          <span className="eyebrow">Plan readiness</span>
           <p>
-            {projection.draft.valid
-              ? planExposure(plan)
-              : (projection.draft.invalidReasons[0] ??
-                "Plan requires attention")}
+            {submittedPulses.length < 3
+              ? `${submittedPulses.length} / 3 Pulses submitted · save each Pulse`
+              : projection.draft.valid
+                ? planExposure(plan)
+                : (projection.draft.invalidReasons[0] ??
+                  "Plan requires attention")}
           </p>
         </div>
         <button
           className="button-primary"
-          disabled={!connected || saving}
+          disabled={
+            !connected || saving || submittedPulses.length < 3 || editorDirty
+          }
           onClick={() => void lock()}
         >
           {saving ? "Securing…" : "Lock & ready"}
           <small>
             {editorDirty
-              ? "Includes unsaved open editor"
-              : "Editable until the deadline"}
+              ? `Save Pulse ${pulse} changes first`
+              : submittedPulses.length < 3
+                ? `${submittedPulses.length} / 3 Pulses submitted`
+                : "All 3 Pulses saved · editable until deadline"}
           </small>
         </button>
       </footer>

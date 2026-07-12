@@ -318,7 +318,18 @@ test.describe("progressive phone discovery", () => {
       await phone.evaluate(() => window.scrollTo(0, 0));
 
       await core.getByText("Hold", { exact: true }).locator("..").click();
-      await phone.getByRole("button", { name: "Lock & ready" }).click();
+      const lockAndReady = phone.getByRole("button", {
+        name: "Lock & ready",
+      });
+      await expect(lockAndReady).toBeDisabled();
+      for (const pulse of [1, 2, 3]) {
+        await phone
+          .getByRole("button", { name: `Save Pulse ${pulse}`, exact: true })
+          .click();
+        if (pulse < 3) await expect(lockAndReady).toBeDisabled();
+      }
+      await expect(lockAndReady).toBeEnabled();
+      await lockAndReady.click();
       await expect(
         display
           .locator(".display-metric", { hasText: "Phase" })

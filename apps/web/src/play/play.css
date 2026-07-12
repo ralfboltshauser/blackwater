@@ -1171,6 +1171,12 @@
 .pulse-stepper .is-filled small {
   color: var(--paper);
 }
+.pulse-stepper button.is-unsubmitted:not(.is-active) {
+  opacity: 0.62;
+}
+.pulse-stepper button.is-submitted small {
+  color: var(--success);
+}
 .pulse-editor {
   min-height: 0;
   display: grid;
@@ -1825,6 +1831,12 @@
   place-content: center;
   padding: 0.3rem 0.7rem;
   font-size: 0.72rem;
+}
+.plan-footer > button:disabled {
+  color: var(--paper-muted);
+  background: rgba(232, 214, 189, 0.08);
+  border-color: var(--line);
+  box-shadow: none;
 }
 .plan-footer button small {
   font: 0.39rem var(--font-mono);

@@ -577,6 +577,7 @@ export function playerProjection(input: {
       reservedSignal: draft.reservedSignal,
       valid: draft.valid,
       invalidReasons: draft.invalidReasons,
+      submittedPulses: draft.submittedPulses,
     },
     deals: Object.values(match.workflow.offers)
       .filter(
