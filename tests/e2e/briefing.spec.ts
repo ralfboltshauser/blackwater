@@ -23,8 +23,8 @@ test.describe("host-led crew briefing", () => {
       await displayPage.goto(`${origin}/display/${roomCode}`);
       await displayPage.getByRole("button", { name: "Enable audio" }).click();
       await expect(
-        displayPage.getByRole("button", { name: "Audio on" }),
-      ).toBeVisible();
+        displayPage.getByRole("button", { name: "Enable audio" }),
+      ).toBeHidden();
       await expect(
         displayPage.getByRole("heading", { name: "Expeditions assembling" }),
       ).toBeVisible();

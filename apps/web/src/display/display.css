@@ -47,14 +47,6 @@ html,
   fill: currentColor;
   stroke: none;
 }
-.display-audio.is-on {
-  color: var(--cyan);
-  border-color: rgba(75, 216, 221, 0.42);
-}
-.display-audio.is-on span {
-  display: none;
-}
-
 .display-app.is-briefing-reveal {
   animation: display-map-reveal 780ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }

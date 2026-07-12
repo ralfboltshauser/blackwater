@@ -510,31 +510,23 @@ function DisplayAudioControl() {
   useEffect(() => subscribeAudioState(() => render((value) => value + 1)), []);
   const enabled = isSoundEnabled();
   const ready = enabled && isAudioReady();
-  const toggle = async () => {
-    if (ready) {
-      setSoundEnabled(false);
-      return;
-    }
+  const enable = async () => {
     setSoundEnabled(true);
     await primeAudio().catch(() => undefined);
     render((value) => value + 1);
   };
+  if (ready) return null;
   return (
     <button
-      className={`display-audio ${ready ? "is-on" : ""}`}
-      aria-pressed={ready}
-      aria-label={ready ? "Audio on" : "Enable audio"}
-      onClick={() => void toggle()}
+      className="display-audio"
+      aria-label="Enable audio"
+      onClick={() => void enable()}
     >
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M5 10v4h3l4 3V7L8 10H5Z" />
-        {ready ? (
-          <path d="M15 9.2c1.4 1.6 1.4 4 0 5.6M18 7c2.8 2.8 2.8 7.2 0 10" />
-        ) : (
-          <path d="m16 10 4 4m0-4-4 4" />
-        )}
+        <path d="m16 10 4 4m0-4-4 4" />
       </svg>
-      <span>{ready ? "Audio on" : "Enable audio"}</span>
+      <span>Enable audio</span>
     </button>
   );
 }
