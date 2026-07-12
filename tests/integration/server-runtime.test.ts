@@ -565,6 +565,98 @@ describe("Blackwater server runtime", () => {
     expect(actor.match.workflow.phase.endsAtServerMs).not.toBeNull();
   });
 
+  it("lets only the host remove a human from the lobby and invalidates that phone", async () => {
+    const application = await openApplication(await testConfig());
+    const created = await application.fastify.inject({
+      method: "POST",
+      url: "/api/v1/matches",
+      payload: {
+        protocol: 1,
+        playerCount: 3,
+        botCount: 1,
+        planningSeconds: 60,
+        factionsEnabled: false,
+      },
+    });
+    const room = created.json<{ roomCode: string; matchId: string }>();
+    const hostCookie = cookieFrom(created.headers["set-cookie"]);
+    const joined = await application.fastify.inject({
+      method: "POST",
+      url: `/api/v1/matches/${room.roomCode}/join`,
+      payload: {
+        protocol: 1,
+        roomCode: room.roomCode,
+        displayName: "Nora",
+        clientInstanceId: "nora-phone",
+      },
+    });
+    const player = PlayerSessionBootstrapSchema.parse(joined.json());
+    const playerCookie = cookieFrom(joined.headers["set-cookie"]);
+
+    const unauthorized = await application.fastify.inject({
+      method: "DELETE",
+      url: `/api/v1/matches/${room.roomCode}/players`,
+      payload: { protocol: 1, seatId: player.seatId },
+    });
+    expect(unauthorized.statusCode).toBe(401);
+
+    const removed = await application.fastify.inject({
+      method: "DELETE",
+      url: `/api/v1/matches/${room.roomCode}/players`,
+      headers: { cookie: hostCookie },
+      payload: { protocol: 1, seatId: player.seatId },
+    });
+    expect(removed.statusCode).toBe(200);
+    expect(
+      removed
+        .json<{ seats: Array<{ seatId: string; claimed: boolean }> }>()
+        .seats.find((seat) => seat.seatId === player.seatId),
+    ).toMatchObject({ claimed: false });
+    expect(application.store.getSession(player.sessionId)).toMatchObject({
+      revokedAtMs: expect.any(Number),
+      sessionEpoch: player.sessionEpoch + 1,
+    });
+
+    const stalePhone = await application.fastify.inject({
+      method: "POST",
+      url: `/api/v1/matches/${room.roomCode}/ready`,
+      headers: { cookie: playerCookie },
+      payload: {
+        protocol: 1,
+        ready: true,
+        clientInstanceId: "nora-phone",
+      },
+    });
+    expect(stalePhone.statusCode).toBe(401);
+
+    const botSeat = application.manager
+      .byRoom(room.roomCode)!
+      .lobby()
+      .seats.find((seat) => seat.controller === "bot")!;
+    const removeBot = await application.fastify.inject({
+      method: "DELETE",
+      url: `/api/v1/matches/${room.roomCode}/players`,
+      headers: { cookie: hostCookie },
+      payload: { protocol: 1, seatId: botSeat.seatId },
+    });
+    expect(removeBot.statusCode).toBe(409);
+
+    const replacement = await application.fastify.inject({
+      method: "POST",
+      url: `/api/v1/matches/${room.roomCode}/join`,
+      payload: {
+        protocol: 1,
+        roomCode: room.roomCode,
+        displayName: "Miro",
+        clientInstanceId: "miro-phone",
+      },
+    });
+    expect(replacement.statusCode).toBe(200);
+    expect(PlayerSessionBootstrapSchema.parse(replacement.json()).seatId).toBe(
+      player.seatId,
+    );
+  });
+
   it("runs a complete one-human expedition with persisted server bots", async () => {
     const config = await testConfig();
     let application = await openApplication(config);

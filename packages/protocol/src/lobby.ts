@@ -54,6 +54,13 @@ export const ConfigureBotsRequestSchema = z
   })
   .strict();
 
+export const RemoveLobbyPlayerRequestSchema = z
+  .object({
+    protocol: z.literal(PROTOCOL_VERSION),
+    seatId: SeatIdSchema,
+  })
+  .strict();
+
 export const JoinLobbyRequestSchema = z
   .object({
     protocol: z.literal(PROTOCOL_VERSION),
@@ -202,6 +209,9 @@ export const LobbyErrorCodeSchema = z.enum([
 
 export type CreateLobbyRequest = z.infer<typeof CreateLobbyRequestSchema>;
 export type ConfigureBotsRequest = z.infer<typeof ConfigureBotsRequestSchema>;
+export type RemoveLobbyPlayerRequest = z.infer<
+  typeof RemoveLobbyPlayerRequestSchema
+>;
 export type JoinLobbyRequest = z.infer<typeof JoinLobbyRequestSchema>;
 export type LobbySnapshot = z.infer<typeof LobbySnapshotSchema>;
 export type SeatController = z.infer<typeof SeatControllerSchema>;

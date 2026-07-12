@@ -441,6 +441,34 @@ export class MatchActor {
     });
   }
 
+  public removeLobbyPlayer(
+    session: SessionRecord,
+    seatId: string,
+  ): Promise<LobbySnapshot> {
+    return this.run(() => {
+      this.#assertHostSession(session);
+      if (this.#match.lifecycle !== "lobby") throw new Error("Lobby is closed");
+      const workflow = structuredClone(this.#match.workflow);
+      const seat = workflow.seats.find(
+        (candidate) => candidate.seatId === seatId,
+      );
+      if (!seat || seat.displayName === null) throw new Error("Seat is open");
+      if (workflow.bots[seatId])
+        throw new Error("AI seats use the AI controls");
+
+      seat.displayName = null;
+      seat.ready = false;
+      seat.joinedAtMs = null;
+      delete workflow.drafts[seatId];
+      delete workflow.resultCards[seatId];
+      delete workflow.socialCommands[seatId];
+      this.#commitWorkflow(workflow);
+      this.#store.releaseSeatController(this.matchId, seatId, this.#now());
+      this.#publish();
+      return this.lobby();
+    });
+  }
+
   public configureBots(
     session: SessionRecord,
     targetBotCount: number,

@@ -18,6 +18,54 @@ async function configurePhone(context: BrowserContext): Promise<void> {
 }
 
 test.describe("server-controlled rivals", () => {
+  test("the host can remove a joined human while assembling the crew", async ({
+    browser,
+    page: host,
+    baseURL,
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== "desktop-chromium");
+    const origin = baseURL ?? "http://127.0.0.1:8796";
+    const contexts: BrowserContext[] = [];
+    try {
+      await host.goto(`${origin}/host`);
+      await host
+        .locator(".host-create__setting", { hasText: "Expedition seats" })
+        .getByRole("button", { name: "3", exact: true })
+        .click();
+      await host.getByRole("button", { name: "Create expedition" }).click();
+      const roomCode = (
+        await host.locator(".host-nav strong").innerText()
+      ).trim();
+
+      const phoneContext = await browser.newContext({
+        viewport: PHONE_VIEWPORT,
+        isMobile: true,
+        hasTouch: true,
+      });
+      contexts.push(phoneContext);
+      await configurePhone(phoneContext);
+      const phone = await phoneContext.newPage();
+      await phone.goto(`${origin}/j/${roomCode}`);
+      await phone.getByLabel("Your name").fill("Nora");
+      await phone.getByRole("button", { name: "Join the survey" }).click();
+
+      const seat = host.locator(".host-lobby__seats article", {
+        hasText: "Nora",
+      });
+      await expect(seat).toBeVisible();
+      host.once("dialog", (dialog) => dialog.accept());
+      await seat.getByRole("button", { name: "Remove Nora" }).click();
+      await expect(
+        host.locator(".host-lobby__seats article").first(),
+      ).toContainText("Open seat");
+      await expect(host.locator(".host-lobby__composition")).toContainText(
+        "0 humans joined",
+      );
+    } finally {
+      await Promise.all(contexts.map((context) => context.close()));
+    }
+  });
+
   test("one human can run a complete one-seat expedition without AI", async ({
     browser,
     page: host,

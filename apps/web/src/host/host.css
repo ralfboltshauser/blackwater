@@ -164,6 +164,31 @@
   border: 1px dashed rgba(232, 214, 189, 0.18);
   border-radius: var(--radius-xs);
 }
+.host-seat__kick {
+  padding: 0.35rem 0.42rem;
+  color: var(--paper-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  font: 600 0.5rem var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.host-seat__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.38rem;
+}
+.host-seat__kick:hover:not(:disabled),
+.host-seat__kick:focus-visible {
+  color: var(--coral);
+  border-color: color-mix(in srgb, var(--coral), transparent 55%);
+  background: color-mix(in srgb, var(--coral) 9%, transparent);
+}
+.host-seat__kick:disabled {
+  opacity: 0.45;
+}
 .host-lobby__seats article.is-claimed {
   color: var(--paper);
   border-style: solid;

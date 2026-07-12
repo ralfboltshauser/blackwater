@@ -372,6 +372,7 @@ function LobbyConsole({
   const [joinMode, setJoinMode] = useState<"lan" | "pwa">("lan");
   const [busy, setBusy] = useState(false);
   const [botsBusy, setBotsBusy] = useState(false);
+  const [removingSeatId, setRemovingSeatId] = useState<string | null>(null);
   const activeJoinUrl = joinMode === "lan" ? lanJoinUrl : joinUrl;
 
   useEffect(() => {
@@ -420,6 +421,32 @@ function LobbyConsole({
       );
     } finally {
       setBotsBusy(false);
+    }
+  };
+
+  const removePlayer = async (seatId: string, displayName: string) => {
+    if (!window.confirm(`Remove ${displayName} from this expedition?`)) return;
+    setRemovingSeatId(seatId);
+    playFeedback("tap");
+    try {
+      const snapshot = await apiFetch<LobbySnapshot>(
+        `/api/v1/matches/${roomCode}/players`,
+        {
+          method: "DELETE",
+          body: JSON.stringify({
+            protocol: PROTOCOL_VERSION,
+            seatId,
+          }),
+        },
+      );
+      onLobbyChange(snapshot);
+      playFeedback("commit");
+    } catch (reason) {
+      onError(
+        reason instanceof Error ? reason.message : "Could not remove player",
+      );
+    } finally {
+      setRemovingSeatId(null);
     }
   };
 
@@ -515,9 +542,26 @@ function LobbyConsole({
                       : "Waiting for player"}
                 </small>
               </div>
-              {seat.controller !== "bot" && (
-                <i className={`presence-dot presence-dot--${seat.presence}`} />
-              )}
+              <span className="host-seat__actions">
+                {seat.controller !== "bot" && (
+                  <i
+                    className={`presence-dot presence-dot--${seat.presence}`}
+                  />
+                )}
+                {isLobby && seat.controller === "human" && seat.displayName && (
+                  <button
+                    className="host-seat__kick"
+                    aria-label={`Remove ${seat.displayName}`}
+                    title={`Remove ${seat.displayName}`}
+                    disabled={removingSeatId !== null}
+                    onClick={() =>
+                      void removePlayer(seat.seatId, seat.displayName!)
+                    }
+                  >
+                    {removingSeatId === seat.seatId ? "…" : "Remove"}
+                  </button>
+                )}
+              </span>
             </article>
           ))}
           {!lobby && (

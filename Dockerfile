@@ -16,7 +16,9 @@ COPY . .
 RUN pnpm build
 
 FROM dependencies AS production-dependencies
-RUN pnpm prune --prod
+# Husky is a development-only prepare hook. Pruning removes its binary, so
+# lifecycle scripts must not run in the production dependency stage.
+RUN pnpm prune --prod --ignore-scripts
 
 FROM base AS runtime
 ENV NODE_ENV=production

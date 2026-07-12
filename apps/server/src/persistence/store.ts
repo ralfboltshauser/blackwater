@@ -527,7 +527,8 @@ export class BlackwaterStore<TRules, TWorkflow> {
         ) VALUES (?, ?, ?, ?, 0, ?)
         ON CONFLICT (match_id, seat_id) DO UPDATE SET
           display_name = excluded.display_name,
-          private_version = MAX(seats.private_version, excluded.private_version)`,
+          private_version = MAX(seats.private_version, excluded.private_version),
+          joined_at_ms = excluded.joined_at_ms`,
       )
       .run(matchId, seatId, displayName, privateVersion, joinedAtMs);
     return this.#requireSeat(matchId, seatId);
@@ -594,6 +595,39 @@ export class BlackwaterStore<TRules, TWorkflow> {
       .prepare("SELECT * FROM seats WHERE match_id = ? ORDER BY seat_id")
       .all(matchId) as SeatRow[];
     return rows.map((row) => this.#deserializeSeat(row));
+  }
+
+  public releaseSeatController(
+    matchIdInput: string,
+    seatIdInput: string,
+    revokedAtMs = this.#now(),
+  ): number {
+    this.#assertOpen();
+    const matchId = MatchIdSchema.parse(matchIdInput);
+    const seatId = SeatIdSchema.parse(seatIdInput);
+    const timestamp = TimestampMsSchema.parse(revokedAtMs);
+    const release = this.#database.transaction(() => {
+      const sessions = this.#database
+        .prepare(
+          `UPDATE sessions
+           SET revoked_at_ms = COALESCE(revoked_at_ms, ?),
+               session_epoch = session_epoch + CASE WHEN revoked_at_ms IS NULL THEN 1 ELSE 0 END
+           WHERE match_id = ? AND seat_id = ? AND role = 'player'`,
+        )
+        .run(timestamp, matchId, seatId);
+      const seat = this.#database
+        .prepare(
+          `UPDATE seats
+           SET controller_epoch = controller_epoch + 1,
+               writer_instance_id = NULL,
+               writer_lease_hash = NULL
+           WHERE match_id = ? AND seat_id = ?`,
+        )
+        .run(matchId, seatId);
+      if (seat.changes !== 1) throw new Error("Seat not found");
+      return sessions.changes;
+    });
+    return release.immediate();
   }
 
   public verifyWriterLease(input: {

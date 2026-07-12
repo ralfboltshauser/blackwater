@@ -18,6 +18,7 @@ import {
   ConfigureBotsRequestSchema,
   CreateLobbyRequestSchema,
   JoinLobbyRequestSchema,
+  RemoveLobbyPlayerRequestSchema,
   PROTOCOL_VERSION,
   ResumeSessionRequestSchema,
   parseCommandMessage,
@@ -335,7 +336,7 @@ export async function createApplication(
   manager.setPublisher(publishActor);
   await manager.initialize();
 
-  registerApiRoutes(fastify, manager, store, config);
+  registerApiRoutes(fastify, io, manager, store, config);
   await registerStaticRoutes(fastify, config.webRoot);
 
   io.on("connection", (socket) => {
@@ -484,6 +485,7 @@ export async function createApplication(
 
 function registerApiRoutes(
   fastify: FastifyInstance,
+  io: SocketServer,
   manager: MatchManager,
   store: BlackwaterStore<PersistedRules, WorkflowState>,
   config: ServerConfig,
@@ -560,6 +562,28 @@ function registerApiRoutes(
       )
         return reply.code(401).send({ error: "Host session required" });
       return actor.configureBots(session, input.targetBotCount);
+    },
+  );
+
+  fastify.delete<{ Params: { roomCode: string } }>(
+    "/api/v1/matches/:roomCode/players",
+    async (request, reply) => {
+      const input = RemoveLobbyPlayerRequestSchema.parse(request.body);
+      const actor = manager.byRoom(request.params.roomCode);
+      const session = requestSession(request, store);
+      if (!actor) return reply.code(404).send({ error: "Room not found" });
+      if (
+        !session ||
+        session.role !== "host" ||
+        session.matchId !== actor.matchId
+      )
+        return reply.code(401).send({ error: "Host session required" });
+      const snapshot = await actor.removeLobbyPlayer(session, input.seatId);
+      io.to(seatRoom(actor, input.seatId)).emit("session:error", {
+        message: "The host removed this phone from the expedition.",
+      });
+      io.in(seatRoom(actor, input.seatId)).disconnectSockets(true);
+      return snapshot;
     },
   );
 
@@ -910,6 +934,8 @@ function classifyExpectedError(
     return { status: 409, code: "LOBBY_NOT_READY" };
   if (/bot count must leave room/i.test(message))
     return { status: 409, code: "BOT_COUNT_CONFLICT" };
+  if (/AI seats use the AI controls|seat is open/i.test(message))
+    return { status: 409, code: "SEAT_NOT_REMOVABLE" };
   if (/briefing/i.test(message)) return { status: 409, code: "BRIEFING_STATE" };
   if (/planning is not active|phase/i.test(message))
     return { status: 409, code: "PHASE_CLOSED" };
