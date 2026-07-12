@@ -75,7 +75,7 @@ function cinematicVisual(visual: BriefingVisual) {
   if (visual === "landfall") {
     return {
       src: "/briefing/neris-landfall-v1.webp",
-      alt: "Four rival research expeditions establishing themselves around the same alien ocean basin.",
+      alt: "Four rival research expeditions establishing themselves around the same connected area of alien ocean.",
     };
   }
   return null;
@@ -125,21 +125,29 @@ function ChartersVisual() {
     ["dominion", "Dominion", "Control every mark", "No rival present"],
   ] as const;
   return (
-    <div className="briefing-visual briefing-charters" aria-hidden="true">
-      {charters.map(([kind, title, metric, detail], index) => (
-        <article
-          key={kind}
-          className={`briefing-charter briefing-charter--${kind}`}
-        >
-          <span className={`charter-icon charter-icon--${kind}`} />
-          <small>Route {index + 1}</small>
-          <h2>{title}</h2>
-          <strong>{metric}</strong>
-          <p>{detail}</p>
-        </article>
-      ))}
-      <div className="briefing-charters__check">
-        Checked together after every round
+    <div className="briefing-visual briefing-objective" aria-hidden="true">
+      <img
+        className="briefing-objective__screen"
+        src="/briefing/game-screen-objective-v1.webp"
+        alt=""
+      />
+      <div className="briefing-objective__topbar">
+        <span /> Three public win conditions live here
+      </div>
+      <div className="briefing-objective__missions">
+        {charters.map(([kind, title, metric, detail]) => (
+          <article key={kind} className={`is-${kind}`}>
+            <span className={`charter-icon charter-icon--${kind}`} />
+            <div>
+              <h2>{title}</h2>
+              <strong>{metric}</strong>
+              <p>{detail}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+      <div className="briefing-objective__check">
+        The server checks all three after every round
       </div>
     </div>
   );

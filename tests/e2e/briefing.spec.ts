@@ -48,14 +48,29 @@ test.describe("host-led crew briefing", () => {
       await hostPage.getByRole("button", { name: "Next" }).click();
       await expect(
         displayPage.getByRole("heading", {
-          name: "Four expeditions enter the same basin.",
+          name: "Four expeditions reach the same calm waters.",
         }),
+      ).toBeVisible();
+      await expect(
+        displayPage.getByText(/shared ocean map on the TV/i),
+      ).toBeVisible();
+
+      await hostPage.getByRole("button", { name: "Next" }).click();
+      await expect(
+        displayPage.getByRole("heading", {
+          name: "Complete one mission shown on the TV.",
+        }),
+      ).toBeVisible();
+      await expect(
+        displayPage.locator(
+          'img[src="/briefing/game-screen-objective-v1.webp"]',
+        ),
       ).toBeVisible();
 
       await displayPage.reload();
       await expect(
         displayPage.getByRole("heading", {
-          name: "Four expeditions enter the same basin.",
+          name: "Complete one mission shown on the TV.",
         }),
       ).toBeVisible();
 

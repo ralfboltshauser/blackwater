@@ -2,7 +2,8 @@
 
 ## The table
 
-Blackwater is for 1–6 expeditions. One screen is the public basin; every human
+Blackwater is for 1–6 expeditions. The basin—the connected ocean map everyone
+explores—is shown on one public screen; every human
 player has one private phone. Never pass a phone around unless its owner
 deliberately wants to reveal something. Pointing, bargaining, bluffing, and
 making temporary alliances are part of play.

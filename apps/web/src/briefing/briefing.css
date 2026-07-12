@@ -431,6 +431,124 @@
 }
 
 /* Charters */
+.briefing-objective {
+  background: #01090c;
+}
+
+.briefing-objective__screen {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  opacity: 0.9;
+}
+
+.briefing-objective::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0 43%,
+    rgba(1, 9, 12, 0.52) 55%,
+    rgba(1, 9, 12, 0.98) 72%
+  );
+}
+
+.briefing-objective__topbar {
+  position: absolute;
+  z-index: 2;
+  left: 27%;
+  top: 8.5%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 11px;
+  color: #051114;
+  background: var(--cyan);
+  border-radius: 3px;
+  font: 700 10px var(--font-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.52);
+}
+
+.briefing-objective__topbar span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.briefing-objective__missions {
+  position: absolute;
+  z-index: 2;
+  left: clamp(18px, 2vw, 34px);
+  right: clamp(18px, 2vw, 34px);
+  bottom: 44px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+
+.briefing-objective__missions article {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 9px;
+  padding: 12px;
+  background: rgba(2, 16, 19, 0.88);
+  border: 1px solid rgba(232, 214, 189, 0.22);
+  border-radius: 4px;
+  backdrop-filter: blur(8px);
+}
+
+.briefing-objective__missions h2,
+.briefing-objective__missions strong,
+.briefing-objective__missions p {
+  margin: 0;
+}
+
+.briefing-objective__missions h2 {
+  color: var(--paper);
+  font: 600 13px var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.briefing-objective__missions strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--cyan);
+  font: 600 10px var(--font-mono);
+  text-transform: uppercase;
+}
+
+.briefing-objective__missions p {
+  margin-top: 3px;
+  color: var(--paper-muted);
+  font: 9px/1.3 var(--font-mono);
+}
+
+.briefing-objective__check {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  color: var(--paper);
+  background: rgba(75, 216, 221, 0.12);
+  border-top: 1px solid rgba(75, 216, 221, 0.34);
+  font: 600 9px var(--font-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
 .briefing-charters {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

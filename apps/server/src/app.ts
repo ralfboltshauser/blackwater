@@ -508,6 +508,7 @@ function registerApiRoutes(
     rulesVersion: "1.0.0",
     schemaVersion: store.schemaVersion,
     publicUrl: config.publicUrl,
+    lanUrl: config.lanUrl,
   }));
 
   fastify.post("/api/v1/matches", async (request, reply) => {

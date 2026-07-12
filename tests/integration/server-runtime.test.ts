@@ -285,6 +285,19 @@ async function runBotPolicyMatch(
 }
 
 describe("Blackwater server runtime", () => {
+  it("publishes canonical public and LAN origins for stale host-link repair", async () => {
+    const application = await openApplication(await testConfig());
+    const meta = await application.fastify.inject({
+      method: "GET",
+      url: "/api/v1/meta",
+    });
+    expect(meta.statusCode).toBe(200);
+    expect(meta.json()).toMatchObject({
+      publicUrl: "http://192.168.50.4:8787",
+      lanUrl: "http://192.168.50.4:8787",
+    });
+  });
+
   it("serves update-sensitive PWA resources with explicit worker scope", async () => {
     const config = await testConfig();
     const webRoot = join(config.dataDir, "web");

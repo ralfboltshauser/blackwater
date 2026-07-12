@@ -22,11 +22,15 @@ describe("crew briefing content", () => {
     const landfall = BRIEFING_SLIDES[1]!;
     expect(detection.id).toBe("detection");
     expect(detection.lead).toMatch(/Four organizations/i);
+    expect(detection.lead).not.toMatch(/basin/i);
     expect(landfall.id).toBe("landfall");
+    expect(landfall.lead).toMatch(/Basin.*shared ocean map on the TV/i);
     expect(landfall.speakerNotes.join(" ")).toMatch(/not conquering Neris/i);
     expect(landfall.callout).toMatch(/Network.*Discovery.*Dominion/i);
 
     const charters = BRIEFING_SLIDES.find((slide) => slide.id === "charters")!;
+    expect(charters.title).toMatch(/mission shown on the TV/i);
+    expect(charters.lead).toMatch(/top of the game screen/i);
     expect(charters.speakerNotes.join(" ")).toMatch(
       /exactly four connected active platforms/i,
     );

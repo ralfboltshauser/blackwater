@@ -20,6 +20,11 @@ type CreateMatchResponse = {
   displayUrl: string;
 };
 
+type ServerMeta = {
+  publicUrl: string;
+  lanUrl: string;
+};
+
 const HOST_ROOM_KEY = "blackwater.host-room";
 const HOST_LINKS_KEY = "blackwater.host-links";
 
@@ -52,6 +57,35 @@ function HostApp() {
   const [lobby, setLobby] = useState<LobbySnapshot | null>(null);
   const [error, setError] = useState<string | null>(null);
   const realtime = useRealtimeProjection<HostProjection>("host", roomCode);
+
+  useEffect(() => {
+    if (!roomCode) return;
+    let active = true;
+    void apiFetch<ServerMeta>("/api/v1/meta")
+      .then((meta) => {
+        if (!active) return;
+        const publicOrigin = meta.publicUrl.replace(/\/$/, "");
+        const lanOrigin = meta.lanUrl.replace(/\/$/, "");
+        setHostedRoom((current) => {
+          if (!current || current.roomCode !== roomCode) return current;
+          const repaired = {
+            ...current,
+            joinUrl: `${publicOrigin}/j/${roomCode}`,
+            lanJoinUrl: `${lanOrigin}/j/${roomCode}`,
+            displayUrl: `${publicOrigin}/display/${roomCode}`,
+          };
+          sessionStorage.setItem(HOST_LINKS_KEY, JSON.stringify(repaired));
+          return repaired;
+        });
+      })
+      .catch(() => {
+        // Lobby polling below still reports a real server outage. A stale link
+        // repair failure should not hide an otherwise usable host console.
+      });
+    return () => {
+      active = false;
+    };
+  }, [roomCode]);
 
   useEffect(() => {
     if (!roomCode) return;
