@@ -279,15 +279,15 @@ function AssetDossierVisual({
       telemetry: ["INTEGRITY 2", "CARGO 0/2", "SILENCE 2"],
     },
     platform: {
-      code: "PLATFORM · INFRASTRUCTURE",
-      visibility: "PUBLIC · PERSISTENT",
+      code: "ONE PER LOCATION · COSTS 3 SUPPLY",
+      visibility: "STAYS ON THE TV",
       sprites: ["platform.webp"],
       capabilities: [
-        ["Extractor", "Produces public Supply"],
-        ["Sonar", "Produces Signal and can Survey"],
-        ["Laboratory", "Analyzes carried specimens"],
+        ["Build more", "Extractor produces Supply each round"],
+        ["Know more", "Sonar produces Signal and watches nearby water"],
+        ["Finish Discovery", "Laboratory analyzes delivered specimens"],
       ],
-      telemetry: ["ONE PER LOCATION", "COST 3", "NO EXTRA ACTION"],
+      telemetry: ["MOVE ARK HERE", "BUILD LATER", "STAYS FOR LATER ROUNDS"],
     },
     devices: {
       code: "FIELD KIT · INFORMATION WARFARE",

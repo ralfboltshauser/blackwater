@@ -87,7 +87,7 @@ test.describe("host-led crew briefing", () => {
         },
         {
           slide: 8,
-          title: "Platforms turn a location into lasting advantage.",
+          title: "Build a platform when you want to invest in one location.",
           className: "is-platform",
         },
         {

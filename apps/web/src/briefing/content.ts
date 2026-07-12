@@ -137,14 +137,17 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     id: "platform-dossier",
     chapter: "Asset dossier · Platform",
     depth: "core",
-    title: "Platforms turn a location into lasting advantage.",
-    lead: "Your Ark builds one public platform in its current location. Choose an Extractor, Sonar, or Laboratory; it stays on the map and strengthens a mission.",
+    title: "Build a platform when you want to invest in one location.",
+    lead: "Move your Ark to a useful location, save 3 Supply, then build one permanent structure there. Choose what your plan needs next: more Supply, more information, or a place to analyze specimens.",
     visual: "platform-dossier",
-    callout: "Persistent and public—but never an extra Operation.",
+    callout:
+      "Extractor = build more · Sonar = know more · Laboratory = complete Discovery.",
     speakerNotes: [
-      "An Extractor produces Supply. A Sonar produces Signal, passively observes nearby evidence, and can actively Survey. A Laboratory analyzes specimens carried to it.",
-      "Only one platform fits in a location. Platforms help Network, Discovery, and Dominion, so choosing where and what to build is your long-term strategy.",
-      "Rivals can contest a platform with Raid or temporarily suppress its module with Jam. They do not permanently delete it.",
+      "A platform is simply a permanent building. Everyone sees it on the TV. It stays in its location and keeps helping you in later rounds.",
+      "Choose an Extractor if you want a stronger economy: it produces Supply, which lets you build more. Choose a Sonar if you need Signal and information about nearby movement.",
+      "Choose a Laboratory if you are pursuing Discovery: bring specimens there with a submarine and Analyze them. A Laboratory is not useful without that specimen plan.",
+      "The practical sequence is: move the Ark, gather 3 Supply, then spend a later Operation to build. Only one platform fits in each location, so rivals can deny an important spot by reaching it first.",
+      "Building is an investment, not an automatic first move. Extractor supports expansion, Sonar supports information and conflict, and Laboratory converts exploration into a win condition.",
     ],
   },
   {

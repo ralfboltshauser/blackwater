@@ -64,9 +64,12 @@ describe("crew briefing content", () => {
     expect(resources.speakerNotes.join(" ")).toMatch(
       /Integrity.*health.*cargo.*not currencies/i,
     );
-    expect(
-      dossiers.find((slide) => slide.id === "platform-dossier")!.callout,
-    ).toMatch(/never an extra Operation/i);
+    const platform = dossiers.find((slide) => slide.id === "platform-dossier")!;
+    expect(platform.title).toMatch(/invest in one location/i);
+    expect(platform.lead).toMatch(/Move your Ark.*3 Supply.*permanent/i);
+    expect(platform.callout).toMatch(
+      /Extractor.*build more.*Sonar.*know more.*Laboratory.*Discovery/i,
+    );
     expect(
       dossiers.find((slide) => slide.id === "devices-dossier")!.callout,
     ).toMatch(/Tag tracks.*Spill stops.*Decoy lies/i);
