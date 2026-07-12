@@ -77,7 +77,7 @@ test.describe("host-led crew briefing", () => {
       for (const dossier of [
         {
           slide: 5,
-          title: "Your Ark is your public command ship.",
+          title: "The Ark is your large construction ship on the TV.",
           className: "is-ark",
         },
         {

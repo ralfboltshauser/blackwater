@@ -51,7 +51,10 @@ describe("crew briefing content", () => {
       "devices-dossier",
     ]);
     expect(dossiers.find((slide) => slide.id === "ark-dossier")!.lead).toMatch(
-      /build platforms.*second submarine.*repair/i,
+      /location where you want to build.*platform.*second submarine.*repair/i,
+    );
+    expect(dossiers.find((slide) => slide.id === "ark-dossier")!.title).toMatch(
+      /large construction ship on the TV/i,
     );
     expect(
       dossiers.find((slide) => slide.id === "platform-dossier")!.callout,

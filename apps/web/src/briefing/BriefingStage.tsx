@@ -198,15 +198,15 @@ function AssetDossierVisual({
 }) {
   const dossiers = {
     ark: {
-      code: "ARK-01 · COMMAND ASSET",
-      visibility: "PUBLIC POSITION",
+      code: "YOUR LARGE SHIP ON THE TV",
+      visibility: "ALWAYS VISIBLE",
       sprites: ["ark-dir00.webp"],
       capabilities: [
-        ["Navigate", "Move one visible connection"],
-        ["Develop", "Build, commission, or repair"],
-        ["Forecast", "+2 Supply · +1 Signal"],
+        ["Move it", "Follow one line to a connected location"],
+        ["Build there", "Place a platform where the Ark is now"],
+        ["Support", "Create or repair a submarine there"],
       ],
-      telemetry: ["UNCAPTURABLE", "MOBILE", "BUILDER"],
+      telemetry: ["PUBLIC ON TV", "BUILDS AT ITS LOCATION", "CANNOT BE LOST"],
     },
     submarine: {
       code: "SUB-A · FIELD ASSET",
