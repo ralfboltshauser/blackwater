@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 import { Brand } from "../shared/Brand";
 import { BRIEFING_SLIDES, type BriefingVisual } from "./content";
 import "./briefing.css";
@@ -490,13 +492,17 @@ function DiscoverVisual() {
     <div className="briefing-visual briefing-discover" aria-hidden="true">
       <div className="briefing-discover__chain">
         {steps.map(([sprite, title, detail], index) => (
-          <article key={title}>
-            <span>{index + 1}</span>
-            <img src={`/sprites/${sprite}`} alt="" />
-            <h2>{title}</h2>
-            <p>{detail}</p>
-            {index < 2 && <i>›</i>}
-          </article>
+          <Fragment key={title}>
+            <article>
+              <span>{index + 1}</span>
+              <img src={`/sprites/${sprite}`} alt="" />
+              <h2>{title}</h2>
+              <p>{detail}</p>
+            </article>
+            {index < steps.length - 1 && (
+              <span className="briefing-discover__arrow">→</span>
+            )}
+          </Fragment>
         ))}
       </div>
       <div className="briefing-discover__modules">
