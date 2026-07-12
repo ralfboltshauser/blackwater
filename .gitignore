@@ -1,0 +1,33 @@
+node_modules/
+dist/
+.tmp/
+.env
+coverage/
+playwright-report/
+test-results/
+blackwater-local-backups/
+assets/generated/*.tmp
+*.db
+*.db-wal
+*.db-shm
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+*.log
+
+# Host-specific HTTPS, DNS, and certificate automation is deliberately local.
+ops/coredns/
+ops/traefik/
+tools/https/
+tools/lan-doctor.mjs
+tools/diagnostics/secure-app-chromium.mjs
+tests/security/fixtures/mock-vercel-dns-*.mjs
+tests/security/vercel-dns-credential.test.ts
+tests/tooling/vercel-dns-verification.test.ts
+
+# Historical machine-specific implementation notes and superseded mockups.
+IMPLEMENTATION_PLAN.md
+TECHNICAL_PLAN.md
+VISUAL_PRODUCTION_PLAN.md
+design/mocks/
+design/reviews/RELEASE_QUALITY_REPORT.md

@@ -1,0 +1,10 @@
+node_modules
+dist
+.git
+.tmp
+coverage
+playwright-report
+test-results
+design/mocks/*.png
+assets/source/blender
+*.db*

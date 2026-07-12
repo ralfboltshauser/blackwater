@@ -1,0 +1,636 @@
+{
+  "schemaVersion": 1,
+  "pipelineVersion": 1,
+  "renderer": "Blender 5 / Eevee Next / AgX",
+  "resolution": [
+    384,
+    384
+  ],
+  "count": 48,
+  "sprites": [
+    {
+      "key": "ark-dir00",
+      "asset": "ark",
+      "state": "idle",
+      "direction": 0,
+      "headingDegrees": 0,
+      "file": "ark-dir00.png",
+      "footprint": 1.75,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "ark-dir01",
+      "asset": "ark",
+      "state": "idle",
+      "direction": 1,
+      "headingDegrees": 22,
+      "file": "ark-dir01.png",
+      "footprint": 1.75,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "ark-dir02",
+      "asset": "ark",
+      "state": "idle",
+      "direction": 2,
+      "headingDegrees": 44,
+      "file": "ark-dir02.png",
+      "footprint": 1.75,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "ark-dir03",
+      "asset": "ark",
+      "state": "idle",
+      "direction": 3,
+      "headingDegrees": 66,
+      "file": "ark-dir03.png",
+      "footprint": 1.75,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "ark-dir04",
+      "asset": "ark",
+      "state": "idle",
+      "direction": 4,
+      "headingDegrees": 88,
+      "file": "ark-dir04.png",
+      "footprint": 1.75,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "ark-dir05",
+      "asset": "ark",
+      "state": "idle",
+      "direction": 5,
+      "headingDegrees": 110,
+      "file": "ark-dir05.png",
+      "footprint": 1.75,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "ark-dir06",
+      "asset": "ark",
+      "state": "idle",
+      "direction": 6,
+      "headingDegrees": 132,
+      "file": "ark-dir06.png",
+      "footprint": 1.75,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "ark-dir07",
+      "asset": "ark",
+      "state": "idle",
+      "direction": 7,
+      "headingDegrees": 154,
+      "file": "ark-dir07.png",
+      "footprint": 1.75,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "ark-dir08",
+      "asset": "ark",
+      "state": "idle",
+      "direction": 8,
+      "headingDegrees": 176,
+      "file": "ark-dir08.png",
+      "footprint": 1.75,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "ark-dir09",
+      "asset": "ark",
+      "state": "idle",
+      "direction": 9,
+      "headingDegrees": 198,
+      "file": "ark-dir09.png",
+      "footprint": 1.75,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "ark-dir10",
+      "asset": "ark",
+      "state": "idle",
+      "direction": 10,
+      "headingDegrees": 220,
+      "file": "ark-dir10.png",
+      "footprint": 1.75,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "ark-dir11",
+      "asset": "ark",
+      "state": "idle",
+      "direction": 11,
+      "headingDegrees": 242,
+      "file": "ark-dir11.png",
+      "footprint": 1.75,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "ark-dir12",
+      "asset": "ark",
+      "state": "idle",
+      "direction": 12,
+      "headingDegrees": 264,
+      "file": "ark-dir12.png",
+      "footprint": 1.75,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "ark-dir13",
+      "asset": "ark",
+      "state": "idle",
+      "direction": 13,
+      "headingDegrees": 286,
+      "file": "ark-dir13.png",
+      "footprint": 1.75,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "ark-dir14",
+      "asset": "ark",
+      "state": "idle",
+      "direction": 14,
+      "headingDegrees": 308,
+      "file": "ark-dir14.png",
+      "footprint": 1.75,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "ark-dir15",
+      "asset": "ark",
+      "state": "idle",
+      "direction": 15,
+      "headingDegrees": 330,
+      "file": "ark-dir15.png",
+      "footprint": 1.75,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "submarine-dir00",
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 0,
+      "headingDegrees": 0,
+      "file": "submarine-dir00.png",
+      "footprint": 1.48,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "submarine-dir01",
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 1,
+      "headingDegrees": 22,
+      "file": "submarine-dir01.png",
+      "footprint": 1.48,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "submarine-dir02",
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 2,
+      "headingDegrees": 44,
+      "file": "submarine-dir02.png",
+      "footprint": 1.48,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "submarine-dir03",
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 3,
+      "headingDegrees": 66,
+      "file": "submarine-dir03.png",
+      "footprint": 1.48,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "submarine-dir04",
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 4,
+      "headingDegrees": 88,
+      "file": "submarine-dir04.png",
+      "footprint": 1.48,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "submarine-dir05",
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 5,
+      "headingDegrees": 110,
+      "file": "submarine-dir05.png",
+      "footprint": 1.48,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "submarine-dir06",
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 6,
+      "headingDegrees": 132,
+      "file": "submarine-dir06.png",
+      "footprint": 1.48,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "submarine-dir07",
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 7,
+      "headingDegrees": 154,
+      "file": "submarine-dir07.png",
+      "footprint": 1.48,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "submarine-dir08",
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 8,
+      "headingDegrees": 176,
+      "file": "submarine-dir08.png",
+      "footprint": 1.48,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "submarine-dir09",
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 9,
+      "headingDegrees": 198,
+      "file": "submarine-dir09.png",
+      "footprint": 1.48,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "submarine-dir10",
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 10,
+      "headingDegrees": 220,
+      "file": "submarine-dir10.png",
+      "footprint": 1.48,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "submarine-dir11",
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 11,
+      "headingDegrees": 242,
+      "file": "submarine-dir11.png",
+      "footprint": 1.48,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "submarine-dir12",
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 12,
+      "headingDegrees": 264,
+      "file": "submarine-dir12.png",
+      "footprint": 1.48,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "submarine-dir13",
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 13,
+      "headingDegrees": 286,
+      "file": "submarine-dir13.png",
+      "footprint": 1.48,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "submarine-dir14",
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 14,
+      "headingDegrees": 308,
+      "file": "submarine-dir14.png",
+      "footprint": 1.48,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "submarine-dir15",
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 15,
+      "headingDegrees": 330,
+      "file": "submarine-dir15.png",
+      "footprint": 1.48,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "platform",
+      "asset": "platform",
+      "state": "idle",
+      "direction": null,
+      "headingDegrees": null,
+      "file": "platform.png",
+      "footprint": 1.0,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "extractor",
+      "asset": "extractor",
+      "state": "active",
+      "direction": null,
+      "headingDegrees": null,
+      "file": "extractor.png",
+      "footprint": 1.0,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "sonar",
+      "asset": "sonar",
+      "state": "active",
+      "direction": null,
+      "headingDegrees": null,
+      "file": "sonar.png",
+      "footprint": 1.0,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "laboratory",
+      "asset": "laboratory",
+      "state": "active",
+      "direction": null,
+      "headingDegrees": null,
+      "file": "laboratory.png",
+      "footprint": 1.0,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "snare-closed",
+      "asset": "snare",
+      "state": "closed",
+      "direction": null,
+      "headingDegrees": null,
+      "file": "snare-closed.png",
+      "footprint": 0.72,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "snare-armed",
+      "asset": "snare",
+      "state": "armed",
+      "direction": null,
+      "headingDegrees": null,
+      "file": "snare-armed.png",
+      "footprint": 0.72,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "decoy-closed",
+      "asset": "decoy",
+      "state": "closed",
+      "direction": null,
+      "headingDegrees": null,
+      "file": "decoy-closed.png",
+      "footprint": 0.7,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "decoy-deployed",
+      "asset": "decoy",
+      "state": "deployed",
+      "direction": null,
+      "headingDegrees": null,
+      "file": "decoy-deployed.png",
+      "footprint": 0.7,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "deep-site-a",
+      "asset": "deep-site",
+      "state": "a",
+      "direction": null,
+      "headingDegrees": null,
+      "file": "deep-site-a.png",
+      "footprint": 0.92,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "deep-site-b",
+      "asset": "deep-site",
+      "state": "b",
+      "direction": null,
+      "headingDegrees": null,
+      "file": "deep-site-b.png",
+      "footprint": 0.92,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "deep-site-c",
+      "asset": "deep-site",
+      "state": "c",
+      "direction": null,
+      "headingDegrees": null,
+      "file": "deep-site-c.png",
+      "footprint": 0.92,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "sample-pod",
+      "asset": "sample-pod",
+      "state": "idle",
+      "direction": null,
+      "headingDegrees": null,
+      "file": "sample-pod.png",
+      "footprint": 0.62,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "specimen-ribbon-filter",
+      "asset": "specimen",
+      "state": "ribbon-filter",
+      "direction": null,
+      "headingDegrees": null,
+      "file": "specimen-ribbon-filter.png",
+      "footprint": 0.68,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "specimen-prism-raft",
+      "asset": "specimen",
+      "state": "prism-raft",
+      "direction": null,
+      "headingDegrees": null,
+      "file": "specimen-prism-raft.png",
+      "footprint": 0.68,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "specimen-luminous-pollen",
+      "asset": "specimen",
+      "state": "luminous-pollen",
+      "direction": null,
+      "headingDegrees": null,
+      "file": "specimen-luminous-pollen.png",
+      "footprint": 0.68,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    },
+    {
+      "key": "calibration-buoy",
+      "asset": "calibration-buoy",
+      "state": "idle",
+      "direction": null,
+      "headingDegrees": null,
+      "file": "calibration-buoy.png",
+      "footprint": 0.58,
+      "pivot": [
+        0.5,
+        0.72
+      ]
+    }
+  ]
+}

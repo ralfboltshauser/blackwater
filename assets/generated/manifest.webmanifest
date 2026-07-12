@@ -1,0 +1,42 @@
+{
+  "id": "/play",
+  "name": "Blackwater Field Console",
+  "short_name": "Blackwater",
+  "description": "A private field console for the Blackwater couch strategy game.",
+  "start_url": "/play?source=installed",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "landscape",
+  "background_color": "#03191d",
+  "theme_color": "#03191d",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "/pwa/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Join an expedition",
+      "short_name": "Join",
+      "description": "Enter the six-character room code shown on the TV.",
+      "url": "/play"
+    }
+  ]
+}

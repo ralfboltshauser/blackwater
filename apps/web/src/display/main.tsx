@@ -1,0 +1,472 @@
+import { createRoot } from "react-dom/client";
+import { useEffect, useMemo, useState } from "react";
+import type { PublicProjection } from "@blackwater/protocol";
+import { BriefingStage } from "../briefing/BriefingStage";
+import { BasinMap } from "../components/BasinMap";
+import { AiBadge } from "../shared/AiBadge";
+import { Brand } from "../shared/Brand";
+import { useRealtimeProjection } from "../shared/api";
+import { formatClock, roomFromLocation } from "../shared/bootstrap";
+import { publicProjectionToBasin } from "../shared/projection";
+import "../shared/bootstrap";
+import "./display.css";
+
+const phaseLabel: Record<string, string> = {
+  lobby: "Crew Assembly",
+  forecast: "Forecast",
+  "open-water": "Open Water",
+  resolution: "Resolution",
+  "claim-check": "Charter Check",
+  "game-over": "Expedition Complete",
+};
+
+function DisplayApp() {
+  const [roomCode, setRoomCode] = useState(roomFromLocation());
+  const [now, setNow] = useState(Date.now());
+  const realtime = useRealtimeProjection<PublicProjection>("public", roomCode);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 250);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  if (!roomCode) {
+    return <DisplayConnect onConnect={setRoomCode} />;
+  }
+
+  if (realtime.briefing.active) {
+    return (
+      <BriefingStage
+        key={realtime.briefing.revision}
+        slideIndex={realtime.briefing.slideIndex}
+      />
+    );
+  }
+
+  if (!realtime.projection) {
+    return (
+      <main className="display-wait">
+        <Brand className="display-wait__brand" />
+        <div className="sonar-loader" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
+        <h1>{realtime.error ? "Signal unavailable" : "Opening the basin"}</h1>
+        <p>{realtime.error ?? `Room ${roomCode} · waiting for public state`}</p>
+        {realtime.error && (
+          <button
+            className="button-secondary"
+            onClick={() => setRoomCode(null)}
+          >
+            Change room
+          </button>
+        )}
+      </main>
+    );
+  }
+
+  const projection = realtime.projection;
+  const basin = publicProjectionToBasin(projection);
+  const remaining = projection.phase.endsAtServerMs
+    ? Math.max(0, (projection.phase.endsAtServerMs - now) / 1000)
+    : 0;
+  const readyCount = projection.expeditions.filter(
+    (expedition) => expedition.ready,
+  ).length;
+
+  return (
+    <main className="display-app">
+      <h1 className="sr-only">Blackwater public basin display</h1>
+      <header className="display-header">
+        <Brand className="display-header__brand" />
+        <DisplayMetric label="Round" value={`${projection.phase.round} / 7`} />
+        <DisplayMetric
+          label="Phase"
+          value={
+            projection.phase.kind === "resolution" &&
+            projection.phase.pulse === null
+              ? "Charter Check"
+              : (phaseLabel[projection.phase.kind] ?? projection.phase.kind)
+          }
+          accent
+        />
+        <DisplayMetric
+          label="Time"
+          value={projection.phase.endsAtServerMs ? formatClock(remaining) : "—"}
+        />
+        <DisplayMetric
+          label="Locked"
+          value={`${readyCount} / ${projection.expeditions.length}`}
+        />
+        <div className="display-header__charters">
+          {(["network", "discovery", "dominion"] as const).map((charter) => {
+            if (charter === "dominion") {
+              return (
+                <div key={charter} className="charter-chip is-sealed">
+                  <span
+                    className="charter-icon charter-icon--dominion"
+                    aria-hidden="true"
+                  />
+                  <div>
+                    <b>dominion</b>
+                    <small>SEALED</small>
+                  </div>
+                </div>
+              );
+            }
+            const leaders = projection.expeditions
+              .map((expedition) => {
+                const progress = expedition.charters.find(
+                  (item) => item.charter === charter,
+                );
+                if (!progress || progress.charter === "dominion") return null;
+                return { expedition, progress };
+              })
+              .filter(
+                (entry): entry is NonNullable<typeof entry> => entry !== null,
+              )
+              .sort((a, b) => b.progress.value - a.progress.value);
+            const lead = leaders[0];
+            return (
+              <div
+                key={charter}
+                className={`charter-chip ${lead?.progress.threatened ? "is-threat" : ""}`}
+              >
+                <span
+                  className={`charter-icon charter-icon--${charter}`}
+                  aria-hidden="true"
+                />
+                <div>
+                  <b>{charter}</b>
+                  <small>
+                    {lead
+                      ? `${lead.expedition.displayName} ${lead.progress.value}/${lead.progress.target}`
+                      : "No progress"}
+                  </small>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div
+          className={`display-header__signal ${realtime.connected ? "is-live" : ""}`}
+        >
+          <span />
+          {realtime.connected ? "Live" : "Reconnecting"}
+        </div>
+      </header>
+
+      <section className="display-body">
+        <aside className="display-rail display-rail--left">
+          {projection.expeditions.slice(0, 3).map((expedition, index) => (
+            <ExpeditionCard
+              key={expedition.seatId}
+              expedition={expedition}
+              platforms={projection.platforms.filter(
+                (platform) => platform.ownerSeatId === expedition.seatId,
+              )}
+              seat={index + 1}
+            />
+          ))}
+        </aside>
+        <section className="display-basin panel">
+          <BasinMap basin={basin} focusSectorId={null} />
+          {projection.currentCaption && (
+            <div
+              key={`${projection.presentation.timelineSeq}-${projection.currentCaption}`}
+              className="display-caption"
+              role="status"
+            >
+              {projection.currentCaption}
+            </div>
+          )}
+          {projection.phase.paused && (
+            <div className="display-pause">
+              <span>Expedition paused</span>
+              <small>{projection.phase.pauseReason ?? "Host control"}</small>
+            </div>
+          )}
+        </section>
+        <aside className="display-rail display-rail--right">
+          {projection.expeditions.slice(3, 6).map((expedition, index) => (
+            <ExpeditionCard
+              key={expedition.seatId}
+              expedition={expedition}
+              platforms={projection.platforms.filter(
+                (platform) => platform.ownerSeatId === expedition.seatId,
+              )}
+              seat={index + 4}
+            />
+          ))}
+        </aside>
+      </section>
+
+      <footer className="display-footer">
+        <div className="pulse-track">
+          {[
+            ["forecast", "Forecast"],
+            ["open-water", "Plan"],
+            ["pulse-1", "Pulse 1"],
+            ["pulse-2", "Pulse 2"],
+            ["pulse-3", "Pulse 3"],
+            ["claim-check", "Charter check"],
+          ].map(([key, label], index) => {
+            const active =
+              projection.phase.kind === key ||
+              (projection.phase.kind === "resolution" &&
+                (projection.phase.pulse === index - 1 ||
+                  (key === "claim-check" && projection.phase.pulse === null)));
+            return (
+              <div key={key} className={active ? "is-active" : ""}>
+                <span>{label}</span>
+              </div>
+            );
+          })}
+        </div>
+        <div className="display-footer__event">
+          <span className="eyebrow">Public pressure</span>
+          <strong>
+            {projection.commissions[0]
+              ? `Open commission · +${projection.commissions[0].rewardSupply} Supply against ${projection.expeditions.find((expedition) => expedition.seatId === projection.commissions[0]?.targetSeatId)?.displayName ?? "the leader"}`
+              : projection.agreements.find(
+                    (agreement) => agreement.status === "active",
+                  )
+                ? "Active Handshake terms in force"
+                : "Open water · no recorded terms"}
+          </strong>
+        </div>
+        <div className="display-footer__forecast">
+          <span className="eyebrow">Room</span>
+          <strong>{projection.roomCode}</strong>
+        </div>
+      </footer>
+
+      {projection.lifecycle === "finished" && (
+        <VictoryOverlay projection={projection} />
+      )}
+    </main>
+  );
+}
+
+function DisplayConnect({ onConnect }: { onConnect: (room: string) => void }) {
+  const [value, setValue] = useState("");
+  return (
+    <main className="display-connect">
+      <Brand className="display-connect__brand" />
+      <p className="eyebrow">Public basin display</p>
+      <h1>Connect this screen</h1>
+      <p>Enter the room code shown in Host Controls.</p>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (value.length === 6) onConnect(value);
+        }}
+      >
+        <input
+          className="field mono"
+          aria-label="Room code"
+          value={value}
+          onChange={(event) =>
+            setValue(
+              event.target.value
+                .replace(/[^a-z0-9]/gi, "")
+                .toUpperCase()
+                .slice(0, 6),
+            )
+          }
+          placeholder="ROOM CODE"
+          autoFocus
+        />
+        <button
+          className="button-primary"
+          type="submit"
+          disabled={value.length !== 6}
+        >
+          Open basin
+        </button>
+      </form>
+    </main>
+  );
+}
+
+function DisplayMetric({
+  label,
+  value,
+  accent = false,
+}: {
+  label: string;
+  value: string;
+  accent?: boolean;
+}) {
+  return (
+    <div className={`display-metric ${accent ? "is-accent" : ""}`}>
+      <small>{label}</small>
+      <strong>{value}</strong>
+    </div>
+  );
+}
+
+type Expedition = PublicProjection["expeditions"][number];
+type Platform = PublicProjection["platforms"][number];
+function ExpeditionCard({
+  expedition,
+  platforms,
+  seat,
+}: {
+  expedition: Expedition;
+  platforms: Platform[];
+  seat: number;
+}) {
+  const threat = expedition.charters.some(
+    (charter) => charter.charter !== "dominion" && charter.threatened,
+  );
+  return (
+    <article
+      className={`expedition-card panel ${expedition.ready ? "is-ready" : ""}`}
+      data-seat={expedition.color}
+    >
+      <header>
+        <b>{seat}</b>
+        <div>
+          <div className="expedition-card__name">
+            <h2>{expedition.displayName}</h2>
+            {expedition.controller === "bot" && (
+              <AiBadge strategy={expedition.botStrategy} />
+            )}
+          </div>
+          <p>{expedition.factionName}</p>
+        </div>
+      </header>
+      <div className="expedition-card__resources">
+        <span>
+          Supply <b>{expedition.supply}</b>
+        </span>
+        <span>
+          Analyzed <b>{expedition.analyzedSpecimenCount}</b>
+        </span>
+      </div>
+      <div
+        className="expedition-card__modules"
+        aria-label={`${platforms.length} research platforms`}
+      >
+        {platforms.length === 0 && <span>No platforms deployed</span>}
+        {platforms.map((platform) => (
+          <img
+            key={platform.platformId}
+            className={platform.state !== "active" ? "is-offline" : ""}
+            src={`/sprites/${platform.module}.webp`}
+            alt={platform.module}
+            title={`${platform.module} · ${platform.state}`}
+          />
+        ))}
+        <small>
+          {expedition.submarineCount} sub
+          {expedition.submarineCount === 1 ? "" : "s"}
+        </small>
+      </div>
+      <div className="expedition-card__progress">
+        {expedition.charters.map((charter) =>
+          charter.charter === "dominion" ? (
+            <span key={charter.charter} className="is-sealed">
+              <i />
+              <small>dominion · SEALED</small>
+            </span>
+          ) : (
+            <span
+              key={charter.charter}
+              style={
+                {
+                  "--value": `${Math.min(1, charter.value / charter.target) * 100}%`,
+                } as React.CSSProperties
+              }
+            >
+              <i />
+              <small>{charter.charter}</small>
+            </span>
+          ),
+        )}
+      </div>
+      <footer>
+        {expedition.controller === "bot" ? (
+          <>{expedition.ready ? "Locked" : "Calculating"}</>
+        ) : (
+          <>
+            <span
+              className={`presence-dot presence-dot--${expedition.presence}`}
+            />
+            {expedition.ready ? "Locked" : "Planning"}
+          </>
+        )}
+        {threat && <b className="threat-tag">Threat</b>}
+      </footer>
+    </article>
+  );
+}
+
+function VictoryOverlay({ projection }: { projection: PublicProjection }) {
+  const winners = projection.expeditions.filter(
+    (expedition) => expedition.winner,
+  );
+  const fallback =
+    projection.outcome?.winningCharters.some((row) =>
+      row.charters.includes("fallback"),
+    ) ?? false;
+  return (
+    <div
+      className="victory-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Expedition complete"
+    >
+      <div className="victory-overlay__bloom" />
+      <p className="eyebrow">
+        {fallback
+          ? "Round cap · field record scored"
+          : "Charter claim confirmed"}
+      </p>
+      <h1>
+        {winners.length > 1 ? "The basin has co-winners" : "The deep answers"}
+      </h1>
+      <div className="victory-overlay__winners">
+        {winners.map((winner) => {
+          const outcome = projection.outcome?.winningCharters.find(
+            (row) => row.seatId === winner.seatId,
+          );
+          const score = projection.outcome?.fallbackScores.find(
+            (row) => row.seatId === winner.seatId,
+          )?.score;
+          return (
+            <div key={winner.seatId} data-seat={winner.color}>
+              <span /> <b>{winner.displayName}</b>
+              <small>
+                {outcome?.charters
+                  .map((charter) => charter.toUpperCase())
+                  .join(" · ") ?? "CHARTER"}
+                {score === undefined ? "" : ` · ${score} PTS`}
+              </small>
+            </div>
+          );
+        })}
+      </div>
+      {fallback && projection.outcome && (
+        <div className="victory-overlay__scores">
+          {projection.outcome.fallbackScores
+            .slice()
+            .sort((a, b) => b.score - a.score)
+            .map((row) => (
+              <span key={row.seatId}>
+                {projection.expeditions.find(
+                  (expedition) => expedition.seatId === row.seatId,
+                )?.displayName ?? row.seatId}
+                <b>{row.score}</b>
+              </span>
+            ))}
+        </div>
+      )}
+      <p>Field record sealed · return to Host Controls for a rematch.</p>
+    </div>
+  );
+}
+
+createRoot(document.getElementById("root")!).render(<DisplayApp />);

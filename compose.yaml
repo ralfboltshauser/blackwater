@@ -1,0 +1,49 @@
+name: blackwater
+
+services:
+  app:
+    image: ${BLACKWATER_IMAGE:-blackwater:local}
+    build:
+      context: .
+      target: runtime
+    ports:
+      - "${BLACKWATER_PORT:-8787}:8787"
+    environment:
+      NODE_ENV: production
+      BLACKWATER_BIND: 0.0.0.0
+      BLACKWATER_PORT: 8787
+      BLACKWATER_BUILD_ID: ${BLACKWATER_BUILD_ID:-blackwater-0.5.0}
+      BLACKWATER_PUBLIC_URL: ${BLACKWATER_PUBLIC_URL:-http://127.0.0.1:8787}
+      BLACKWATER_LAN_URL: ${BLACKWATER_LAN_URL:-http://127.0.0.1:8787}
+      BLACKWATER_ALLOWED_CIDRS: ${BLACKWATER_ALLOWED_CIDRS:-127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
+      BLACKWATER_DATA_DIR: /var/lib/blackwater
+    volumes:
+      - blackwater_data:/var/lib/blackwater
+    user: "10001:10001"
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:size=96m,mode=1777,uid=10001,gid=10001
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 128
+    mem_limit: 768m
+    restart: unless-stopped
+    stop_signal: SIGTERM
+    stop_grace_period: 30s
+    healthcheck:
+      test: ["CMD", "node", "dist/server/healthcheck.js"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 20s
+    logging:
+      driver: local
+      options:
+        max-size: 10m
+        max-file: "3"
+
+volumes:
+  blackwater_data:

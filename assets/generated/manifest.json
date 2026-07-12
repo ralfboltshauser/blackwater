@@ -1,0 +1,2328 @@
+{
+  "schemaVersion": 1,
+  "pipelineVersion": 1,
+  "source": {
+    "renderer": "Blender 5 / Eevee Next / AgX",
+    "renderResolution": [
+      384,
+      384
+    ],
+    "renderCount": 48,
+    "sharp": "0.34.5"
+  },
+  "atlas": {
+    "size": 2048,
+    "extrusion": 4,
+    "spacing": 8,
+    "pages": [
+      {
+        "file": "atlas/equipment-00.webp",
+        "width": 2048,
+        "height": 2048,
+        "bytes": 1154900,
+        "decodedBytes": 16777216,
+        "sha256": "8f24d3942b0b139a28e1cc85eaa2b6539709145caf12a9cd81c72a6bf1dffcd5"
+      }
+    ]
+  },
+  "sprites": {
+    "ark-dir00": {
+      "asset": "ark",
+      "state": "idle",
+      "direction": 0,
+      "headingDegrees": 0,
+      "footprint": 1.75,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 266,
+        "height": 177
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/ark-dir00.webp",
+        "bytes": 37096,
+        "sha256": "f5951fd646f8fe4cc7d23718957332822ba5444fcbe194297ffe0aa01fee69db"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 852,
+          "y": 229,
+          "width": 266,
+          "height": 177
+        },
+        "extrudedRect": {
+          "x": 848,
+          "y": 225,
+          "width": 274,
+          "height": 185
+        }
+      }
+    },
+    "ark-dir01": {
+      "asset": "ark",
+      "state": "idle",
+      "direction": 1,
+      "headingDegrees": 22,
+      "footprint": 1.75,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 260,
+        "height": 176
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/ark-dir01.webp",
+        "bytes": 34348,
+        "sha256": "d0116b93fb6a5fc69f99b3ba97b5cfb4667957ecae8f3cbe7365ce3f0ee52689"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1134,
+          "y": 229,
+          "width": 260,
+          "height": 176
+        },
+        "extrudedRect": {
+          "x": 1130,
+          "y": 225,
+          "width": 268,
+          "height": 184
+        }
+      }
+    },
+    "ark-dir02": {
+      "asset": "ark",
+      "state": "idle",
+      "direction": 2,
+      "headingDegrees": 44,
+      "footprint": 1.75,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 268,
+        "height": 168
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/ark-dir02.webp",
+        "bytes": 32158,
+        "sha256": "aa125ac358667f5e1f822765190c95271f6a1f6c27ba5cc9e97593ce8f00c024"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 304,
+          "y": 424,
+          "width": 268,
+          "height": 168
+        },
+        "extrudedRect": {
+          "x": 300,
+          "y": 420,
+          "width": 276,
+          "height": 176
+        }
+      }
+    },
+    "ark-dir03": {
+      "asset": "ark",
+      "state": "idle",
+      "direction": 3,
+      "headingDegrees": 66,
+      "footprint": 1.75,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 246,
+        "height": 178
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/ark-dir03.webp",
+        "bytes": 32276,
+        "sha256": "e4c957397e1468f7486205f465b3351e9bdbb89a4141368981245c7fec5d6305"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 590,
+          "y": 229,
+          "width": 246,
+          "height": 178
+        },
+        "extrudedRect": {
+          "x": 586,
+          "y": 225,
+          "width": 254,
+          "height": 186
+        }
+      }
+    },
+    "ark-dir04": {
+      "asset": "ark",
+      "state": "idle",
+      "direction": 4,
+      "headingDegrees": 88,
+      "footprint": 1.75,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 280,
+        "height": 168
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/ark-dir04.webp",
+        "bytes": 37606,
+        "sha256": "ed25ff53a8aff99cbd8ab4cd4a98ddca4562a02e45b463a105b751de5c9cbdfd"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1690,
+          "y": 229,
+          "width": 280,
+          "height": 168
+        },
+        "extrudedRect": {
+          "x": 1686,
+          "y": 225,
+          "width": 288,
+          "height": 176
+        }
+      }
+    },
+    "ark-dir05": {
+      "asset": "ark",
+      "state": "idle",
+      "direction": 5,
+      "headingDegrees": 110,
+      "footprint": 1.75,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 276,
+        "height": 168
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/ark-dir05.webp",
+        "bytes": 35974,
+        "sha256": "e88f3f6b5086d07f5e473f8867cce4176c2d8ba9a2842312da2df18a56f222fd"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 12,
+          "y": 424,
+          "width": 276,
+          "height": 168
+        },
+        "extrudedRect": {
+          "x": 8,
+          "y": 420,
+          "width": 284,
+          "height": 176
+        }
+      }
+    },
+    "ark-dir06": {
+      "asset": "ark",
+      "state": "idle",
+      "direction": 6,
+      "headingDegrees": 132,
+      "footprint": 1.75,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 264,
+        "height": 179
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/ark-dir06.webp",
+        "bytes": 33886,
+        "sha256": "c7b540a1a8d9df973d0509ed07c44a596cba47500fd972d1ab5c06a407e89d9c"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 12,
+          "y": 229,
+          "width": 264,
+          "height": 179
+        },
+        "extrudedRect": {
+          "x": 8,
+          "y": 225,
+          "width": 272,
+          "height": 187
+        }
+      }
+    },
+    "ark-dir07": {
+      "asset": "ark",
+      "state": "idle",
+      "direction": 7,
+      "headingDegrees": 154,
+      "footprint": 1.75,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 282,
+        "height": 178
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/ark-dir07.webp",
+        "bytes": 38198,
+        "sha256": "b3dc6ae5357743003a29f17117c9e75635beca7d724710ec2dc4da9a5a0c909d"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 292,
+          "y": 229,
+          "width": 282,
+          "height": 178
+        },
+        "extrudedRect": {
+          "x": 288,
+          "y": 225,
+          "width": 290,
+          "height": 186
+        }
+      }
+    },
+    "ark-dir08": {
+      "asset": "ark",
+      "state": "idle",
+      "direction": 8,
+      "headingDegrees": 176,
+      "footprint": 1.75,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 266,
+        "height": 188
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/ark-dir08.webp",
+        "bytes": 38138,
+        "sha256": "a96afb3cc53d905b47a78da468bd7bb43b8e46e81d9ab426af7a9a0413e2b81b"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 718,
+          "y": 12,
+          "width": 266,
+          "height": 188
+        },
+        "extrudedRect": {
+          "x": 714,
+          "y": 8,
+          "width": 274,
+          "height": 196
+        }
+      }
+    },
+    "ark-dir09": {
+      "asset": "ark",
+      "state": "idle",
+      "direction": 9,
+      "headingDegrees": 198,
+      "footprint": 1.75,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 260,
+        "height": 190
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/ark-dir09.webp",
+        "bytes": 35944,
+        "sha256": "1ea2931140ae7e87e784c41e0d04d30ddbace523a47968787611c55627f63ed4"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 180,
+          "y": 12,
+          "width": 260,
+          "height": 190
+        },
+        "extrudedRect": {
+          "x": 176,
+          "y": 8,
+          "width": 268,
+          "height": 198
+        }
+      }
+    },
+    "ark-dir10": {
+      "asset": "ark",
+      "state": "idle",
+      "direction": 10,
+      "headingDegrees": 220,
+      "footprint": 1.75,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 268,
+        "height": 187
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/ark-dir10.webp",
+        "bytes": 33360,
+        "sha256": "5efb94c2367b6dd7650b894cfe43913616ed76ec0b302569d2f8f3a135bf1ed6"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1000,
+          "y": 12,
+          "width": 268,
+          "height": 187
+        },
+        "extrudedRect": {
+          "x": 996,
+          "y": 8,
+          "width": 276,
+          "height": 195
+        }
+      }
+    },
+    "ark-dir11": {
+      "asset": "ark",
+      "state": "idle",
+      "direction": 11,
+      "headingDegrees": 242,
+      "footprint": 1.75,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 246,
+        "height": 190
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/ark-dir11.webp",
+        "bytes": 33846,
+        "sha256": "b8867b9e81d7a99cadaac599eb26315780ae9de2d764b1530b36146bf1884478"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 456,
+          "y": 12,
+          "width": 246,
+          "height": 190
+        },
+        "extrudedRect": {
+          "x": 452,
+          "y": 8,
+          "width": 254,
+          "height": 198
+        }
+      }
+    },
+    "ark-dir12": {
+      "asset": "ark",
+      "state": "idle",
+      "direction": 12,
+      "headingDegrees": 264,
+      "footprint": 1.75,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 280,
+        "height": 179
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/ark-dir12.webp",
+        "bytes": 38344,
+        "sha256": "6884aeb05b3b1ad5f2c6b1d3ba749efd27944edf0043e6069231cf0180d4a074"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1284,
+          "y": 12,
+          "width": 280,
+          "height": 179
+        },
+        "extrudedRect": {
+          "x": 1280,
+          "y": 8,
+          "width": 288,
+          "height": 187
+        }
+      }
+    },
+    "ark-dir13": {
+      "asset": "ark",
+      "state": "idle",
+      "direction": 13,
+      "headingDegrees": 286,
+      "footprint": 1.75,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 276,
+        "height": 179
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/ark-dir13.webp",
+        "bytes": 36176,
+        "sha256": "dff400de68927cab77f42a85e8873017d53845307e332e54721be1ad8d475e25"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1580,
+          "y": 12,
+          "width": 276,
+          "height": 179
+        },
+        "extrudedRect": {
+          "x": 1576,
+          "y": 8,
+          "width": 284,
+          "height": 187
+        }
+      }
+    },
+    "ark-dir14": {
+      "asset": "ark",
+      "state": "idle",
+      "direction": 14,
+      "headingDegrees": 308,
+      "footprint": 1.75,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 264,
+        "height": 174
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/ark-dir14.webp",
+        "bytes": 34266,
+        "sha256": "2c3ea3d3c1c53987a23de29a193afce0f3cc6ce1586d2fb44404076cc158ec22"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1410,
+          "y": 229,
+          "width": 264,
+          "height": 174
+        },
+        "extrudedRect": {
+          "x": 1406,
+          "y": 225,
+          "width": 272,
+          "height": 182
+        }
+      }
+    },
+    "ark-dir15": {
+      "asset": "ark",
+      "state": "idle",
+      "direction": 15,
+      "headingDegrees": 330,
+      "footprint": 1.75,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 282,
+        "height": 165
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/ark-dir15.webp",
+        "bytes": 37694,
+        "sha256": "731cedd00004e1ab69421f6b9fd836db54209abf18b4e3678a26141cb06940f6"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 588,
+          "y": 424,
+          "width": 282,
+          "height": 165
+        },
+        "extrudedRect": {
+          "x": 584,
+          "y": 420,
+          "width": 290,
+          "height": 173
+        }
+      }
+    },
+    "calibration-buoy": {
+      "asset": "calibration-buoy",
+      "state": "idle",
+      "direction": null,
+      "headingDegrees": null,
+      "footprint": 0.58,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 92,
+        "height": 129
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/calibration-buoy.webp",
+        "bytes": 9012,
+        "sha256": "6a0641c8508fbddd393b9a714d451717d097b274003dd22176027dbfae9857db"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 607,
+          "y": 773,
+          "width": 92,
+          "height": 129
+        },
+        "extrudedRect": {
+          "x": 603,
+          "y": 769,
+          "width": 100,
+          "height": 137
+        }
+      }
+    },
+    "decoy-closed": {
+      "asset": "decoy",
+      "state": "closed",
+      "direction": null,
+      "headingDegrees": null,
+      "footprint": 0.7,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 110,
+        "height": 100
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/decoy-closed.webp",
+        "bytes": 10108,
+        "sha256": "a823850f6b8bc5a1b24c9914d6b2bb387438000059ca4698839f2152577e3a5b"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1420,
+          "y": 773,
+          "width": 110,
+          "height": 100
+        },
+        "extrudedRect": {
+          "x": 1416,
+          "y": 769,
+          "width": 118,
+          "height": 108
+        }
+      }
+    },
+    "decoy-deployed": {
+      "asset": "decoy",
+      "state": "deployed",
+      "direction": null,
+      "headingDegrees": null,
+      "footprint": 0.7,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 154,
+        "height": 114
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/decoy-deployed.webp",
+        "bytes": 12228,
+        "sha256": "559e411c6cc222859fc12d8db503233cb871236e60fc1c81c41b6d2b8de6b676"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 823,
+          "y": 773,
+          "width": 154,
+          "height": 114
+        },
+        "extrudedRect": {
+          "x": 819,
+          "y": 769,
+          "width": 162,
+          "height": 122
+        }
+      }
+    },
+    "deep-site-a": {
+      "asset": "deep-site",
+      "state": "a",
+      "direction": null,
+      "headingDegrees": null,
+      "footprint": 0.92,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 136,
+        "height": 92
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/deep-site-a.webp",
+        "bytes": 12788,
+        "sha256": "80cc85f971c666f775ae231a0cab46c89e0becb7724091bce7c65d08a69db397"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1698,
+          "y": 773,
+          "width": 136,
+          "height": 92
+        },
+        "extrudedRect": {
+          "x": 1694,
+          "y": 769,
+          "width": 144,
+          "height": 100
+        }
+      }
+    },
+    "deep-site-b": {
+      "asset": "deep-site",
+      "state": "b",
+      "direction": null,
+      "headingDegrees": null,
+      "footprint": 0.92,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 136,
+        "height": 101
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/deep-site-b.webp",
+        "bytes": 13066,
+        "sha256": "fc2e23346877ec83f07239806757627905956b2eefca9b2aab1a2a58c553bf4f"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1161,
+          "y": 773,
+          "width": 136,
+          "height": 101
+        },
+        "extrudedRect": {
+          "x": 1157,
+          "y": 769,
+          "width": 144,
+          "height": 109
+        }
+      }
+    },
+    "deep-site-c": {
+      "asset": "deep-site",
+      "state": "c",
+      "direction": null,
+      "headingDegrees": null,
+      "footprint": 0.92,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 136,
+        "height": 94
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/deep-site-c.webp",
+        "bytes": 13032,
+        "sha256": "703a9fb3ff32744024ca3ccb0cf33d7afba4d0b331118c7af021fe8ee75a1c03"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1546,
+          "y": 773,
+          "width": 136,
+          "height": 94
+        },
+        "extrudedRect": {
+          "x": 1542,
+          "y": 769,
+          "width": 144,
+          "height": 102
+        }
+      }
+    },
+    "extractor": {
+      "asset": "extractor",
+      "state": "active",
+      "direction": null,
+      "headingDegrees": null,
+      "footprint": 1,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 152,
+        "height": 162
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/extractor.webp",
+        "bytes": 20768,
+        "sha256": "848556089575b88edeb94fe20614cb0c1c6e4f5ed9cf70d9cf270639b498e1ff"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 886,
+          "y": 424,
+          "width": 152,
+          "height": 162
+        },
+        "extrudedRect": {
+          "x": 882,
+          "y": 420,
+          "width": 160,
+          "height": 170
+        }
+      }
+    },
+    "laboratory": {
+      "asset": "laboratory",
+      "state": "active",
+      "direction": null,
+      "headingDegrees": null,
+      "footprint": 1,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 152,
+        "height": 167
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/laboratory.webp",
+        "bytes": 23214,
+        "sha256": "de9a0e71ec2408e20acfa185a030661d085f4df212a116c70714d1e23c5ec802"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1872,
+          "y": 12,
+          "width": 152,
+          "height": 167
+        },
+        "extrudedRect": {
+          "x": 1868,
+          "y": 8,
+          "width": 160,
+          "height": 175
+        }
+      }
+    },
+    "platform": {
+      "asset": "platform",
+      "state": "idle",
+      "direction": null,
+      "headingDegrees": null,
+      "footprint": 1,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 152,
+        "height": 107
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/platform.webp",
+        "bytes": 16594,
+        "sha256": "090910f2344b16b3010dc482c744c134b68f68f4048c208ba848d096a583dc33"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 993,
+          "y": 773,
+          "width": 152,
+          "height": 107
+        },
+        "extrudedRect": {
+          "x": 989,
+          "y": 769,
+          "width": 160,
+          "height": 115
+        }
+      }
+    },
+    "sample-pod": {
+      "asset": "sample-pod",
+      "state": "idle",
+      "direction": null,
+      "headingDegrees": null,
+      "footprint": 0.62,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 103,
+        "height": 84
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/sample-pod.webp",
+        "bytes": 9664,
+        "sha256": "400af3221d44ad44fdf47126d45f7ede0ffadb3ae30034901978fb71b1f0eef8"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 12,
+          "y": 926,
+          "width": 103,
+          "height": 84
+        },
+        "extrudedRect": {
+          "x": 8,
+          "y": 922,
+          "width": 111,
+          "height": 92
+        }
+      }
+    },
+    "snare-armed": {
+      "asset": "snare",
+      "state": "armed",
+      "direction": null,
+      "headingDegrees": null,
+      "footprint": 0.72,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 130,
+        "height": 83
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/snare-armed.webp",
+        "bytes": 12282,
+        "sha256": "24dfcb8d267d1c143c3e88d8b1637f83e4e052eae0841c6873c8fd943db9a85c"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 131,
+          "y": 926,
+          "width": 130,
+          "height": 83
+        },
+        "extrudedRect": {
+          "x": 127,
+          "y": 922,
+          "width": 138,
+          "height": 91
+        }
+      }
+    },
+    "snare-closed": {
+      "asset": "snare",
+      "state": "closed",
+      "direction": null,
+      "headingDegrees": null,
+      "footprint": 0.72,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 106,
+        "height": 66
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/snare-closed.webp",
+        "bytes": 9470,
+        "sha256": "2d39fb36b7b6074b35954cdef04f53d933767868259abcc63d3e612b7d079bda"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 277,
+          "y": 926,
+          "width": 106,
+          "height": 66
+        },
+        "extrudedRect": {
+          "x": 273,
+          "y": 922,
+          "width": 114,
+          "height": 74
+        }
+      }
+    },
+    "sonar": {
+      "asset": "sonar",
+      "state": "active",
+      "direction": null,
+      "headingDegrees": null,
+      "footprint": 1,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 152,
+        "height": 201
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/sonar.webp",
+        "bytes": 23616,
+        "sha256": "11261744bf2940948617872eb77076d3b76d777a08b58b9d8c5b2eabb4c33614"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 12,
+          "y": 12,
+          "width": 152,
+          "height": 201
+        },
+        "extrudedRect": {
+          "x": 8,
+          "y": 8,
+          "width": 160,
+          "height": 209
+        }
+      }
+    },
+    "specimen-luminous-pollen": {
+      "asset": "specimen",
+      "state": "luminous-pollen",
+      "direction": null,
+      "headingDegrees": null,
+      "footprint": 0.68,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 91,
+        "height": 101
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/specimen-luminous-pollen.webp",
+        "bytes": 11292,
+        "sha256": "c10d5072b22a998934ae4dc7ee199ef3e96e0f527c75884c0f13d02e09cb65a7"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1313,
+          "y": 773,
+          "width": 91,
+          "height": 101
+        },
+        "extrudedRect": {
+          "x": 1309,
+          "y": 769,
+          "width": 99,
+          "height": 109
+        }
+      }
+    },
+    "specimen-prism-raft": {
+      "asset": "specimen",
+      "state": "prism-raft",
+      "direction": null,
+      "headingDegrees": null,
+      "footprint": 0.68,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 92,
+        "height": 127
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/specimen-prism-raft.webp",
+        "bytes": 13644,
+        "sha256": "cace66fe5b7a5e427e9a6a08de0e5b36ad5f3a854b3646d3f5a7e39baa97a2f2"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 715,
+          "y": 773,
+          "width": 92,
+          "height": 127
+        },
+        "extrudedRect": {
+          "x": 711,
+          "y": 769,
+          "width": 100,
+          "height": 135
+        }
+      }
+    },
+    "specimen-ribbon-filter": {
+      "asset": "specimen",
+      "state": "ribbon-filter",
+      "direction": null,
+      "headingDegrees": null,
+      "footprint": 0.68,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 90,
+        "height": 89
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/specimen-ribbon-filter.webp",
+        "bytes": 11822,
+        "sha256": "da19249e15f81c91be343bff4fd4867287ee495128a1aff7428c74d2f0747738"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1850,
+          "y": 773,
+          "width": 90,
+          "height": 89
+        },
+        "extrudedRect": {
+          "x": 1846,
+          "y": 769,
+          "width": 98,
+          "height": 97
+        }
+      }
+    },
+    "submarine-dir00": {
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 0,
+      "headingDegrees": 0,
+      "footprint": 1.48,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 178,
+        "height": 134
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/submarine-dir00.webp",
+        "bytes": 21952,
+        "sha256": "cf6233a0ad18b76a38d50a81690110c537531ec776a9e30b837ee2750a4ad0a3"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 219,
+          "y": 773,
+          "width": 178,
+          "height": 134
+        },
+        "extrudedRect": {
+          "x": 215,
+          "y": 769,
+          "width": 186,
+          "height": 142
+        }
+      }
+    },
+    "submarine-dir01": {
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 1,
+      "headingDegrees": 22,
+      "footprint": 1.48,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 210,
+        "height": 151
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/submarine-dir01.webp",
+        "bytes": 21682,
+        "sha256": "31e43277912e1c2b73b7a22d45a6228d8ab232159bdad9c268aa8e571c5b2590"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1288,
+          "y": 424,
+          "width": 210,
+          "height": 151
+        },
+        "extrudedRect": {
+          "x": 1284,
+          "y": 420,
+          "width": 218,
+          "height": 159
+        }
+      }
+    },
+    "submarine-dir02": {
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 2,
+      "headingDegrees": 44,
+      "footprint": 1.48,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 218,
+        "height": 154
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/submarine-dir02.webp",
+        "bytes": 22512,
+        "sha256": "cfab4f2f962da7cdb18934dbae4b9e296cd855c50b2f97d37820324909e81dec"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1054,
+          "y": 424,
+          "width": 218,
+          "height": 154
+        },
+        "extrudedRect": {
+          "x": 1050,
+          "y": 420,
+          "width": 226,
+          "height": 162
+        }
+      }
+    },
+    "submarine-dir03": {
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 3,
+      "headingDegrees": 66,
+      "footprint": 1.48,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 196,
+        "height": 143
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/submarine-dir03.webp",
+        "bytes": 22966,
+        "sha256": "7025c112ed0a4ad01a7809253b0a05945b5f0c4c37a92229420f30630e07a1f6"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1171,
+          "y": 608,
+          "width": 196,
+          "height": 143
+        },
+        "extrudedRect": {
+          "x": 1167,
+          "y": 604,
+          "width": 204,
+          "height": 151
+        }
+      }
+    },
+    "submarine-dir04": {
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 4,
+      "headingDegrees": 88,
+      "footprint": 1.48,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 191,
+        "height": 137
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/submarine-dir04.webp",
+        "bytes": 21338,
+        "sha256": "5b2eeca304e6088f48f9032360db196835ccfbd358a6764121c958084168d926"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 12,
+          "y": 773,
+          "width": 191,
+          "height": 137
+        },
+        "extrudedRect": {
+          "x": 8,
+          "y": 769,
+          "width": 199,
+          "height": 145
+        }
+      }
+    },
+    "submarine-dir05": {
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 5,
+      "headingDegrees": 110,
+      "footprint": 1.48,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 222,
+        "height": 147
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/submarine-dir05.webp",
+        "bytes": 20470,
+        "sha256": "bbedb9ac65660def1dd2f5bf3611bcdbadef6258983c22f33b22af94663775db"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 484,
+          "y": 608,
+          "width": 222,
+          "height": 147
+        },
+        "extrudedRect": {
+          "x": 480,
+          "y": 604,
+          "width": 230,
+          "height": 155
+        }
+      }
+    },
+    "submarine-dir06": {
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 6,
+      "headingDegrees": 132,
+      "footprint": 1.48,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 229,
+        "height": 150
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/submarine-dir06.webp",
+        "bytes": 20022,
+        "sha256": "fa016441ceeddbada6618355fb1973b700c50abf2717cecd42be9288f5914b64"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1514,
+          "y": 424,
+          "width": 229,
+          "height": 150
+        },
+        "extrudedRect": {
+          "x": 1510,
+          "y": 420,
+          "width": 237,
+          "height": 158
+        }
+      }
+    },
+    "submarine-dir07": {
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 7,
+      "headingDegrees": 154,
+      "footprint": 1.48,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 207,
+        "height": 145
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/submarine-dir07.webp",
+        "bytes": 23030,
+        "sha256": "50c8ea5a2ae66cf073bef88e3eb2dee48857481741c6107f5b73dc1fdf712530"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 948,
+          "y": 608,
+          "width": 207,
+          "height": 145
+        },
+        "extrudedRect": {
+          "x": 944,
+          "y": 604,
+          "width": 215,
+          "height": 153
+        }
+      }
+    },
+    "submarine-dir08": {
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 8,
+      "headingDegrees": 176,
+      "footprint": 1.48,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 178,
+        "height": 134
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/submarine-dir08.webp",
+        "bytes": 23536,
+        "sha256": "ec5c628a21bd72842c27de7894011fa243ed350729edaf7ad9121ab9b687324e"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 413,
+          "y": 773,
+          "width": 178,
+          "height": 134
+        },
+        "extrudedRect": {
+          "x": 409,
+          "y": 769,
+          "width": 186,
+          "height": 142
+        }
+      }
+    },
+    "submarine-dir09": {
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 9,
+      "headingDegrees": 198,
+      "footprint": 1.48,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 210,
+        "height": 146
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/submarine-dir09.webp",
+        "bytes": 23640,
+        "sha256": "d7a781c168e9469c8a0e964f2759ccaa2fda81fa0b600f5de7948ef821f12790"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 722,
+          "y": 608,
+          "width": 210,
+          "height": 146
+        },
+        "extrudedRect": {
+          "x": 718,
+          "y": 604,
+          "width": 218,
+          "height": 154
+        }
+      }
+    },
+    "submarine-dir10": {
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 10,
+      "headingDegrees": 220,
+      "footprint": 1.48,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 218,
+        "height": 149
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/submarine-dir10.webp",
+        "bytes": 22510,
+        "sha256": "edc014bc7cc2cf4f53076270d5293d4ea976d5b48946f6e11932db5a9e56b074"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 250,
+          "y": 608,
+          "width": 218,
+          "height": 149
+        },
+        "extrudedRect": {
+          "x": 246,
+          "y": 604,
+          "width": 226,
+          "height": 157
+        }
+      }
+    },
+    "submarine-dir11": {
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 11,
+      "headingDegrees": 242,
+      "footprint": 1.48,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 196,
+        "height": 137
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/submarine-dir11.webp",
+        "bytes": 23368,
+        "sha256": "180b5ecacb0a5c8a98051a118b7206392226d2bdc781b436e36eca6f02afcf69"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1812,
+          "y": 608,
+          "width": 196,
+          "height": 137
+        },
+        "extrudedRect": {
+          "x": 1808,
+          "y": 604,
+          "width": 204,
+          "height": 145
+        }
+      }
+    },
+    "submarine-dir12": {
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 12,
+      "headingDegrees": 264,
+      "footprint": 1.48,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 191,
+        "height": 141
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/submarine-dir12.webp",
+        "bytes": 23064,
+        "sha256": "a85992d8e01c81165c367c30c1656f22f7b630173957fd90bdece5150d9c17b4"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1605,
+          "y": 608,
+          "width": 191,
+          "height": 141
+        },
+        "extrudedRect": {
+          "x": 1601,
+          "y": 604,
+          "width": 199,
+          "height": 149
+        }
+      }
+    },
+    "submarine-dir13": {
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 13,
+      "headingDegrees": 286,
+      "footprint": 1.48,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 222,
+        "height": 149
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/submarine-dir13.webp",
+        "bytes": 22002,
+        "sha256": "107932d3ba30571e58854a35f897f6c535d41d6ccbe43b72621478fa320c94f0"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 12,
+          "y": 608,
+          "width": 222,
+          "height": 149
+        },
+        "extrudedRect": {
+          "x": 8,
+          "y": 604,
+          "width": 230,
+          "height": 157
+        }
+      }
+    },
+    "submarine-dir14": {
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 14,
+      "headingDegrees": 308,
+      "footprint": 1.48,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 229,
+        "height": 150
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/submarine-dir14.webp",
+        "bytes": 19876,
+        "sha256": "f15f3e8c7143e3e36bedf6a0694857700c1792d4d1a49af236228b3c51339358"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1759,
+          "y": 424,
+          "width": 229,
+          "height": 150
+        },
+        "extrudedRect": {
+          "x": 1755,
+          "y": 420,
+          "width": 237,
+          "height": 158
+        }
+      }
+    },
+    "submarine-dir15": {
+      "asset": "submarine",
+      "state": "idle",
+      "direction": 15,
+      "headingDegrees": 330,
+      "footprint": 1.48,
+      "sourceSize": {
+        "width": 384,
+        "height": 384
+      },
+      "trim": {
+        "x": 0,
+        "y": 0,
+        "width": 206,
+        "height": 142
+      },
+      "pivot": {
+        "normalized": [
+          0.5,
+          0.72
+        ],
+        "trimmedPixels": {
+          "x": 192,
+          "y": 276
+        }
+      },
+      "individual": {
+        "file": "sprites/submarine-dir15.webp",
+        "bytes": 21216,
+        "sha256": "633af774e64cead60603dd51bfdba972b51fe979c76fc23a7ff0b5954f8d2f5c"
+      },
+      "atlas": {
+        "page": 0,
+        "rect": {
+          "x": 1383,
+          "y": 608,
+          "width": 206,
+          "height": 142
+        },
+        "extrudedRect": {
+          "x": 1379,
+          "y": 604,
+          "width": 214,
+          "height": 150
+        }
+      }
+    }
+  },
+  "water": {
+    "foundation": {
+      "file": "water/water-foundation.webp",
+      "width": 2048,
+      "height": 1280,
+      "bytes": 144214,
+      "decodedBytes": 10485760,
+      "sha256": "cff53e8a0a8ddc37c7ca86fedbe3e2da282bf28fa3131ec9647546e2f7e15bc8"
+    },
+    "phone": {
+      "file": "water/water-phone.webp",
+      "width": 1024,
+      "height": 640,
+      "bytes": 37236,
+      "decodedBytes": 2621440,
+      "sha256": "931db15fbb45e714c46aa6e575b148295dbcc4294e367996ee3302ac786fecaa"
+    },
+    "flow": {
+      "file": "water/water-flow.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 1710,
+      "decodedBytes": 262144,
+      "sha256": "9290ac9bd941851b430fde8625223a1fd7bd540006d624ed07b996b8737b405f"
+    }
+  },
+  "contactSheet": {
+    "file": "contact-sheet.webp",
+    "width": 1280,
+    "height": 1200,
+    "bytes": 145006,
+    "decodedBytes": 6144000,
+    "sha256": "136c856c9df2479e4f9b12fd837a8a73f237077de8eacc523d29e864be2cbc52"
+  },
+  "budget": {
+    "individualBytes": 1145094,
+    "atlasBytes": 1154900,
+    "atlasDecodedBytes": 16777216,
+    "waterBytes": 183160,
+    "visualDeliveryBytes": 2483154,
+    "maxVisualDeliveryBytes": 10485760
+  }
+}

@@ -1,0 +1,530 @@
+{
+  "schemaVersion": 1,
+  "match": {
+    "round": 4,
+    "roundCap": 7,
+    "phase": "open_water",
+    "secondsRemaining": 88,
+    "readyPlayers": 3,
+    "playerCount": 6,
+    "deepSiteStock": "replenished"
+  },
+  "victoryWatch": {
+    "network": {
+      "leaderPlayerId": "cyan",
+      "publicProgress": "3/4",
+      "threat": true
+    },
+    "discovery": {
+      "publicLeaders": [
+        { "playerId": "violet", "analyzed": 2, "activeLab": false },
+        { "playerId": "coral", "analyzed": 2, "activeLab": false }
+      ]
+    },
+    "dominion": {
+      "publicProgress": null,
+      "label": "sealed_until_claim_check"
+    },
+    "openCommission": {
+      "targetPlayerId": "cyan",
+      "bountySupply": 1
+    }
+  },
+  "players": [
+    {
+      "id": "cyan",
+      "seatColor": "cyan",
+      "faction": "Echo Cartographers",
+      "supply": 5,
+      "analyzedCount": 1,
+      "ready": false,
+      "connected": true,
+      "platformIds": ["p-cyan-2", "p-cyan-7", "p-cyan-8"]
+    },
+    {
+      "id": "amber",
+      "seatColor": "amber",
+      "faction": "Hadal Engineers",
+      "supply": 4,
+      "analyzedCount": 1,
+      "ready": false,
+      "connected": true,
+      "platformIds": ["p-amber-9", "p-amber-14"]
+    },
+    {
+      "id": "violet",
+      "seatColor": "violet",
+      "faction": "Quiet Current",
+      "supply": 2,
+      "analyzedCount": 2,
+      "ready": true,
+      "connected": true,
+      "platformIds": ["p-violet-3", "p-violet-12"]
+    },
+    {
+      "id": "lime",
+      "seatColor": "lime",
+      "faction": "Roaming Atoll",
+      "supply": 6,
+      "analyzedCount": 0,
+      "ready": true,
+      "connected": true,
+      "platformIds": ["p-lime-6", "p-lime-11"]
+    },
+    {
+      "id": "coral",
+      "seatColor": "coral",
+      "faction": "Concord Relay",
+      "supply": 3,
+      "analyzedCount": 2,
+      "ready": false,
+      "connected": true,
+      "platformIds": ["p-coral-5", "p-coral-15"]
+    },
+    {
+      "id": "chalk",
+      "seatColor": "chalk",
+      "faction": "Second Dawn",
+      "supply": 7,
+      "analyzedCount": 1,
+      "ready": true,
+      "connected": true,
+      "platformIds": ["p-chalk-10", "p-chalk-18"]
+    }
+  ],
+  "sectors": [
+    {
+      "id": 1,
+      "name": "Shallow Shelf",
+      "region": "shelf",
+      "x": 0.08,
+      "y": 0.08,
+      "deepSite": false
+    },
+    {
+      "id": 2,
+      "name": "Shelf Break",
+      "region": "shelf",
+      "x": 0.28,
+      "y": 0.06,
+      "deepSite": false
+    },
+    {
+      "id": 3,
+      "name": "North Shelf",
+      "region": "shelf",
+      "x": 0.5,
+      "y": 0.08,
+      "deepSite": false
+    },
+    {
+      "id": 4,
+      "name": "Aeolian Pass",
+      "region": "shelf",
+      "x": 0.71,
+      "y": 0.07,
+      "deepSite": false
+    },
+    {
+      "id": 5,
+      "name": "Glass Shoal",
+      "region": "shelf",
+      "x": 0.91,
+      "y": 0.1,
+      "deepSite": false
+    },
+    {
+      "id": 6,
+      "name": "Western Rift",
+      "region": "rift",
+      "x": 0.1,
+      "y": 0.31,
+      "deepSite": false
+    },
+    {
+      "id": 7,
+      "name": "Rift Junction",
+      "region": "rift",
+      "x": 0.3,
+      "y": 0.28,
+      "deepSite": false
+    },
+    {
+      "id": 8,
+      "name": "Helix Rift",
+      "region": "rift",
+      "x": 0.5,
+      "y": 0.3,
+      "deepSite": false
+    },
+    {
+      "id": 9,
+      "name": "Eastern Rift",
+      "region": "rift",
+      "x": 0.7,
+      "y": 0.28,
+      "deepSite": false
+    },
+    {
+      "id": 10,
+      "name": "Thermal Vents",
+      "region": "rift",
+      "x": 0.9,
+      "y": 0.32,
+      "deepSite": false
+    },
+    {
+      "id": 11,
+      "name": "Southwest Basin",
+      "region": "blackwater",
+      "x": 0.07,
+      "y": 0.56,
+      "deepSite": false
+    },
+    {
+      "id": 12,
+      "name": "Abyssal Plain",
+      "region": "blackwater",
+      "x": 0.27,
+      "y": 0.53,
+      "deepSite": true
+    },
+    {
+      "id": 13,
+      "name": "Blackwater Site 2",
+      "region": "blackwater",
+      "x": 0.5,
+      "y": 0.53,
+      "deepSite": true
+    },
+    {
+      "id": 14,
+      "name": "Brine Gallery",
+      "region": "blackwater",
+      "x": 0.72,
+      "y": 0.53,
+      "deepSite": false
+    },
+    {
+      "id": 15,
+      "name": "Southeast Basin",
+      "region": "blackwater",
+      "x": 0.92,
+      "y": 0.57,
+      "deepSite": false
+    },
+    {
+      "id": 16,
+      "name": "Lantern Trench",
+      "region": "blackwater",
+      "x": 0.17,
+      "y": 0.8,
+      "deepSite": false
+    },
+    {
+      "id": 17,
+      "name": "Cobalt Drop",
+      "region": "blackwater",
+      "x": 0.39,
+      "y": 0.77,
+      "deepSite": false
+    },
+    {
+      "id": 18,
+      "name": "Choir Basin",
+      "region": "blackwater",
+      "x": 0.65,
+      "y": 0.79,
+      "deepSite": true
+    },
+    {
+      "id": 19,
+      "name": "Far Reach",
+      "region": "blackwater",
+      "x": 0.87,
+      "y": 0.81,
+      "deepSite": false
+    }
+  ],
+  "connections": [
+    [1, 2],
+    [1, 6],
+    [2, 3],
+    [2, 7],
+    [3, 4],
+    [3, 8],
+    [4, 5],
+    [4, 9],
+    [5, 10],
+    [6, 7],
+    [6, 11],
+    [7, 8],
+    [7, 12],
+    [8, 9],
+    [8, 13],
+    [9, 10],
+    [9, 13],
+    [9, 14],
+    [10, 15],
+    [11, 12],
+    [11, 16],
+    [12, 13],
+    [12, 16],
+    [12, 17],
+    [13, 14],
+    [13, 17],
+    [13, 18],
+    [14, 15],
+    [14, 18],
+    [15, 19],
+    [16, 17],
+    [17, 18],
+    [18, 19]
+  ],
+  "platforms": [
+    {
+      "id": "p-cyan-2",
+      "ownerId": "cyan",
+      "sectorId": 2,
+      "module": "extractor",
+      "state": "active"
+    },
+    {
+      "id": "p-cyan-7",
+      "ownerId": "cyan",
+      "sectorId": 7,
+      "module": "sonar",
+      "state": "active"
+    },
+    {
+      "id": "p-cyan-8",
+      "ownerId": "cyan",
+      "sectorId": 8,
+      "module": "laboratory",
+      "state": "active"
+    },
+    {
+      "id": "p-amber-9",
+      "ownerId": "amber",
+      "sectorId": 9,
+      "module": "laboratory",
+      "state": "active"
+    },
+    {
+      "id": "p-amber-14",
+      "ownerId": "amber",
+      "sectorId": 14,
+      "module": "extractor",
+      "state": "active"
+    },
+    {
+      "id": "p-violet-3",
+      "ownerId": "violet",
+      "sectorId": 3,
+      "module": "extractor",
+      "state": "active"
+    },
+    {
+      "id": "p-violet-12",
+      "ownerId": "violet",
+      "sectorId": 12,
+      "module": "sonar",
+      "state": "contested",
+      "moduleOnline": false,
+      "contenderId": "lime",
+      "transferEligibleAt": "round_4_claim_check"
+    },
+    {
+      "id": "p-lime-6",
+      "ownerId": "lime",
+      "sectorId": 6,
+      "module": "extractor",
+      "state": "active"
+    },
+    {
+      "id": "p-lime-11",
+      "ownerId": "lime",
+      "sectorId": 11,
+      "module": "laboratory",
+      "state": "active"
+    },
+    {
+      "id": "p-coral-5",
+      "ownerId": "coral",
+      "sectorId": 5,
+      "module": "sonar",
+      "state": "active"
+    },
+    {
+      "id": "p-coral-15",
+      "ownerId": "coral",
+      "sectorId": 15,
+      "module": "extractor",
+      "state": "active"
+    },
+    {
+      "id": "p-chalk-10",
+      "ownerId": "chalk",
+      "sectorId": 10,
+      "module": "extractor",
+      "state": "active"
+    },
+    {
+      "id": "p-chalk-18",
+      "ownerId": "chalk",
+      "sectorId": 18,
+      "module": "sonar",
+      "state": "active"
+    }
+  ],
+  "arks": [
+    { "ownerId": "cyan", "sectorId": 13 },
+    { "ownerId": "amber", "sectorId": 4 },
+    { "ownerId": "violet", "sectorId": 17 },
+    { "ownerId": "lime", "sectorId": 6 },
+    { "ownerId": "coral", "sectorId": 15 },
+    { "ownerId": "chalk", "sectorId": 10 }
+  ],
+  "publicEvidence": [
+    {
+      "kind": "identified_contact",
+      "ownerId": "lime",
+      "sectorId": 12,
+      "observedAt": "R3/P3"
+    },
+    {
+      "kind": "wake",
+      "ownerId": null,
+      "fromSectorId": 11,
+      "toSectorId": 12,
+      "observedAt": "R3/P3",
+      "fade": 0.45
+    },
+    {
+      "kind": "anonymous_echo",
+      "ownerId": null,
+      "sectorId": 14,
+      "observedAt": "R3/P2",
+      "confidence": "partial"
+    },
+    {
+      "kind": "wake",
+      "ownerId": null,
+      "fromSectorId": 18,
+      "toSectorId": 14,
+      "observedAt": "R3/P2",
+      "fade": 0.25
+    }
+  ],
+  "publicAgreements": [
+    {
+      "id": "handshake-cyan-amber-site13-r4",
+      "kind": "handshake",
+      "partyIds": ["cyan", "amber"],
+      "terms": "No Hunt or Raid against each other at Blackwater Site 2",
+      "expiresAt": "round_4_claim_check",
+      "binding": false,
+      "status": "active"
+    }
+  ],
+  "privateViews": {
+    "amber": {
+      "signal": 3,
+      "analyzedTypes": ["Ribbon Filter"],
+      "selectedAssetId": "sub-amber-a1",
+      "assets": [
+        {
+          "id": "sub-amber-a1",
+          "kind": "submarine",
+          "name": "Sub A-1",
+          "sectorId": 9,
+          "integrity": { "current": 2, "max": 2 },
+          "cargo": { "current": 0, "max": 2 },
+          "silence": { "current": 2, "max": 2 }
+        }
+      ],
+      "deviceInventory": [{ "kind": "decoy", "count": 1 }],
+      "deployedDevices": [
+        {
+          "id": "device-amber-snare-14",
+          "kind": "snare",
+          "sectorId": 14,
+          "configuration": "tag",
+          "state": "armed",
+          "deployedAt": "R3/P1"
+        }
+      ],
+      "unreadIntel": 2,
+      "pendingDeals": 1,
+      "receivedIntel": [
+        {
+          "id": "intel-amber-1",
+          "kind": "sealed_report",
+          "sourcePlayerId": "coral",
+          "sectorId": 14,
+          "observedAt": "R3/P2",
+          "contactClass": "submarine",
+          "heading": "northeast",
+          "identityEstimate": "chalk",
+          "confidence": 0.7
+        },
+        {
+          "id": "intel-amber-2",
+          "kind": "statement",
+          "sourcePlayerId": "coral",
+          "sectorId": 13,
+          "observedAt": "R3/P3",
+          "claim": "Blackwater Site 2 is clear",
+          "verified": false
+        }
+      ],
+      "pendingDeal": {
+        "fromPlayerId": "coral",
+        "offer": {
+          "sealedPacketMetadata": {
+            "sectorId": 13,
+            "observedAt": "R3/P3",
+            "contentsVisibleBeforeAcceptance": false
+          }
+        },
+        "request": { "signal": 1 }
+      },
+      "operations": [
+        {
+          "pulse": 1,
+          "assetId": "sub-amber-a1",
+          "operation": "glide",
+          "fromSectorId": 9,
+          "toSectorId": 13,
+          "silenceEnabled": true,
+          "cost": { "supply": 0, "signal": 0, "silence": 1 },
+          "publicTrace": "none"
+        },
+        {
+          "pulse": 2,
+          "assetId": "sub-amber-a1",
+          "operation": "survey",
+          "sectorId": 13,
+          "cost": { "supply": 0, "signal": 1, "silence": 0 },
+          "publicTrace": "identified_pinger_contact_at_sector_13"
+        },
+        {
+          "pulse": 3,
+          "assetId": "sub-amber-a1",
+          "operation": "harvest",
+          "sectorId": 13,
+          "signalCommitment": 1,
+          "cost": { "supply": 0, "signal": 1, "silence": 0 },
+          "publicTrace": "contact_at_sector_13",
+          "projectedForce": 2
+        }
+      ],
+      "projectedResources": {
+        "supply": 4,
+        "signal": 1,
+        "silence": 1
+      },
+      "exposureSummary": "Pulse 1 leaves no wake. Pulses 2 and 3 reveal activity at Blackwater Site 2."
+    }
+  }
+}
