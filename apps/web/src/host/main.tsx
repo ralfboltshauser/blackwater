@@ -405,6 +405,11 @@ function LobbyConsole({
   const [botsBusy, setBotsBusy] = useState(false);
   const [removingSeatId, setRemovingSeatId] = useState<string | null>(null);
   const activeJoinUrl = joinMode === "lan" ? lanJoinUrl : joinUrl;
+  const pwaAvailable = new URL(joinUrl).protocol === "https:";
+  const lanHostname = new URL(lanJoinUrl).hostname;
+  const lanIsLoopback = ["localhost", "127.0.0.1", "[::1]"].includes(
+    lanHostname,
+  );
 
   useEffect(() => {
     void QRCode.toDataURL(activeJoinUrl, {
@@ -528,6 +533,12 @@ function LobbyConsole({
               <button
                 className={joinMode === "pwa" ? "is-selected" : ""}
                 aria-pressed={joinMode === "pwa"}
+                disabled={!pwaAvailable}
+                title={
+                  pwaAvailable
+                    ? undefined
+                    : "Installable mode requires a configured trusted HTTPS origin"
+                }
                 onClick={() => setJoinMode("pwa")}
               >
                 HTTPS PWA
@@ -538,6 +549,18 @@ function LobbyConsole({
                 ? "Works on home Wi-Fi without DNS changes. Browser mode only."
                 : "Requires Private DNS or local DNS; enables full-screen install."}
             </small>
+            {lanIsLoopback && (
+              <small className="host-lobby__link-warning" role="alert">
+                This QR works only on this computer. Reopen Host Controls using
+                the LAN URL printed by ./blackwater, then create the room again.
+              </small>
+            )}
+            {!pwaAvailable && !lanIsLoopback && (
+              <small className="host-lobby__link-note">
+                Full-screen installation is unavailable on plain HTTP. LAN
+                browser play still works normally.
+              </small>
+            )}
           </div>
         </div>
         <div className="host-lobby__seats">

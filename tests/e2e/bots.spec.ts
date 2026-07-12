@@ -104,11 +104,12 @@ test.describe("server-controlled rivals", () => {
       await expect(host.locator(".host-lobby__invite")).toContainText(
         "Works on home Wi-Fi without DNS changes",
       );
-      await host.getByRole("button", { name: "HTTPS PWA" }).click();
+      await expect(
+        host.getByRole("button", { name: "HTTPS PWA" }),
+      ).toBeDisabled();
       await expect(host.locator(".host-lobby__invite")).toContainText(
-        "Requires Private DNS or local DNS",
+        "This QR works only on this computer",
       );
-      await host.getByRole("button", { name: "LAN browser" }).click();
       await expect(host.locator(".host-lobby__composition")).toContainText(
         "0 / 1 ready · 0 humans joined · 0 AI · 1 open",
       );

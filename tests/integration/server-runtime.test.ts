@@ -53,8 +53,8 @@ async function testConfig(port = 0): Promise<ServerConfig> {
   return {
     bind: "127.0.0.1",
     port,
-    publicUrl: "http://192.168.50.4:8787",
-    lanUrl: "http://192.168.50.4:8787",
+    publicUrl: "http://blackwater.lan.test:8787",
+    lanUrl: "http://blackwater.lan.test:8787",
     allowedCidrs: ["127.0.0.0/8"],
     dataDir: directory,
     webRoot: join(directory, "web-not-built"),
@@ -101,10 +101,14 @@ async function startThreePlayerMatch(
     lanJoinUrl: string;
     displayUrl: string;
   }>();
-  expect(body.joinUrl).toBe(`http://192.168.50.4:8787/j/${body.roomCode}`);
-  expect(body.lanJoinUrl).toBe(`http://192.168.50.4:8787/j/${body.roomCode}`);
+  expect(body.joinUrl).toBe(
+    `http://blackwater.lan.test:8787/j/${body.roomCode}`,
+  );
+  expect(body.lanJoinUrl).toBe(
+    `http://blackwater.lan.test:8787/j/${body.roomCode}`,
+  );
   expect(body.displayUrl).toBe(
-    `http://192.168.50.4:8787/display/${body.roomCode}`,
+    `http://blackwater.lan.test:8787/display/${body.roomCode}`,
   );
   const hostCookie = cookieFrom(created.headers["set-cookie"]);
   const displayConnectionId = `integration-display-${body.matchId}`;
@@ -293,9 +297,51 @@ describe("Blackwater server runtime", () => {
     });
     expect(meta.statusCode).toBe(200);
     expect(meta.json()).toMatchObject({
-      publicUrl: "http://192.168.50.4:8787",
-      lanUrl: "http://192.168.50.4:8787",
+      publicUrl: "http://blackwater.lan.test:8787",
+      lanUrl: "http://blackwater.lan.test:8787",
     });
+  });
+
+  it("derives portable room links from the Host request when no origin is configured", async () => {
+    const config = await testConfig();
+    const application = await openApplication({
+      ...config,
+      publicUrl: null,
+      lanUrl: null,
+    });
+    const host = "party-mac.local:8787";
+    const meta = await application.fastify.inject({
+      method: "GET",
+      url: "/api/v1/meta",
+      headers: { host },
+    });
+    expect(meta.json()).toMatchObject({
+      publicUrl: `http://${host}`,
+      lanUrl: `http://${host}`,
+      originMode: "request",
+    });
+
+    const created = await application.fastify.inject({
+      method: "POST",
+      url: "/api/v1/matches",
+      headers: { host, origin: `http://${host}` },
+      payload: {
+        protocol: 1,
+        playerCount: 3,
+        planningSeconds: 90,
+        factionsEnabled: false,
+      },
+    });
+    expect(created.statusCode).toBe(201);
+    const body = created.json<{
+      roomCode: string;
+      joinUrl: string;
+      lanJoinUrl: string;
+      displayUrl: string;
+    }>();
+    expect(body.joinUrl).toBe(`http://${host}/j/${body.roomCode}`);
+    expect(body.lanJoinUrl).toBe(body.joinUrl);
+    expect(body.displayUrl).toBe(`http://${host}/display/${body.roomCode}`);
   });
 
   it("serves update-sensitive PWA resources with explicit worker scope", async () => {
@@ -354,7 +400,7 @@ describe("Blackwater server runtime", () => {
     const lanJoin = await application.fastify.inject({
       method: "POST",
       url: `/api/v1/matches/${created.json<{ roomCode: string }>().roomCode}/join`,
-      headers: { host: "192.168.50.4:8787" },
+      headers: { host: "blackwater.lan.test:8787" },
       payload: {
         protocol: 1,
         roomCode: created.json<{ roomCode: string }>().roomCode,

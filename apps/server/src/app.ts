@@ -52,8 +52,8 @@ import {
 export interface ServerConfig {
   bind: string;
   port: number;
-  publicUrl: string;
-  lanUrl: string;
+  publicUrl: string | null;
+  lanUrl: string | null;
   allowedCidrs: string[];
   dataDir: string;
   webRoot: string;
@@ -88,7 +88,9 @@ interface ProjectionCacheEntry {
 export async function createApplication(
   config: ServerConfig,
 ): Promise<BlackwaterApplication> {
-  const securePublicOrigin = new URL(config.publicUrl).protocol === "https:";
+  const securePublicOrigin = config.publicUrl
+    ? new URL(config.publicUrl).protocol === "https:"
+    : false;
   const fastify = Fastify({
     logger: config.logger ?? false,
     trustProxy: false,
@@ -493,11 +495,15 @@ function registerApiRoutes(
   store: BlackwaterStore<PersistedRules, WorkflowState>,
   config: ServerConfig,
 ): void {
-  const publicOrigin = new URL(config.publicUrl);
-  const securePublicOrigin = publicOrigin.protocol === "https:";
+  const configuredPublicOrigin = config.publicUrl
+    ? new URL(config.publicUrl)
+    : null;
   const cookieIsSecure = (request: FastifyRequest): boolean =>
-    securePublicOrigin &&
-    request.headers.host?.toLowerCase() === publicOrigin.host.toLowerCase();
+    configuredPublicOrigin
+      ? configuredPublicOrigin.protocol === "https:" &&
+        request.headers.host?.toLowerCase() ===
+          configuredPublicOrigin.host.toLowerCase()
+      : request.protocol === "https";
   fastify.get("/health/live", async () => ({ status: "live" }));
   fastify.get("/health/ready", async (_request, reply) => {
     const check = store.quickCheck();
@@ -505,14 +511,18 @@ function registerApiRoutes(
       ? { status: "ready", schemaVersion: store.schemaVersion }
       : reply.code(503).send({ status: "not-ready", check });
   });
-  fastify.get("/api/v1/meta", async () => ({
-    protocol: PROTOCOL_VERSION,
-    buildId: config.buildId,
-    rulesVersion: "1.0.0",
-    schemaVersion: store.schemaVersion,
-    publicUrl: config.publicUrl,
-    lanUrl: config.lanUrl,
-  }));
+  fastify.get("/api/v1/meta", async (request) => {
+    const requestUrl = requestOrigin(request);
+    return {
+      protocol: PROTOCOL_VERSION,
+      buildId: config.buildId,
+      rulesVersion: "1.0.0",
+      schemaVersion: store.schemaVersion,
+      publicUrl: config.publicUrl ?? requestUrl,
+      lanUrl: config.lanUrl ?? requestUrl,
+      originMode: config.publicUrl || config.lanUrl ? "configured" : "request",
+    };
+  });
 
   fastify.post("/api/v1/matches", async (request, reply) => {
     const input = CreateLobbyRequestSchema.parse(request.body);
@@ -529,8 +539,9 @@ function registerApiRoutes(
       nowMs: Date.now(),
     });
     setSessionCookie(reply, created.credential, cookieIsSecure(request));
-    const origin = config.publicUrl.replace(/\/$/, "");
-    const lanOrigin = config.lanUrl.replace(/\/$/, "");
+    const requestUrl = requestOrigin(request);
+    const origin = (config.publicUrl ?? requestUrl).replace(/\/$/, "");
+    const lanOrigin = (config.lanUrl ?? requestUrl).replace(/\/$/, "");
     return reply.code(201).send({
       roomCode: actor.roomCode,
       matchId: actor.matchId,
@@ -925,13 +936,12 @@ function addressAllowed(
 function originAllowed(
   origin: string,
   host: string | undefined,
-  publicUrl: string,
+  publicUrl: string | null,
 ): boolean {
   try {
     const parsed = new URL(origin);
-    const publicOrigin = new URL(publicUrl).origin;
     return (
-      parsed.origin === publicOrigin ||
+      (publicUrl !== null && parsed.origin === new URL(publicUrl).origin) ||
       parsed.host === host ||
       parsed.hostname === "localhost" ||
       parsed.hostname === "127.0.0.1"
@@ -939,6 +949,13 @@ function originAllowed(
   } catch {
     return false;
   }
+}
+
+function requestOrigin(request: FastifyRequest): string {
+  const host = request.headers.host;
+  if (!host)
+    throw new Error("A Host header is required to generate room links");
+  return new URL(`${request.protocol}://${host}`).origin;
 }
 
 function classifyExpectedError(
@@ -1004,8 +1021,8 @@ export function configFromEnvironment(): ServerConfig {
   return {
     bind: process.env.BLACKWATER_BIND ?? "0.0.0.0",
     port: Number(process.env.BLACKWATER_PORT ?? 8787),
-    publicUrl: process.env.BLACKWATER_PUBLIC_URL ?? "http://127.0.0.1:8787",
-    lanUrl: process.env.BLACKWATER_LAN_URL ?? "http://127.0.0.1:8787",
+    publicUrl: optionalOrigin(process.env.BLACKWATER_PUBLIC_URL),
+    lanUrl: optionalOrigin(process.env.BLACKWATER_LAN_URL),
     allowedCidrs: (process.env.BLACKWATER_ALLOWED_CIDRS ?? "127.0.0.0/8")
       .split(",")
       .map((item) => item.trim()),
@@ -1015,4 +1032,10 @@ export function configFromEnvironment(): ServerConfig {
     assetManifestHash,
     logger: process.env.NODE_ENV === "production",
   };
+}
+
+function optionalOrigin(value: string | undefined): string | null {
+  const trimmed = value?.trim();
+  if (!trimmed) return null;
+  return new URL(trimmed).origin;
 }

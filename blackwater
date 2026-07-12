@@ -1,0 +1,69 @@
+#!/bin/sh
+set -eu
+
+port="${BLACKWATER_PORT:-8787}"
+
+detect_lan_address() {
+  case "$(uname -s)" in
+    Darwin)
+      interface="$(route -n get default 2>/dev/null | awk '/interface:/{print $2; exit}')"
+      if [ -n "${interface:-}" ]; then
+        ipconfig getifaddr "$interface" 2>/dev/null || true
+      fi
+      ;;
+    Linux)
+      interface="$(ip route show default 2>/dev/null | awk 'NR == 1 {print $5}')"
+      if [ -n "${interface:-}" ]; then
+        ip -o -4 addr show dev "$interface" scope global 2>/dev/null \
+          | awk 'NR == 1 {split($4, parts, "/"); print parts[1]}'
+      else
+        hostname -I 2>/dev/null | awk '{print $1}'
+      fi
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+configure_origins() {
+  if [ -n "${BLACKWATER_LAN_URL:-}" ]; then
+    origin="$BLACKWATER_LAN_URL"
+  else
+    address="$(detect_lan_address)"
+    if [ -z "${address:-}" ]; then
+      echo "Could not detect this computer's LAN address." >&2
+      echo "Connect to Wi-Fi, or set BLACKWATER_LAN_URL before starting." >&2
+      exit 1
+    fi
+    origin="http://$address:$port"
+    export BLACKWATER_LAN_URL="$origin"
+  fi
+  if [ -z "${BLACKWATER_PUBLIC_URL:-}" ]; then
+    export BLACKWATER_PUBLIC_URL="$origin"
+  fi
+  echo "Blackwater host: $origin/host"
+  echo "Open that URL on the shared Mac/TV; phone QR codes will use the same LAN address."
+}
+
+command="${1:-up}"
+if [ "$#" -gt 0 ]; then
+  shift
+fi
+
+case "$command" in
+  up|start)
+    configure_origins
+    exec docker compose up --build "$@"
+    ;;
+  url)
+    configure_origins
+    ;;
+  down|stop|logs|ps|pull|build)
+    exec docker compose "$command" "$@"
+    ;;
+  *)
+    echo "Usage: ./blackwater [up|url|down|stop|logs|ps|pull|build] [Docker Compose options]" >&2
+    exit 2
+    ;;
+esac

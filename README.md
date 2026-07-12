@@ -29,19 +29,22 @@ without knocking anyone out. Solo and mixed groups can fill empty seats with AI.
 
 ## Start a game
 
-You need Docker, a laptop on the same Wi-Fi as the phones, and its LAN IP.
+You need Docker and a laptop on the same Wi-Fi as the phones.
 
 ```bash
 git clone https://github.com/ralfboltshauser/blackwater.git
 cd blackwater
-cp .env.example .env
-# Set BLACKWATER_LAN_URL to this computer's LAN address, then:
-docker compose up --build
+./blackwater up
 ```
 
-Open `http://localhost:8787/host`, create an expedition, and put the public
-display on the TV. Friends scan its QR code; no accounts or internet service are
-required. The host can run the built-in briefing before round one.
+Open the printed LAN Host Controls URL, create an expedition, and put the public
+display on the TV. Friends scan its QR code; no accounts or internet service
+are required. The host can run the built-in briefing before round one.
+
+Raw `docker compose up --build` also works with no `.env`: open Host Controls
+through the laptop's LAN address and room links derive from that request. See
+the [self-hosting guide](SELF_HOSTING.md) for macOS, Linux, background startup,
+firewalls, and secure-PWA options.
 
 > Plain HTTP is perfect for browser play on trusted Wi-Fi. Installing the phone
 > controller as a fullscreen PWA requires an HTTPS hostname and certificate.

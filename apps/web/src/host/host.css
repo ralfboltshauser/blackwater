@@ -115,6 +115,23 @@
   color: var(--paper-muted);
   font: 0.68rem/1.5 var(--font-mono);
 }
+.host-lobby__invite .host-lobby__link-warning,
+.host-lobby__invite .host-lobby__link-note {
+  max-width: 28rem;
+  margin-top: 0.3rem;
+  padding: 0.35rem 0.45rem;
+  white-space: normal;
+}
+.host-lobby__invite .host-lobby__link-warning {
+  color: #ffd3c8;
+  background: rgba(216, 102, 84, 0.08);
+  border-left: 2px solid var(--danger);
+}
+.host-lobby__invite .host-lobby__link-note {
+  color: var(--paper-muted);
+  background: rgba(75, 216, 221, 0.04);
+  border-left: 2px solid var(--line-strong);
+}
 .host-lobby__join-mode {
   display: grid;
   grid-template-columns: 1fr 1fr;

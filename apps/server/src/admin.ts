@@ -23,8 +23,7 @@ try {
           schemaVersion: store.schemaVersion,
           pragmas: store.pragmaState(),
           matches: store.listMatches().length,
-          publicUrl:
-            process.env.BLACKWATER_PUBLIC_URL ?? "http://127.0.0.1:8787",
+          publicUrl: process.env.BLACKWATER_PUBLIC_URL ?? "request-derived",
           allowedCidrs: process.env.BLACKWATER_ALLOWED_CIDRS ?? "127.0.0.0/8",
         },
         null,
