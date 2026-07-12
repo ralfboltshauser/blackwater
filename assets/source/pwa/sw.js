@@ -52,6 +52,7 @@ self.addEventListener("fetch", (event) => {
   if (
     url.pathname.startsWith("/sprites/") ||
     url.pathname.startsWith("/water/") ||
+    url.pathname.startsWith("/audio/") ||
     url.pathname.startsWith("/pwa/")
   ) {
     event.respondWith(staleWhileRevalidate(request, GENERATED_CACHE));

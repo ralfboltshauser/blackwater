@@ -21,6 +21,10 @@ test.describe("host-led crew briefing", () => {
     const displayPage = await displayContext.newPage();
     try {
       await displayPage.goto(`${origin}/display/${roomCode}`);
+      await displayPage.getByRole("button", { name: "Enable audio" }).click();
+      await expect(
+        displayPage.getByRole("button", { name: "Audio on" }),
+      ).toBeVisible();
       await expect(
         displayPage.getByRole("heading", { name: "Opening the basin" }),
       ).toBeVisible();

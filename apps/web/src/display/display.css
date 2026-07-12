@@ -14,6 +14,47 @@ html,
   background: #020c0f;
 }
 
+.display-audio {
+  position: fixed;
+  z-index: 210;
+  top: 76px;
+  right: 18px;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 0.48rem;
+  padding: 0.45rem 0.68rem;
+  color: var(--paper-muted);
+  background: rgba(1, 13, 16, 0.88);
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(12px);
+  font: 600 0.58rem var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.display-audio svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.display-audio svg path:first-child {
+  fill: currentColor;
+  stroke: none;
+}
+.display-audio.is-on {
+  color: var(--cyan);
+  border-color: rgba(75, 216, 221, 0.42);
+}
+.display-audio.is-on span {
+  display: none;
+}
+
 .display-app.is-briefing-reveal {
   animation: display-map-reveal 780ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }

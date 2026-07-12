@@ -7,6 +7,15 @@ import { AiBadge } from "../shared/AiBadge";
 import { Brand } from "../shared/Brand";
 import { useRealtimeProjection } from "../shared/api";
 import { formatClock, roomFromLocation } from "../shared/bootstrap";
+import {
+  isAudioReady,
+  isSoundEnabled,
+  playFeedback,
+  primeAudio,
+  setMusicScene,
+  setSoundEnabled,
+  subscribeAudioState,
+} from "../shared/feedback";
 import { publicProjectionToBasin } from "../shared/projection";
 import "../shared/bootstrap";
 import "./display.css";
@@ -37,6 +46,10 @@ function DisplayApp() {
   const lastBriefingSlide = useRef(realtime.briefing.slideIndex);
   const wasBriefingActive = useRef(briefingActive);
   const [briefingExiting, setBriefingExiting] = useState(false);
+  const previousBriefingRevision = useRef(realtime.briefing.revision);
+  const previousPhaseSound = useRef("");
+  const previousCaptionSequence = useRef(0);
+  const victorySoundPlayed = useRef(false);
 
   if (briefingActive) lastBriefingSlide.current = realtime.briefing.slideIndex;
 
@@ -58,16 +71,75 @@ function DisplayApp() {
     return () => window.clearInterval(timer);
   }, []);
 
+  const musicScene = roomCode
+    ? briefingActive || !realtime.projection
+      ? "briefing"
+      : "open-water"
+    : "silent";
+  useEffect(() => {
+    setMusicScene(musicScene);
+    return () => setMusicScene("silent");
+  }, [musicScene]);
+
+  useEffect(() => {
+    if (
+      briefingActive &&
+      previousBriefingRevision.current !== realtime.briefing.revision
+    )
+      playFeedback("select");
+    previousBriefingRevision.current = realtime.briefing.revision;
+  }, [briefingActive, realtime.briefing.revision]);
+
+  useEffect(() => {
+    const projection = realtime.projection;
+    if (!projection || briefingActive) return;
+    const phaseKey = `${projection.phase.phaseId}:${projection.phase.pulse ?? 0}`;
+    if (previousPhaseSound.current && previousPhaseSound.current !== phaseKey)
+      playFeedback("pulse");
+    previousPhaseSound.current = phaseKey;
+  }, [briefingActive, realtime.projection?.phase]);
+
+  useEffect(() => {
+    const projection = realtime.projection;
+    if (
+      !projection?.currentCaption ||
+      projection.presentation.timelineSeq === previousCaptionSequence.current
+    )
+      return;
+    previousCaptionSequence.current = projection.presentation.timelineSeq;
+    const caption = projection.currentCaption.toLowerCase();
+    playFeedback(
+      /hunt|raid|jam|damage|disabled|contest|snare/.test(caption)
+        ? "warning"
+        : /survey|sonar|scan|contact/.test(caption)
+          ? "scan"
+          : /build|develop|analy|harvest|commission/.test(caption)
+            ? "commit"
+            : "select",
+    );
+  }, [realtime.projection?.presentation.timelineSeq]);
+
+  useEffect(() => {
+    const finished = realtime.projection?.lifecycle === "finished";
+    if (finished && !victorySoundPlayed.current) {
+      victorySoundPlayed.current = true;
+      playFeedback("victory");
+    }
+  }, [realtime.projection?.lifecycle]);
+
   if (!roomCode) {
     return <DisplayConnect onConnect={setRoomCode} />;
   }
 
   if (briefingActive) {
     return (
-      <BriefingStage
-        key={realtime.briefing.revision}
-        slideIndex={realtime.briefing.slideIndex}
-      />
+      <>
+        <BriefingStage
+          key={realtime.briefing.revision}
+          slideIndex={realtime.briefing.slideIndex}
+        />
+        <DisplayAudioControl />
+      </>
     );
   }
 
@@ -97,6 +169,7 @@ function DisplayApp() {
         {briefingExiting && (
           <BriefingExit slideIndex={lastBriefingSlide.current} />
         )}
+        <DisplayAudioControl />
       </>
     );
   }
@@ -310,7 +383,42 @@ function DisplayApp() {
       {briefingExiting && (
         <BriefingExit slideIndex={lastBriefingSlide.current} />
       )}
+      <DisplayAudioControl />
     </>
+  );
+}
+
+function DisplayAudioControl() {
+  const [, render] = useState(0);
+  useEffect(() => subscribeAudioState(() => render((value) => value + 1)), []);
+  const enabled = isSoundEnabled();
+  const ready = enabled && isAudioReady();
+  const toggle = async () => {
+    if (ready) {
+      setSoundEnabled(false);
+      return;
+    }
+    setSoundEnabled(true);
+    await primeAudio().catch(() => undefined);
+    render((value) => value + 1);
+  };
+  return (
+    <button
+      className={`display-audio ${ready ? "is-on" : ""}`}
+      aria-pressed={ready}
+      aria-label={ready ? "Audio on" : "Enable audio"}
+      onClick={() => void toggle()}
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 10v4h3l4 3V7L8 10H5Z" />
+        {ready ? (
+          <path d="M15 9.2c1.4 1.6 1.4 4 0 5.6M18 7c2.8 2.8 2.8 7.2 0 10" />
+        ) : (
+          <path d="m16 10 4 4m0-4-4 4" />
+        )}
+      </svg>
+      <span>{ready ? "Audio on" : "Enable audio"}</span>
+    </button>
   );
 }
 
