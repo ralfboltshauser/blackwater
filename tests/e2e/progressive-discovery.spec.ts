@@ -96,10 +96,14 @@ test.describe("progressive phone discovery", () => {
         clientX: sprintBox!.x + sprintBox!.width / 2,
         clientY: sprintBox!.y + sprintBox!.height / 2,
       });
-      await expect(phone.getByRole("tooltip")).toContainText(
-        "Move a submarine two edges",
-        { timeout: 1_500 },
-      );
+      const holdGuide = phone.getByRole("dialog", { name: "Sprint" });
+      await expect(holdGuide).toContainText("Move a submarine two edges", {
+        timeout: 1_500,
+      });
+      await expect(holdGuide).toContainText("Use it when");
+      const holdGuideBox = await holdGuide.boundingBox();
+      expect(holdGuideBox?.width).toBeGreaterThan(800);
+      expect(holdGuideBox?.height).toBeGreaterThan(370);
       await expect(phone.locator(".pulse-editor h2")).toHaveText("Glide");
       await sprint.dispatchEvent("pointerup", {
         pointerId: 41,
@@ -110,15 +114,21 @@ test.describe("progressive phone discovery", () => {
       });
       await sprint.dispatchEvent("click", { detail: 1 });
       await expect(phone.locator(".pulse-editor h2")).toHaveText("Glide");
+      await phone
+        .getByRole("button", { name: "Close full operation guide" })
+        .click();
       await sprint.click();
       await expect(phone.locator(".pulse-editor h2")).toHaveText("Sprint");
       await phone.getByRole("button", { name: "Explain" }).click();
       await expect(phone.locator("#selected-operation-guide")).toContainText(
-        "HOW SPRINT WORKS",
+        /How Sprint works/i,
       );
       await expect(phone.locator("#selected-operation-guide")).toContainText(
         "Tap a glowing two-edge destination",
       );
+      await phone
+        .getByRole("button", { name: "Close operation explanation" })
+        .click();
 
       const map = phone.locator(".private-map .basin-map");
       await expect(map).toHaveAttribute("role", "region");
@@ -261,6 +271,31 @@ test.describe("progressive phone discovery", () => {
         scroll: document.documentElement.scrollWidth,
       }));
       expect(widths.scroll).toBeLessThanOrEqual(widths.client + 1);
+
+      await phone.locator(".asset-rail button").first().click();
+      await phone
+        .getByRole("group", { name: "Core orders" })
+        .getByRole("button", { name: "Develop" })
+        .click();
+      await phone
+        .getByRole("button", { name: "extractor", exact: true })
+        .click();
+      await phone.getByRole("button", { name: "Explain" }).click();
+      const extractorGuide = phone.getByRole("dialog", {
+        name: "Extractor platform",
+      });
+      await expect(extractorGuide).toContainText(
+        "each active Extractor adds +1 Supply",
+      );
+      await expect(extractorGuide).toContainText(
+        "Network requires four connected active platforms",
+      );
+      await expect(extractorGuide).toContainText(
+        "Rivals can Raid it into a contest or Jam it",
+      );
+      await phone
+        .getByRole("button", { name: "Close operation explanation" })
+        .click();
 
       await phone.setViewportSize({ width: 390, height: 844 });
       await expect(map).toBeVisible();

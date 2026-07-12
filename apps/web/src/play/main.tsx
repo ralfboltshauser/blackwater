@@ -1,4 +1,5 @@
 import { createRoot } from "react-dom/client";
+import { createPortal } from "react-dom";
 import {
   useCallback,
   useEffect,
@@ -53,12 +54,13 @@ import {
   reachableForEditor,
   replacePulse,
   type AssetChoice,
+  type ModuleKind,
   type OperationEditor,
   type OperationKind,
   type Pulse,
 } from "./operations";
 import {
-  ContextHintTooltip,
+  ContextHintDialog,
   HintableButton,
   type ContextHint,
 } from "./HintableButton";
@@ -1692,6 +1694,8 @@ function PlanningWorkspace({
         hintTitle={meta.label}
         hintSummary={meta.short}
         hintTrace={meta.trace}
+        hintWhen={meta.when}
+        hintHow={meta.how}
         onHint={setContextHint}
         onHintDismiss={dismissContextHint}
         onActivate={() => chooseKind(kind)}
@@ -2063,43 +2067,12 @@ function PlanningWorkspace({
             )}
           </div>
           {guideOpen && (
-            <article
-              id="selected-operation-guide"
-              className="operation-guide"
-              aria-live="polite"
-            >
-              <header>
-                <span>{operationGlyph(editor.kind)}</span>
-                <div>
-                  <small>
-                    HOW {OPERATION_META[editor.kind].label.toUpperCase()} WORKS
-                  </small>
-                  <b>{OPERATION_META[editor.kind].short}</b>
-                </div>
-                <button
-                  className="icon-button"
-                  aria-label="Close operation explanation"
-                  onClick={() => setGuideOpen(false)}
-                >
-                  ×
-                </button>
-              </header>
-              <div>
-                <p>
-                  <span>USE IT WHEN</span>
-                  {OPERATION_META[editor.kind].when}
-                </p>
-                <p>
-                  <span>WHAT TO DO</span>
-                  {OPERATION_META[editor.kind].how}
-                </p>
-                <p>
-                  <span>RIGHT NOW</span>
-                  {localCandidate.error ??
-                    "This order is complete and ready to save."}
-                </p>
-              </div>
-            </article>
+            <OperationGuideDialog
+              editor={editor}
+              cost={localCost}
+              currentIssue={localCandidate.error ?? null}
+              onClose={() => setGuideOpen(false)}
+            />
           )}
           <OperationFields
             projection={projection}
@@ -2214,8 +2187,222 @@ function PlanningWorkspace({
           </small>
         </button>
       </footer>
-      <ContextHintTooltip hint={contextHint} />
+      <ContextHintDialog
+        hint={contextHint}
+        onClose={() => setContextHint(null)}
+      />
     </section>
+  );
+}
+
+const PLATFORM_GUIDES: Record<
+  ModuleKind,
+  {
+    title: string;
+    summary: string;
+    effect: string;
+    charter: string;
+    counterplay: string;
+  }
+> = {
+  extractor: {
+    title: "Extractor platform",
+    summary:
+      "A durable Supply engine that turns one occupied sector into recurring income.",
+    effect:
+      "At every Forecast, each active Extractor adds +1 Supply to your expedition. Extractor income is capped at +2, on top of the normal +2 Supply each Forecast.",
+    charter:
+      "Network requires four connected active platforms across all three depth regions, including at least one Extractor and one Sonar. An Extractor is therefore both economy and mission infrastructure.",
+    counterplay:
+      "Its owner, module, and sector are always public. Rivals can Raid it into a contest or Jam it so it misses production; protecting its connections matters.",
+  },
+  sonar: {
+    title: "Sonar platform",
+    summary:
+      "A Signal engine and a private listening post for nearby submarine movement.",
+    effect:
+      "At every Forecast, each active Sonar adds +1 Signal, capped at +2 Sonar income on top of the normal +1 Signal. During movement it can privately detect submarines entering its own or an adjacent sector.",
+    charter:
+      "Network requires at least one Sonar and one Extractor among four connected active platforms spanning all three depth regions.",
+    counterplay:
+      "The platform is public, but its passive contacts are private to you. Raid can contest it and Jam can suppress its module and Forecast production.",
+  },
+  laboratory: {
+    title: "Laboratory platform",
+    summary:
+      "The processing station that converts carried specimens into Discovery progress.",
+    effect:
+      "A submarine carrying a specimen must share this sector with your active Laboratory, then spend a Pulse on Analyze. The specimen leaves cargo; the type stays private while your analyzed count becomes public.",
+    charter:
+      "Discovery requires three distinct analyzed specimen types and at least one active Laboratory. A Lab produces no Supply or Signal by itself.",
+    counterplay:
+      "The Lab's location is public, so rivals can predict where your cargo must travel. Raid can contest it and Jam can temporarily stop Analyze there.",
+  },
+};
+
+function OperationGuideDialog({
+  editor,
+  cost,
+  currentIssue,
+  onClose,
+}: {
+  editor: OperationEditor;
+  cost: { supply: number; signal: number; silence: number };
+  currentIssue: string | null;
+  onClose: () => void;
+}) {
+  const dialogRef = useDialogFocusTrap(onClose);
+  const meta = OPERATION_META[editor.kind];
+  const moduleGuide =
+    editor.kind === "develop" && editor.developKind === "platform"
+      ? PLATFORM_GUIDES[editor.module]
+      : null;
+  const projectGuide =
+    editor.kind !== "develop" || moduleGuide
+      ? null
+      : editor.developKind === "submarine"
+        ? {
+            title: "Second submarine",
+            summary:
+              "Build another hidden field unit from your Ark for more reach and simultaneous plans.",
+            effect:
+              "The project costs 4 Supply. Construction is public in the Ark's sector, and the new submarine becomes usable at the next Forecast.",
+            charter:
+              "A second submarine does not directly satisfy a Charter, but it can move cargo, contest Deep Sites, screen infrastructure, and execute a second route.",
+            counterplay:
+              "Rivals see construction begin but lose exact position after launch. You may own at most two submarines.",
+          }
+        : {
+            title: "Repair submarine",
+            summary:
+              "Restore one damaged or disabled submarine beside your Ark.",
+            effect:
+              "Repair costs 1 Supply. The Ark and target submarine must occupy the same sector in this Pulse.",
+            charter:
+              "Repair preserves the units that carry specimens, protect platforms, and control Deep Sites.",
+            counterplay:
+              "The repair project is public. A fully intact or still-constructing submarine cannot be repaired.",
+          };
+  const specific = moduleGuide ?? projectGuide;
+  const title = specific?.title ?? meta.label;
+  const summary = specific?.summary ?? meta.short;
+  const costParts = [
+    cost.supply ? `${cost.supply} Supply` : "",
+    cost.signal ? `${cost.signal} Signal` : "",
+    cost.silence ? `${cost.silence} Silence` : "",
+  ].filter(Boolean);
+  const costLabel = costParts.join(" + ") || "No resource cost";
+
+  return createPortal(
+    <div
+      ref={dialogRef}
+      className="learning-dialog"
+      role="presentation"
+      onClick={onClose}
+    >
+      <article
+        id="selected-operation-guide"
+        className="learning-dialog__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="selected-operation-guide-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <header>
+          <div className="learning-dialog__glyph" aria-hidden="true">
+            {operationGlyph(editor.kind)}
+          </div>
+          <div>
+            <p className="eyebrow">
+              {moduleGuide
+                ? "Platform module briefing"
+                : `How ${meta.label} works`}
+            </p>
+            <h1 id="selected-operation-guide-title">{title}</h1>
+            <p>{summary}</p>
+          </div>
+          <button
+            type="button"
+            className="icon-button"
+            data-dialog-initial
+            aria-label="Close operation explanation"
+            onClick={onClose}
+          >
+            ×
+          </button>
+        </header>
+
+        <div className="learning-dialog__sections">
+          {specific ? (
+            <>
+              <section>
+                <span>What it actually does</span>
+                <p>{specific.effect}</p>
+              </section>
+              <section>
+                <span>How to build it</span>
+                <p>
+                  Develop uses your Ark in its current sector. This project
+                  costs {costLabel}
+                  {editor.developKind === "platform"
+                    ? ", becomes active immediately, and fails without spending if that sector already has a platform or multiple Arks build there in the same Pulse."
+                    : ". Follow the project-specific co-location and timing rules above."}
+                </p>
+              </section>
+              <section>
+                <span>Why it matters</span>
+                <p>{specific.charter}</p>
+              </section>
+              <section>
+                <span>What rivals can do</span>
+                <p>{specific.counterplay}</p>
+              </section>
+            </>
+          ) : (
+            <>
+              <section>
+                <span>Use it when</span>
+                <p>{meta.when}</p>
+              </section>
+              <section>
+                <span>What to do</span>
+                <p>{meta.how}</p>
+              </section>
+              <section>
+                <span>What rivals learn</span>
+                <p>{meta.trace}</p>
+              </section>
+              <section>
+                <span>Cost in this editor</span>
+                <p>
+                  {costLabel}. Costs are reserved across all three Pulses when
+                  you save the plan.
+                </p>
+              </section>
+            </>
+          )}
+        </div>
+
+        <aside
+          className={`learning-dialog__status ${currentIssue ? "is-blocked" : "is-ready"}`}
+        >
+          <span>
+            {currentIssue ? "Current setup needs attention" : "Current setup"}
+          </span>
+          <p>
+            {currentIssue ??
+              "This order has every required field and is ready to save into this Pulse."}
+          </p>
+        </aside>
+        <footer>
+          <p>Nothing changes while this explanation is open.</p>
+          <button type="button" className="button-primary" onClick={onClose}>
+            Back to planning
+          </button>
+        </footer>
+      </article>
+    </div>,
+    document.body,
   );
 }
 

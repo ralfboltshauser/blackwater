@@ -15,7 +15,8 @@ export type ContextHint = {
   title: string;
   summary: string;
   trace: string;
-  anchor: DOMRect;
+  when: string;
+  how: string;
 };
 
 type HintableButtonProps = Omit<
@@ -27,6 +28,8 @@ type HintableButtonProps = Omit<
   hintTitle: string;
   hintSummary: string;
   hintTrace: string;
+  hintWhen: string;
+  hintHow: string;
   onActivate: () => void;
   onHint: (hint: ContextHint) => void;
   onHintDismiss: (hintId: string) => void;
@@ -38,6 +41,8 @@ export function HintableButton({
   hintTitle,
   hintSummary,
   hintTrace,
+  hintWhen,
+  hintHow,
   onActivate,
   onHint,
   onHintDismiss,
@@ -72,14 +77,15 @@ export function HintableButton({
       window.clearTimeout(dismissTimer.current);
     dismissTimer.current = null;
   };
-  const show = (button: HTMLButtonElement) => {
+  const show = () => {
     clearDismiss();
     onHint({
       id: hintId,
       title: hintTitle,
       summary: hintSummary,
       trace: hintTrace,
-      anchor: button.getBoundingClientRect(),
+      when: hintWhen,
+      how: hintHow,
     });
   };
   const dismiss = () => {
@@ -118,12 +124,11 @@ export function HintableButton({
     } catch {
       // Synthetic events may not have an active pointer to capture.
     }
-    const button = event.currentTarget;
     holdTimer.current = window.setTimeout(() => {
       if (pointer.current?.id !== event.pointerId) return;
       pointer.current.activated = true;
       suppressClick.current = true;
-      show(button);
+      show();
     }, HOLD_DELAY_MS);
   };
 
@@ -150,10 +155,9 @@ export function HintableButton({
     if (event.currentTarget.hasPointerCapture(event.pointerId))
       event.currentTarget.releasePointerCapture(event.pointerId);
     if (current.activated) {
-      dismissTimer.current = window.setTimeout(
-        () => onHintDismiss(hintId),
-        2_600,
-      );
+      // The full-screen guide remains open until the player explicitly closes
+      // it. Releasing a long press must not make educational content vanish.
+      return;
     }
   };
 
@@ -187,27 +191,19 @@ export function HintableButton({
       onPointerCancel={cancelHold}
       onPointerEnter={(event) => {
         onPointerEnter?.(event);
-        if (event.pointerType !== "mouse") return;
-        clearHold();
-        const button = event.currentTarget;
-        holdTimer.current = window.setTimeout(() => show(button), 420);
       }}
       onPointerLeave={(event) => {
         onPointerLeave?.(event);
-        if (event.pointerType !== "mouse") return;
-        clearHold();
-        if (!focused.current) onHintDismiss(hintId);
+        if (event.pointerType === "mouse") clearHold();
       }}
       onFocus={(event) => {
         focused.current = true;
         onFocus?.(event);
-        if (event.currentTarget.matches(":focus-visible"))
-          show(event.currentTarget);
+        if (event.currentTarget.matches(":focus-visible")) show();
       }}
       onBlur={(event) => {
         focused.current = false;
         onBlur?.(event);
-        onHintDismiss(hintId);
       }}
       onContextMenu={(event) => {
         event.preventDefault();
@@ -216,36 +212,109 @@ export function HintableButton({
     >
       {children}
       <span id={`${hintId}-description`} className="sr-only">
-        {hintSummary}. {hintTrace}. Hold for a quick explanation.
+        {hintSummary}. {hintTrace}. Hold for the full-screen guide.
       </span>
     </button>
   );
 }
 
-export function ContextHintTooltip({ hint }: { hint: ContextHint | null }) {
-  if (!hint || typeof document === "undefined") return null;
-  const viewportWidth = window.innerWidth;
-  const width = Math.min(320, viewportWidth - 16);
-  const left = Math.min(
-    viewportWidth - width - 8,
-    Math.max(8, hint.anchor.left + hint.anchor.width / 2 - width / 2),
-  );
-  const placeAbove = hint.anchor.top > Math.min(210, window.innerHeight * 0.52);
-  return createPortal(
-    <div
-      className="context-hint-tooltip"
-      data-placement={placeAbove ? "above" : "below"}
-      role="tooltip"
-      style={
-        placeAbove
-          ? { left, width, bottom: window.innerHeight - hint.anchor.top + 8 }
-          : { left, width, top: hint.anchor.bottom + 8 }
+export function ContextHintDialog({
+  hint,
+  onClose,
+}: {
+  hint: ContextHint | null;
+  onClose: () => void;
+}) {
+  const dialogRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!hint) return;
+    const previous =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+    const dialog = dialogRef.current;
+    const controls = () =>
+      Array.from(
+        dialog?.querySelectorAll<HTMLElement>(
+          'button:not(:disabled), [href], [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      );
+    controls()[0]?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
       }
-    >
-      <span>HOLD GUIDE</span>
-      <b>{hint.title}</b>
-      <p>{hint.summary}</p>
-      <small>Public: {hint.trace}</small>
+      if (event.key !== "Tab") return;
+      const items = controls();
+      if (!items.length) return;
+      const first = items[0]!;
+      const last = items.at(-1)!;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      previous?.focus();
+    };
+  }, [hint, onClose]);
+  if (!hint || typeof document === "undefined") return null;
+  return createPortal(
+    <div className="learning-dialog" role="presentation" onClick={onClose}>
+      <article
+        ref={dialogRef}
+        className="learning-dialog__panel learning-dialog__panel--hint"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={`${hint.id}-guide-title`}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <header>
+          <div className="learning-dialog__glyph" aria-hidden="true">
+            ?
+          </div>
+          <div>
+            <p className="eyebrow">Full operation guide</p>
+            <h1 id={`${hint.id}-guide-title`}>{hint.title}</h1>
+            <p>{hint.summary}</p>
+          </div>
+          <button
+            type="button"
+            className="icon-button"
+            aria-label="Close full operation guide"
+            onClick={onClose}
+          >
+            ×
+          </button>
+        </header>
+        <div className="learning-dialog__sections">
+          <section>
+            <span>Use it when</span>
+            <p>{hint.when}</p>
+          </section>
+          <section>
+            <span>What to do</span>
+            <p>{hint.how}</p>
+          </section>
+          <section>
+            <span>What rivals learn</span>
+            <p>{hint.trace}</p>
+          </section>
+        </div>
+        <footer>
+          <p>Closing this guide does not select or change the order.</p>
+          <button type="button" className="button-primary" onClick={onClose}>
+            Back to planning
+          </button>
+        </footer>
+      </article>
     </div>,
     document.body,
   );
