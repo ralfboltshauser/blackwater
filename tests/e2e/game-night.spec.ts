@@ -448,6 +448,60 @@ test.describe("one-screen game night", () => {
         await expect(endgame.locator(".fallback-scoreboard")).toBeVisible();
         await expect(endgame).toContainText("Your final private record");
       }
+
+      const rematchPhone = phones[0]!.page;
+      await rematchPhone
+        .getByRole("button", { name: "Join a rematch" })
+        .click();
+      await expect(
+        rematchPhone.getByRole("heading", { name: "Calibrate your console" }),
+      ).toBeVisible();
+      await expect(rematchPhone.getByLabel("Room code")).toHaveValue("");
+      await expect(rematchPhone.getByLabel("Your name")).toHaveValue("Nora");
+      await expect(rematchPhone).toHaveURL(/\/play\.html$/);
+
+      await hostPage.getByRole("button", { name: "Close console" }).click();
+      await expect(
+        hostPage.getByRole("heading", { name: /Open a new basin survey/i }),
+      ).toBeVisible();
+      await hostPage
+        .locator(".host-create__setting", { hasText: "Expedition seats" })
+        .getByRole("button", { name: "1", exact: true })
+        .click();
+      await hostPage.getByRole("button", { name: "Create expedition" }).click();
+      const rematchRoom = (
+        await hostPage.locator(".host-nav strong").innerText()
+      ).trim();
+      expect(rematchRoom).not.toBe(roomCode);
+
+      await rematchPhone.getByLabel("Room code").fill(rematchRoom);
+      await rematchPhone
+        .getByRole("button", { name: "Join the survey" })
+        .click();
+      await finishCalibration(rematchPhone);
+      await rematchPhone
+        .getByRole("button", { name: "Ready for the deep" })
+        .click();
+
+      await displayPage.goto(`${origin}/display/${rematchRoom}`);
+      await expect(
+        displayPage.getByRole("heading", { name: "Expeditions assembling" }),
+      ).toBeVisible();
+      const rematchStart = hostPage.getByRole("button", {
+        name: "Begin calibration",
+      });
+      await expect(rematchStart).toBeEnabled();
+      await rematchStart.click();
+      const rematchReady = rematchPhone.getByRole("button", {
+        name: "Lock & ready",
+      });
+      await expect(rematchReady).toBeVisible({ timeout: 12_000 });
+      await expect(rematchReady).toBeDisabled();
+      await submitAllPulses(rematchPhone);
+      await rematchReady.click();
+      await expect(metric(displayPage, "Phase")).toHaveText(
+        /Resolution|Charter Check/,
+      );
     } catch (error) {
       await attachFailureScreens(testInfo, diagnosticPages);
       throw error;

@@ -271,6 +271,17 @@ function PlayerApp() {
     localStorage.setItem(SUPPRESS_RESUME_KEY, "true");
   };
 
+  const joinRematch = () => {
+    if (bootstrap)
+      sessionStorage.removeItem(`${SESSION_PREFIX}${bootstrap.roomCode}`);
+    localStorage.removeItem(ROOM_KEY);
+    localStorage.removeItem(AUTO_RESUME_KEY);
+    localStorage.setItem(SUPPRESS_RESUME_KEY, "true");
+    window.history.replaceState(null, "", "/play.html");
+    setRoomCode("");
+    setBootstrap(null);
+  };
+
   useEffect(() => {
     if (!restoring || bootstrap) return;
     let active = true;
@@ -324,6 +335,7 @@ function PlayerApp() {
 
   return (
     <AuthenticatedPlayer
+      key={bootstrap.matchId}
       bootstrap={bootstrap}
       realtime={realtime}
       settings={settings}
@@ -331,6 +343,7 @@ function PlayerApp() {
       onBootstrap={acceptBootstrap}
       onSessionError={setJoinError}
       onLeave={leaveSession}
+      onRematch={joinRematch}
     />
   );
 }
@@ -524,6 +537,7 @@ function AuthenticatedPlayer({
   onBootstrap,
   onSessionError,
   onLeave,
+  onRematch,
 }: {
   bootstrap: PlayerBootstrap;
   realtime: RealtimePlayer;
@@ -532,6 +546,7 @@ function AuthenticatedPlayer({
   onBootstrap: (bootstrap: PlayerBootstrap) => void;
   onSessionError: (message: string) => void;
   onLeave: () => void;
+  onRematch: () => void;
 }) {
   const [lobby, setLobby] = useState<LobbySnapshot | null>(null);
   const [calibrationOpen, setCalibrationOpen] = useState(
@@ -724,6 +739,7 @@ function AuthenticatedPlayer({
       settings={settings}
       onSettings={onSettings}
       onLeave={onLeave}
+      onRematch={onRematch}
     />
   );
 }
@@ -991,6 +1007,7 @@ function FieldConsole({
   settings,
   onSettings,
   onLeave,
+  onRematch,
 }: {
   bootstrap: PlayerBootstrap;
   projection: PlayerProjection;
@@ -1000,6 +1017,7 @@ function FieldConsole({
   settings: Settings;
   onSettings: (settings: Settings) => void;
   onLeave: () => void;
+  onRematch: () => void;
 }) {
   const [tab, setTab] = useState<ConsoleTab>("commands");
   const [privacy, setPrivacy] = useState(false);
@@ -1117,7 +1135,7 @@ function FieldConsole({
     projection.public.lifecycle === "finished" ||
     projection.public.phase.kind === "game-over";
   const commandBody = isFinished ? (
-    <EndgamePanel projection={projection} />
+    <EndgamePanel projection={projection} onRematch={onRematch} />
   ) : projection.public.phase.kind === "open-water" ? (
     <PlanningWorkspace
       projection={projection}
@@ -4348,7 +4366,13 @@ function ResolutionWorkspace({ projection }: { projection: PlayerProjection }) {
   );
 }
 
-function EndgamePanel({ projection }: { projection: PlayerProjection }) {
+function EndgamePanel({
+  projection,
+  onRematch,
+}: {
+  projection: PlayerProjection;
+  onRematch: () => void;
+}) {
   const outcome = projection.public.outcome;
   const winnerIds = new Set(
     outcome?.winnerSeatIds ??
@@ -4459,9 +4483,9 @@ function EndgamePanel({ projection }: { projection: PlayerProjection }) {
           </span>
         </div>
       </section>
-      <a className="button-primary" href="/play.html">
+      <button className="button-primary" onClick={onRematch}>
         Join a rematch
-      </a>
+      </button>
     </section>
   );
 }
