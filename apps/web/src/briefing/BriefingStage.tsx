@@ -633,28 +633,40 @@ function ComebackVisual() {
   return (
     <div className="briefing-visual briefing-comeback" aria-hidden="true">
       <section className="briefing-comeback__leader">
-        <span>VICTORY WATCH</span>
-        <img src="/sprites/ark-dir00.webp" alt="" />
-        <h2>Cyan is one action away</h2>
-        <div>
+        <span>VICTORY WATCH · NETWORK THREAT</span>
+        <div className="briefing-comeback__network">
           <i />
+          <b>━━</b>
           <i />
+          <b>━━</b>
           <i />
-          <i />
+          <b className="is-next">━━</b>
+          <i className="is-next" />
         </div>
+        <h2>Cyan has 3 linked platforms</h2>
+        <p>Its Ark can build platform 4 next round and complete Network.</p>
       </section>
       <section className="briefing-comeback__commission">
-        <small>OPEN COMMISSION</small>
-        <strong>+1 Supply</strong>
-        <p>Every qualifier in the first successful interference Pulse</p>
+        <small>OPEN THIS ROUND</small>
+        <strong>Commission · +1 Supply</strong>
+        <p>First successful Pulse: each qualifying rival gains 1 Supply.</p>
       </section>
       <section className="briefing-comeback__return">
-        <img src="/sprites/submarine-dir00.webp" alt="" />
-        <div>
-          <small>Disabled, not destroyed</small>
-          <b>Repair early or return later</b>
-        </div>
-        <strong>3 OPS</strong>
+        <article>
+          <small>Amber chooses Raid</small>
+          <b>Contest platform 2</b>
+          <span>Breaks Cyan's linked chain</span>
+        </article>
+        <article>
+          <small>Violet chooses Jam</small>
+          <b>Switch platform 3 off</b>
+          <span>Delays Cyan, but pays no bonus</span>
+        </article>
+        <article>
+          <small>What Cyan loses</small>
+          <b>Time—not everything</b>
+          <span>Recover the platform and try again</span>
+        </article>
       </section>
     </div>
   );

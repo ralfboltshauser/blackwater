@@ -265,16 +265,21 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
   },
   {
     id: "comeback",
-    chapter: "Pressure",
+    chapter: "Worked example · Stop the leader",
     depth: "deeper",
-    title: "A visible leader becomes everyone’s target.",
-    lead: "Victory Watch exposes public Network and Discovery threats. An Open Commission makes coordinated interference materially worth negotiating.",
+    title:
+      "The leader keeps their progress—but rivals can delay the final step.",
+    lead: "Example: Cyan has three connected platforms and can build the fourth next round. The TV marks Cyan as a Network threat and opens a one-round Commission against them.",
     visual: "comeback",
-    callout: "Harsh consequences. No elimination. Always three Operations.",
+    callout:
+      "Contest or Jam a key platform · disable a cargo submarine · block a required location.",
     speakerNotes: [
-      "The first Pulse in which rivals damage that expedition’s submarine or contest its platform pays 1 Supply to every rival who qualified in that Pulse.",
-      "A disabled submarine drops cargo and later returns, or can be repaired early. Your Ark and gathered Intel always remain.",
-      "Even from behind you can rebuild, trade information, expose a route, steal tempo, or pivot to another Charter.",
+      "Cyan does not lose already analyzed specimens, buildings, or turns. Comeback pressure delays the move that would complete a Charter; it does not reset the leader.",
+      "For Network, Amber can Raid one of Cyan's connected platforms. A successful Raid makes that platform contested and therefore inactive, breaking the chain until Cyan answers it. Jam also temporarily deactivates a platform, but does not earn the Commission reward.",
+      "For Discovery, rivals can Jam or Raid Cyan's Laboratory. They can also Hunt a submarine carrying the final specimen: disabling it makes the specimen drop into the ocean. Previously analyzed specimens remain safe.",
+      "For Dominion, occupy or contest one required Deep Site so Cyan is no longer its unique controller. Dominion threats do not currently open a Commission, but the public map shows where control can be challenged.",
+      "The Commission is a bonus, not the attack itself. In the first Pulse where rivals damage Cyan's submarine or contest Cyan's platform, every rival who achieved one of those results in that same Pulse gains 1 Supply. Then the Commission closes.",
+      "Cyan remains fully in the game: a damaged submarine retreats, a disabled one can be repaired or returns later, and a contested platform can be recovered. Every player still programs three Operations.",
     ],
   },
   {

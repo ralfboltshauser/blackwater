@@ -83,6 +83,16 @@ describe("crew briefing content", () => {
       /wrong location.*no public fight.*still spends/i,
     );
 
+    const comeback = BRIEFING_SLIDES.find((slide) => slide.id === "comeback")!;
+    expect(comeback.lead).toMatch(/three connected platforms.*fourth/i);
+    expect(comeback.callout).toMatch(/Contest or Jam.*disable.*block/i);
+    expect(comeback.speakerNotes.join(" ")).toMatch(
+      /Commission is a bonus, not the attack itself/i,
+    );
+    expect(comeback.speakerNotes.join(" ")).toMatch(
+      /Jam.*does not earn the Commission reward/i,
+    );
+
     const finalSlide = BRIEFING_SLIDES.at(-1)!;
     expect(finalSlide.lead).toMatch(/Round 1 is setup/i);
     expect(finalSlide.lead).not.toMatch(/win in (?:the )?first round/i);
