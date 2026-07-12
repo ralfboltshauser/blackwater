@@ -56,6 +56,14 @@ describe("crew briefing content", () => {
     expect(dossiers.find((slide) => slide.id === "ark-dossier")!.title).toMatch(
       /large construction ship on the TV/i,
     );
+    const resources = BRIEFING_SLIDES.find(
+      (slide) => slide.id === "resources",
+    )!;
+    expect(resources.title).toMatch(/three resources/i);
+    expect(resources.lead).toMatch(/Supply builds.*Signal powers.*Silence/i);
+    expect(resources.speakerNotes.join(" ")).toMatch(
+      /Integrity.*health.*cargo.*not currencies/i,
+    );
     expect(
       dossiers.find((slide) => slide.id === "platform-dossier")!.callout,
     ).toMatch(/never an extra Operation/i);

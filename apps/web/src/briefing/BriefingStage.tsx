@@ -92,6 +92,8 @@ function BriefingVisualView({ visual }: { visual: BriefingVisual }) {
       return <TruthVisual />;
     case "ark-dossier":
       return <AssetDossierVisual kind="ark" />;
+    case "resources":
+      return <ResourcesVisual />;
     case "submarine-dossier":
       return <AssetDossierVisual kind="submarine" />;
     case "platform-dossier":
@@ -117,6 +119,63 @@ function BriefingVisualView({ visual }: { visual: BriefingVisual }) {
     case "round":
       return <RoundVisual />;
   }
+}
+
+function ResourcesVisual() {
+  const resources = [
+    {
+      kind: "supply",
+      name: "Supply",
+      purpose: "Build & repair",
+      source: "Ark + Extractors",
+      spend: "Platforms · submarines · repairs",
+    },
+    {
+      kind: "signal",
+      name: "Signal",
+      purpose: "Scan & contest",
+      source: "Ark + Sonars",
+      spend: "Survey · Jam · conflict",
+    },
+    {
+      kind: "silence",
+      name: "Silence",
+      purpose: "Move unseen",
+      source: "Stored on each submarine",
+      spend: "Quiet Glide",
+    },
+  ] as const;
+  return (
+    <div className="briefing-visual briefing-resources" aria-hidden="true">
+      <header>
+        <span>PRIVATE STORES · SHOWN ON YOUR PHONE</span>
+        <b>WHAT YOU CAN SPEND</b>
+      </header>
+      <div className="briefing-resources__grid">
+        {resources.map((resource, index) => (
+          <article key={resource.name} className={`is-${resource.kind}`}>
+            <div className="briefing-resources__token">
+              <i />
+              <strong>{index + 1}</strong>
+            </div>
+            <small>{resource.purpose}</small>
+            <h2>{resource.name}</h2>
+            <dl>
+              <dt>Gain it</dt>
+              <dd>{resource.source}</dd>
+              <dt>Spend it</dt>
+              <dd>{resource.spend}</dd>
+            </dl>
+          </article>
+        ))}
+      </div>
+      <footer>
+        <span>NOT RESOURCES</span>
+        <b>Integrity = health</b>
+        <b>Cargo = carrying space</b>
+      </footer>
+    </div>
+  );
 }
 
 function ChartersVisual() {

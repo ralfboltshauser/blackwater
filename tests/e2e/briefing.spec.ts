@@ -81,17 +81,17 @@ test.describe("host-led crew briefing", () => {
           className: "is-ark",
         },
         {
-          slide: 6,
+          slide: 7,
           title: "Your submarine does the secret fieldwork.",
           className: "is-submarine",
         },
         {
-          slide: 7,
+          slide: 8,
           title: "Platforms turn a location into lasting advantage.",
           className: "is-platform",
         },
         {
-          slide: 8,
+          slide: 9,
           title: "Devices shape what rivals know and where they dare to move.",
           className: "is-devices",
         },

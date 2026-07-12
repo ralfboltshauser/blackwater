@@ -6,6 +6,7 @@ export type BriefingVisual =
   | "charters"
   | "truth"
   | "ark-dossier"
+  | "resources"
   | "submarine-dossier"
   | "platform-dossier"
   | "devices-dossier"
@@ -101,6 +102,21 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
       "Think of it as a mobile construction yard. First use Navigate to move it one line on the map. In a later Pulse, use Develop to build at the location it currently occupies.",
       "Develop can build a platform, create your second submarine, or repair a damaged submarine. The Ark cannot be destroyed or captured.",
       "At every Forecast after setup, it also produces 2 Supply and 1 Signal. Moving or building still uses one of your three Operations.",
+    ],
+  },
+  {
+    id: "resources",
+    chapter: "Expedition stores",
+    depth: "core",
+    title: "Your expedition manages three resources.",
+    lead: "Supply builds lasting assets. Signal powers scans and conflict. Silence lets a submarine move without leaving its ordinary wake. Your current amounts stay private on your phone.",
+    visual: "resources",
+    callout: "Supply builds · Signal acts · Silence hides.",
+    speakerNotes: [
+      "Supply is construction material. Spend it to build platforms and submarines or to repair a disabled submarine. Your Ark and Extractors produce more.",
+      "Signal is operational energy and attention. Spend it to Survey, Jam, and strengthen conflict commitments. Your Ark and Sonars produce more.",
+      "Silence is stored stealth aboard each submarine. Spend one for a quiet Glide that avoids the ordinary wake and passive Sonar; Go Dark restores it.",
+      "Integrity is a submarine's health and cargo is what it carries. They are limits, not currencies you spend on actions.",
     ],
   },
   {
