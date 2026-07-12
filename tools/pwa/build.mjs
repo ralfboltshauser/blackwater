@@ -20,6 +20,7 @@ const outputs = [
   ["icon-maskable-512.png", resolve(ICON_OUTPUT, "icon-maskable-512.png")],
   ["apple-touch-icon.png", resolve(ICON_OUTPUT, "apple-touch-icon.png")],
   ["favicon-32.png", resolve(ICON_OUTPUT, "favicon-32.png")],
+  ["favicon.svg", resolve(ICON_OUTPUT, "favicon.svg")],
 ];
 
 if (verifyOnly) {
@@ -52,6 +53,10 @@ await copyFile(
   resolve(OUTPUT, "manifest.webmanifest"),
 );
 await copyFile(resolve(SOURCE, "sw.js"), resolve(OUTPUT, "sw.js"));
+await copyFile(
+  resolve(SOURCE, "icon.svg"),
+  resolve(ICON_OUTPUT, "favicon.svg"),
+);
 
 const svg = await readFile(resolve(SOURCE, "icon.svg"));
 const icon = (size) =>
