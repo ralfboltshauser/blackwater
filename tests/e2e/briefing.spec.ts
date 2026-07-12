@@ -37,7 +37,7 @@ test.describe("host-led crew briefing", () => {
         }),
       ).toBeVisible();
       await expect(
-        displayPage.getByLabel("Crew briefing slide 1 of 17"),
+        displayPage.getByLabel("Crew briefing slide 1 of 18"),
       ).toBeVisible();
       await expect(
         hostPage.getByRole("heading", {
@@ -136,6 +136,8 @@ test.describe("host-led crew briefing", () => {
       await hostPage
         .getByRole("button", { name: "End briefing", exact: true })
         .click();
+      await expect(displayPage.locator(".display-briefing-exit")).toBeVisible();
+      await expect(displayPage.locator(".display-briefing-exit")).toBeHidden();
       await expect(
         displayPage.getByRole("heading", { name: "Opening the basin" }),
       ).toBeVisible();

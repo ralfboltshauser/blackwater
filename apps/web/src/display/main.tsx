@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { PublicProjection } from "@blackwater/protocol";
 import { BriefingStage } from "../briefing/BriefingStage";
 import { BasinMap } from "../components/BasinMap";
@@ -24,6 +24,25 @@ function DisplayApp() {
   const [roomCode, setRoomCode] = useState(roomFromLocation());
   const [now, setNow] = useState(Date.now());
   const realtime = useRealtimeProjection<PublicProjection>("public", roomCode);
+  const briefingActive = realtime.briefing.active;
+  const lastBriefingSlide = useRef(realtime.briefing.slideIndex);
+  const wasBriefingActive = useRef(briefingActive);
+  const [briefingExiting, setBriefingExiting] = useState(false);
+
+  if (briefingActive) lastBriefingSlide.current = realtime.briefing.slideIndex;
+
+  useLayoutEffect(() => {
+    const justEnded = wasBriefingActive.current && !briefingActive;
+    wasBriefingActive.current = briefingActive;
+    if (briefingActive) {
+      setBriefingExiting(false);
+      return;
+    }
+    if (!justEnded) return;
+    setBriefingExiting(true);
+    const timer = window.setTimeout(() => setBriefingExiting(false), 900);
+    return () => window.clearTimeout(timer);
+  }, [briefingActive]);
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(Date.now()), 250);
@@ -34,7 +53,7 @@ function DisplayApp() {
     return <DisplayConnect onConnect={setRoomCode} />;
   }
 
-  if (realtime.briefing.active) {
+  if (briefingActive) {
     return (
       <BriefingStage
         key={realtime.briefing.revision}
@@ -45,24 +64,31 @@ function DisplayApp() {
 
   if (!realtime.projection) {
     return (
-      <main className="display-wait">
-        <Brand className="display-wait__brand" />
-        <div className="sonar-loader" aria-hidden="true">
-          <span />
-          <span />
-          <span />
-        </div>
-        <h1>{realtime.error ? "Signal unavailable" : "Opening the basin"}</h1>
-        <p>{realtime.error ?? `Room ${roomCode} · waiting for public state`}</p>
-        {realtime.error && (
-          <button
-            className="button-secondary"
-            onClick={() => setRoomCode(null)}
-          >
-            Change room
-          </button>
+      <>
+        <main className="display-wait">
+          <Brand className="display-wait__brand" />
+          <div className="sonar-loader" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
+          <h1>{realtime.error ? "Signal unavailable" : "Opening the basin"}</h1>
+          <p>
+            {realtime.error ?? `Room ${roomCode} · waiting for public state`}
+          </p>
+          {realtime.error && (
+            <button
+              className="button-secondary"
+              onClick={() => setRoomCode(null)}
+            >
+              Change room
+            </button>
+          )}
+        </main>
+        {briefingExiting && (
+          <BriefingExit slideIndex={lastBriefingSlide.current} />
         )}
-      </main>
+      </>
     );
   }
 
@@ -76,176 +102,198 @@ function DisplayApp() {
   ).length;
 
   return (
-    <main className="display-app">
-      <h1 className="sr-only">Blackwater public basin display</h1>
-      <header className="display-header">
-        <Brand className="display-header__brand" />
-        <DisplayMetric label="Round" value={`${projection.phase.round} / 7`} />
-        <DisplayMetric
-          label="Phase"
-          value={
-            projection.phase.kind === "resolution" &&
-            projection.phase.pulse === null
-              ? "Charter Check"
-              : (phaseLabel[projection.phase.kind] ?? projection.phase.kind)
-          }
-          accent
-        />
-        <DisplayMetric
-          label="Time"
-          value={projection.phase.endsAtServerMs ? formatClock(remaining) : "—"}
-        />
-        <DisplayMetric
-          label="Locked"
-          value={`${readyCount} / ${projection.expeditions.length}`}
-        />
-        <div className="display-header__charters">
-          {(["network", "discovery", "dominion"] as const).map((charter) => {
-            if (charter === "dominion") {
+    <>
+      <main
+        className={`display-app ${briefingExiting ? "is-briefing-reveal" : ""}`}
+      >
+        <h1 className="sr-only">Blackwater public basin display</h1>
+        <header className="display-header">
+          <Brand className="display-header__brand" />
+          <DisplayMetric
+            label="Round"
+            value={`${projection.phase.round} / 7`}
+          />
+          <DisplayMetric
+            label="Phase"
+            value={
+              projection.phase.kind === "resolution" &&
+              projection.phase.pulse === null
+                ? "Charter Check"
+                : (phaseLabel[projection.phase.kind] ?? projection.phase.kind)
+            }
+            accent
+          />
+          <DisplayMetric
+            label="Time"
+            value={
+              projection.phase.endsAtServerMs ? formatClock(remaining) : "—"
+            }
+          />
+          <DisplayMetric
+            label="Locked"
+            value={`${readyCount} / ${projection.expeditions.length}`}
+          />
+          <div className="display-header__charters">
+            {(["network", "discovery", "dominion"] as const).map((charter) => {
+              if (charter === "dominion") {
+                return (
+                  <div key={charter} className="charter-chip is-sealed">
+                    <span
+                      className="charter-icon charter-icon--dominion"
+                      aria-hidden="true"
+                    />
+                    <div>
+                      <b>dominion</b>
+                      <small>SEALED</small>
+                    </div>
+                  </div>
+                );
+              }
+              const leaders = projection.expeditions
+                .map((expedition) => {
+                  const progress = expedition.charters.find(
+                    (item) => item.charter === charter,
+                  );
+                  if (!progress || progress.charter === "dominion") return null;
+                  return { expedition, progress };
+                })
+                .filter(
+                  (entry): entry is NonNullable<typeof entry> => entry !== null,
+                )
+                .sort((a, b) => b.progress.value - a.progress.value);
+              const lead = leaders[0];
               return (
-                <div key={charter} className="charter-chip is-sealed">
+                <div
+                  key={charter}
+                  className={`charter-chip ${lead?.progress.threatened ? "is-threat" : ""}`}
+                >
                   <span
-                    className="charter-icon charter-icon--dominion"
+                    className={`charter-icon charter-icon--${charter}`}
                     aria-hidden="true"
                   />
                   <div>
-                    <b>dominion</b>
-                    <small>SEALED</small>
+                    <b>{charter}</b>
+                    <small>
+                      {lead
+                        ? `${lead.expedition.displayName} ${lead.progress.value}/${lead.progress.target}`
+                        : "No progress"}
+                    </small>
                   </div>
                 </div>
               );
-            }
-            const leaders = projection.expeditions
-              .map((expedition) => {
-                const progress = expedition.charters.find(
-                  (item) => item.charter === charter,
-                );
-                if (!progress || progress.charter === "dominion") return null;
-                return { expedition, progress };
-              })
-              .filter(
-                (entry): entry is NonNullable<typeof entry> => entry !== null,
-              )
-              .sort((a, b) => b.progress.value - a.progress.value);
-            const lead = leaders[0];
-            return (
+            })}
+          </div>
+          <div
+            className={`display-header__signal ${realtime.connected ? "is-live" : ""}`}
+          >
+            <span />
+            {realtime.connected ? "Live" : "Reconnecting"}
+          </div>
+        </header>
+
+        <section className="display-body">
+          <aside className="display-rail display-rail--left">
+            {projection.expeditions.slice(0, 3).map((expedition, index) => (
+              <ExpeditionCard
+                key={expedition.seatId}
+                expedition={expedition}
+                platforms={projection.platforms.filter(
+                  (platform) => platform.ownerSeatId === expedition.seatId,
+                )}
+                seat={index + 1}
+              />
+            ))}
+          </aside>
+          <section className="display-basin panel">
+            <BasinMap basin={basin} focusSectorId={null} />
+            {projection.currentCaption && (
               <div
-                key={charter}
-                className={`charter-chip ${lead?.progress.threatened ? "is-threat" : ""}`}
+                key={`${projection.presentation.timelineSeq}-${projection.currentCaption}`}
+                className="display-caption"
+                role="status"
               >
-                <span
-                  className={`charter-icon charter-icon--${charter}`}
-                  aria-hidden="true"
-                />
-                <div>
-                  <b>{charter}</b>
-                  <small>
-                    {lead
-                      ? `${lead.expedition.displayName} ${lead.progress.value}/${lead.progress.target}`
-                      : "No progress"}
-                  </small>
-                </div>
+                {projection.currentCaption}
               </div>
-            );
-          })}
-        </div>
-        <div
-          className={`display-header__signal ${realtime.connected ? "is-live" : ""}`}
-        >
-          <span />
-          {realtime.connected ? "Live" : "Reconnecting"}
-        </div>
-      </header>
-
-      <section className="display-body">
-        <aside className="display-rail display-rail--left">
-          {projection.expeditions.slice(0, 3).map((expedition, index) => (
-            <ExpeditionCard
-              key={expedition.seatId}
-              expedition={expedition}
-              platforms={projection.platforms.filter(
-                (platform) => platform.ownerSeatId === expedition.seatId,
-              )}
-              seat={index + 1}
-            />
-          ))}
-        </aside>
-        <section className="display-basin panel">
-          <BasinMap basin={basin} focusSectorId={null} />
-          {projection.currentCaption && (
-            <div
-              key={`${projection.presentation.timelineSeq}-${projection.currentCaption}`}
-              className="display-caption"
-              role="status"
-            >
-              {projection.currentCaption}
-            </div>
-          )}
-          {projection.phase.paused && (
-            <div className="display-pause">
-              <span>Expedition paused</span>
-              <small>{projection.phase.pauseReason ?? "Host control"}</small>
-            </div>
-          )}
+            )}
+            {projection.phase.paused && (
+              <div className="display-pause">
+                <span>Expedition paused</span>
+                <small>{projection.phase.pauseReason ?? "Host control"}</small>
+              </div>
+            )}
+          </section>
+          <aside className="display-rail display-rail--right">
+            {projection.expeditions.slice(3, 6).map((expedition, index) => (
+              <ExpeditionCard
+                key={expedition.seatId}
+                expedition={expedition}
+                platforms={projection.platforms.filter(
+                  (platform) => platform.ownerSeatId === expedition.seatId,
+                )}
+                seat={index + 4}
+              />
+            ))}
+          </aside>
         </section>
-        <aside className="display-rail display-rail--right">
-          {projection.expeditions.slice(3, 6).map((expedition, index) => (
-            <ExpeditionCard
-              key={expedition.seatId}
-              expedition={expedition}
-              platforms={projection.platforms.filter(
-                (platform) => platform.ownerSeatId === expedition.seatId,
-              )}
-              seat={index + 4}
-            />
-          ))}
-        </aside>
-      </section>
 
-      <footer className="display-footer">
-        <div className="pulse-track">
-          {[
-            ["forecast", "Forecast"],
-            ["open-water", "Plan"],
-            ["pulse-1", "Pulse 1"],
-            ["pulse-2", "Pulse 2"],
-            ["pulse-3", "Pulse 3"],
-            ["claim-check", "Charter check"],
-          ].map(([key, label], index) => {
-            const active =
-              projection.phase.kind === key ||
-              (projection.phase.kind === "resolution" &&
-                (projection.phase.pulse === index - 1 ||
-                  (key === "claim-check" && projection.phase.pulse === null)));
-            return (
-              <div key={key} className={active ? "is-active" : ""}>
-                <span>{label}</span>
-              </div>
-            );
-          })}
-        </div>
-        <div className="display-footer__event">
-          <span className="eyebrow">Public pressure</span>
-          <strong>
-            {projection.commissions[0]
-              ? `Open commission · +${projection.commissions[0].rewardSupply} Supply against ${projection.expeditions.find((expedition) => expedition.seatId === projection.commissions[0]?.targetSeatId)?.displayName ?? "the leader"}`
-              : projection.agreements.find(
-                    (agreement) => agreement.status === "active",
-                  )
-                ? "Active Handshake terms in force"
-                : "Open water · no recorded terms"}
-          </strong>
-        </div>
-        <div className="display-footer__forecast">
-          <span className="eyebrow">Room</span>
-          <strong>{projection.roomCode}</strong>
-        </div>
-      </footer>
+        <footer className="display-footer">
+          <div className="pulse-track">
+            {[
+              ["forecast", "Forecast"],
+              ["open-water", "Plan"],
+              ["pulse-1", "Pulse 1"],
+              ["pulse-2", "Pulse 2"],
+              ["pulse-3", "Pulse 3"],
+              ["claim-check", "Charter check"],
+            ].map(([key, label], index) => {
+              const active =
+                projection.phase.kind === key ||
+                (projection.phase.kind === "resolution" &&
+                  (projection.phase.pulse === index - 1 ||
+                    (key === "claim-check" &&
+                      projection.phase.pulse === null)));
+              return (
+                <div key={key} className={active ? "is-active" : ""}>
+                  <span>{label}</span>
+                </div>
+              );
+            })}
+          </div>
+          <div className="display-footer__event">
+            <span className="eyebrow">Public pressure</span>
+            <strong>
+              {projection.commissions[0]
+                ? `Open commission · +${projection.commissions[0].rewardSupply} Supply against ${projection.expeditions.find((expedition) => expedition.seatId === projection.commissions[0]?.targetSeatId)?.displayName ?? "the leader"}`
+                : projection.agreements.find(
+                      (agreement) => agreement.status === "active",
+                    )
+                  ? "Active Handshake terms in force"
+                  : "Open water · no recorded terms"}
+            </strong>
+          </div>
+          <div className="display-footer__forecast">
+            <span className="eyebrow">Room</span>
+            <strong>{projection.roomCode}</strong>
+          </div>
+        </footer>
 
-      {projection.lifecycle === "finished" && (
-        <VictoryOverlay projection={projection} />
+        {projection.lifecycle === "finished" && (
+          <VictoryOverlay projection={projection} />
+        )}
+      </main>
+      {briefingExiting && (
+        <BriefingExit slideIndex={lastBriefingSlide.current} />
       )}
-    </main>
+    </>
+  );
+}
+
+function BriefingExit({ slideIndex }: { slideIndex: number }) {
+  return (
+    <div className="display-briefing-exit" aria-hidden="true">
+      <BriefingStage slideIndex={slideIndex} />
+      <div className="display-briefing-exit__dive">Entering Neris</div>
+    </div>
   );
 }
 
