@@ -1,5 +1,4 @@
 import { createRoot } from "react-dom/client";
-import { createPortal } from "react-dom";
 import {
   useCallback,
   useEffect,
@@ -54,7 +53,6 @@ import {
   reachableForEditor,
   replacePulse,
   type AssetChoice,
-  type ModuleKind,
   type OperationEditor,
   type OperationKind,
   type Pulse,
@@ -64,6 +62,8 @@ import {
   HintableButton,
   type ContextHint,
 } from "./HintableButton";
+import { GuideLibrary } from "./GuideLibrary";
+import { operationGuideId, type GuideArticleId } from "./guide-content";
 import "../shared/bootstrap";
 import "./play.css";
 
@@ -1021,7 +1021,10 @@ function FieldConsole({
 }) {
   const [tab, setTab] = useState<ConsoleTab>("commands");
   const [privacy, setPrivacy] = useState(false);
-  const [sheet, setSheet] = useState<"rules" | "settings" | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [guideArticleId, setGuideArticleId] = useState<GuideArticleId | null>(
+    null,
+  );
   const [toast, setToast] = useState<{
     kind: "ok" | "error";
     message: string;
@@ -1143,6 +1146,7 @@ function FieldConsole({
       sendIntent={sendIntent}
       showToast={showToast}
       onPrivacy={() => setPrivacy(true)}
+      onGuide={setGuideArticleId}
     />
   ) : (
     <ResolutionWorkspace projection={projection} />
@@ -1159,7 +1163,7 @@ function FieldConsole({
       <header className="field-head">
         <button
           className="field-head__identity"
-          onClick={() => setSheet("rules")}
+          onClick={() => setGuideArticleId("start")}
         >
           <span>{own.displayName.slice(0, 1).toUpperCase()}</span>
           <div>
@@ -1218,7 +1222,7 @@ function FieldConsole({
         </button>
         <button
           className="icon-button"
-          onClick={() => setSheet("settings")}
+          onClick={() => setSettingsOpen(true)}
           aria-label="Open settings"
         >
           ⚙
@@ -1262,6 +1266,15 @@ function FieldConsole({
             }
           </span>
         </button>
+        <button
+          aria-haspopup="dialog"
+          onClick={() => {
+            setGuideArticleId("start");
+            playFeedback("select");
+          }}
+        >
+          Guides
+        </button>
       </nav>
 
       <section className="console-content">
@@ -1295,15 +1308,24 @@ function FieldConsole({
           onReveal={() => setPrivacy(false)}
         />
       )}
-      {sheet && (
+      {settingsOpen && (
         <ReferenceSheet
-          mode={sheet}
           roomCode={bootstrap.roomCode}
           settings={settings}
           onSettings={onSettings}
-          onMode={setSheet}
-          onClose={() => setSheet(null)}
+          onGuide={() => {
+            setSettingsOpen(false);
+            setGuideArticleId("start");
+          }}
+          onClose={() => setSettingsOpen(false)}
           onLeave={onLeave}
+        />
+      )}
+      {guideArticleId && (
+        <GuideLibrary
+          key={guideArticleId}
+          initialArticleId={guideArticleId}
+          onClose={() => setGuideArticleId(null)}
         />
       )}
       {toast && (
@@ -1521,6 +1543,7 @@ function PlanningWorkspace({
   sendIntent,
   showToast,
   onPrivacy,
+  onGuide,
 }: {
   projection: PlayerProjection;
   connected: boolean;
@@ -1531,6 +1554,7 @@ function PlanningWorkspace({
   }) => Promise<CommandResult>;
   showToast: (kind: "ok" | "error", message: string) => void;
   onPrivacy: () => void;
+  onGuide: (articleId: GuideArticleId) => void;
 }) {
   const discoveryChapter =
     projection.public.phase.round >= 2 ? "tactics" : "core";
@@ -1551,7 +1575,6 @@ function PlanningWorkspace({
   const [editorDirty, setEditorDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editorError, setEditorError] = useState<string | null>(null);
-  const [guideOpen, setGuideOpen] = useState(false);
   const [tacticsOpen, setTacticsOpen] = useState(
     () =>
       OPERATION_META[projection.draft.plan.operations[0].kind].chapter ===
@@ -1648,6 +1671,10 @@ function PlanningWorkspace({
           projection.deviceInventory[localCandidate.operation.device] <= 0,
       )
     : { supply: 0, signal: 0, silence: 0 };
+  const currentGuideId =
+    editor.kind === "develop" && editor.developKind === "platform"
+      ? `platform-${editor.module}`
+      : operationGuideId(editor.kind);
   const basin = basinForPlayer(projection);
 
   useEffect(() => {
@@ -1713,6 +1740,7 @@ function PlanningWorkspace({
       <HintableButton
         key={`${kind}-${options.current ? "current" : "menu"}`}
         hintId={hintId}
+        hintGuideId={operationGuideId(kind)}
         hintTitle={meta.label}
         hintSummary={meta.short}
         hintTrace={meta.trace}
@@ -1999,9 +2027,19 @@ function PlanningWorkspace({
                     : "Open Tactics only when you want traps, stealth recovery, defense, or conflict. Context-only actions still appear exactly where they work."}
                 </p>
               </div>
-              <button className="button-ghost" onClick={dismissDiscovery}>
-                Got it
-              </button>
+              <div className="discovery-card__actions">
+                <button
+                  className="button-ghost"
+                  onClick={() =>
+                    onGuide(discoveryChapter === "core" ? "rounds" : "conflict")
+                  }
+                >
+                  Full guide
+                </button>
+                <button className="button-ghost" onClick={dismissDiscovery}>
+                  Got it
+                </button>
+              </div>
             </aside>
           ) : (
             <div className="discovery-breadcrumb">
@@ -2021,9 +2059,8 @@ function PlanningWorkspace({
             <div className="pulse-editor__tools">
               <button
                 className="operation-help-button"
-                aria-expanded={guideOpen}
-                aria-controls="selected-operation-guide"
-                onClick={() => setGuideOpen((open) => !open)}
+                aria-haspopup="dialog"
+                onClick={() => onGuide(currentGuideId)}
               >
                 <span>?</span> Explain
               </button>
@@ -2105,14 +2142,6 @@ function PlanningWorkspace({
               </div>
             )}
           </div>
-          {guideOpen && (
-            <OperationGuideDialog
-              editor={editor}
-              cost={localCost}
-              currentIssue={localCandidate.error ?? null}
-              onClose={() => setGuideOpen(false)}
-            />
-          )}
           <OperationFields
             projection={projection}
             asset={selectedAsset}
@@ -2243,219 +2272,12 @@ function PlanningWorkspace({
       <ContextHintDialog
         hint={contextHint}
         onClose={() => setContextHint(null)}
+        onOpenGuide={(articleId) => {
+          setContextHint(null);
+          onGuide(articleId);
+        }}
       />
     </section>
-  );
-}
-
-const PLATFORM_GUIDES: Record<
-  ModuleKind,
-  {
-    title: string;
-    summary: string;
-    effect: string;
-    charter: string;
-    counterplay: string;
-  }
-> = {
-  extractor: {
-    title: "Extractor platform",
-    summary:
-      "A durable Supply engine that turns one occupied sector into recurring income.",
-    effect:
-      "At every Forecast, each active Extractor adds +1 Supply to your expedition. Extractor income is capped at +2, on top of the normal +2 Supply each Forecast.",
-    charter:
-      "Network requires four connected active platforms across all three depth regions, including at least one Extractor and one Sonar. An Extractor is therefore both economy and mission infrastructure.",
-    counterplay:
-      "Its owner, module, and sector are always public. Rivals can Raid it into a contest or Jam it so it misses production; protecting its connections matters.",
-  },
-  sonar: {
-    title: "Sonar platform",
-    summary:
-      "A Signal engine and a private listening post for nearby submarine movement.",
-    effect:
-      "At every Forecast, each active Sonar adds +1 Signal, capped at +2 Sonar income on top of the normal +1 Signal. During movement it can privately detect submarines entering its own or an adjacent sector.",
-    charter:
-      "Network requires at least one Sonar and one Extractor among four connected active platforms spanning all three depth regions.",
-    counterplay:
-      "The platform is public, but its passive contacts are private to you. Raid can contest it and Jam can suppress its module and Forecast production.",
-  },
-  laboratory: {
-    title: "Laboratory platform",
-    summary:
-      "The processing station that converts carried specimens into Discovery progress.",
-    effect:
-      "A submarine carrying a specimen must share this sector with your active Laboratory, then spend a Pulse on Analyze. The specimen leaves cargo; the type stays private while your analyzed count becomes public.",
-    charter:
-      "Discovery requires three distinct analyzed specimen types and at least one active Laboratory. A Lab produces no Supply or Signal by itself.",
-    counterplay:
-      "The Lab's location is public, so rivals can predict where your cargo must travel. Raid can contest it and Jam can temporarily stop Analyze there.",
-  },
-};
-
-function OperationGuideDialog({
-  editor,
-  cost,
-  currentIssue,
-  onClose,
-}: {
-  editor: OperationEditor;
-  cost: { supply: number; signal: number; silence: number };
-  currentIssue: string | null;
-  onClose: () => void;
-}) {
-  const dialogRef = useDialogFocusTrap(onClose);
-  const meta = OPERATION_META[editor.kind];
-  const moduleGuide =
-    editor.kind === "develop" && editor.developKind === "platform"
-      ? PLATFORM_GUIDES[editor.module]
-      : null;
-  const projectGuide =
-    editor.kind !== "develop" || moduleGuide
-      ? null
-      : editor.developKind === "submarine"
-        ? {
-            title: "Second submarine",
-            summary:
-              "Build another hidden field unit from your Ark for more reach and simultaneous plans.",
-            effect:
-              "The project costs 4 Supply. Construction is public in the Ark's sector, and the new submarine becomes usable at the next Forecast.",
-            charter:
-              "A second submarine does not directly satisfy a Charter, but it can move cargo, contest Deep Sites, screen infrastructure, and execute a second route.",
-            counterplay:
-              "Rivals see construction begin but lose exact position after launch. You may own at most two submarines.",
-          }
-        : {
-            title: "Repair submarine",
-            summary:
-              "Restore one damaged or disabled submarine beside your Ark.",
-            effect:
-              "Repair costs 1 Supply. The Ark and target submarine must occupy the same sector in this Pulse.",
-            charter:
-              "Repair preserves the units that carry specimens, protect platforms, and control Deep Sites.",
-            counterplay:
-              "The repair project is public. A fully intact or still-constructing submarine cannot be repaired.",
-          };
-  const specific = moduleGuide ?? projectGuide;
-  const title = specific?.title ?? meta.label;
-  const summary = specific?.summary ?? meta.short;
-  const costParts = [
-    cost.supply ? `${cost.supply} Supply` : "",
-    cost.signal ? `${cost.signal} Signal` : "",
-    cost.silence ? `${cost.silence} Silence` : "",
-  ].filter(Boolean);
-  const costLabel = costParts.join(" + ") || "No resource cost";
-
-  return createPortal(
-    <div
-      ref={dialogRef}
-      className="learning-dialog"
-      role="presentation"
-      onClick={onClose}
-    >
-      <article
-        id="selected-operation-guide"
-        className="learning-dialog__panel"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="selected-operation-guide-title"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <header>
-          <div className="learning-dialog__glyph" aria-hidden="true">
-            {operationGlyph(editor.kind)}
-          </div>
-          <div>
-            <p className="eyebrow">
-              {moduleGuide
-                ? "Platform module briefing"
-                : `How ${meta.label} works`}
-            </p>
-            <h1 id="selected-operation-guide-title">{title}</h1>
-            <p>{summary}</p>
-          </div>
-          <button
-            type="button"
-            className="icon-button"
-            data-dialog-initial
-            aria-label="Close operation explanation"
-            onClick={onClose}
-          >
-            ×
-          </button>
-        </header>
-
-        <div className="learning-dialog__sections">
-          {specific ? (
-            <>
-              <section>
-                <span>What it actually does</span>
-                <p>{specific.effect}</p>
-              </section>
-              <section>
-                <span>How to build it</span>
-                <p>
-                  Develop uses your Ark in its current sector. This project
-                  costs {costLabel}
-                  {editor.developKind === "platform"
-                    ? ", becomes active immediately, and fails without spending if that sector already has a platform or multiple Arks build there in the same Pulse."
-                    : ". Follow the project-specific co-location and timing rules above."}
-                </p>
-              </section>
-              <section>
-                <span>Why it matters</span>
-                <p>{specific.charter}</p>
-              </section>
-              <section>
-                <span>What rivals can do</span>
-                <p>{specific.counterplay}</p>
-              </section>
-            </>
-          ) : (
-            <>
-              <section>
-                <span>Use it when</span>
-                <p>{meta.when}</p>
-              </section>
-              <section>
-                <span>What to do</span>
-                <p>{meta.how}</p>
-              </section>
-              <section>
-                <span>What rivals learn</span>
-                <p>{meta.trace}</p>
-              </section>
-              <section>
-                <span>Cost in this editor</span>
-                <p>
-                  {costLabel}. Costs are reserved across all three Pulses when
-                  you save the plan.
-                </p>
-              </section>
-            </>
-          )}
-        </div>
-
-        <aside
-          className={`learning-dialog__status ${currentIssue ? "is-blocked" : "is-ready"}`}
-        >
-          <span>
-            {currentIssue ? "Current setup needs attention" : "Current setup"}
-          </span>
-          <p>
-            {currentIssue ??
-              "This order has every required field and is ready to save into this Pulse."}
-          </p>
-        </aside>
-        <footer>
-          <p>Nothing changes while this explanation is open.</p>
-          <button type="button" className="button-primary" onClick={onClose}>
-            Back to planning
-          </button>
-        </footer>
-      </article>
-    </div>,
-    document.body,
   );
 }
 
@@ -4519,19 +4341,17 @@ function PrivacyVeil({
 }
 
 function ReferenceSheet({
-  mode,
   roomCode,
   settings,
   onSettings,
-  onMode,
+  onGuide,
   onClose,
   onLeave,
 }: {
-  mode: "rules" | "settings";
   roomCode: string;
   settings: Settings;
   onSettings: (settings: Settings) => void;
-  onMode: (mode: "rules" | "settings") => void;
+  onGuide: () => void;
   onClose: () => void;
   onLeave: () => void;
 }) {
@@ -4542,7 +4362,7 @@ function ReferenceSheet({
       className="reference-sheet"
       role="dialog"
       aria-modal="true"
-      aria-label="Blackwater rules and settings"
+      aria-label="Blackwater settings"
     >
       <button
         className="reference-sheet__scrim"
@@ -4553,139 +4373,53 @@ function ReferenceSheet({
       <section className="reference-sheet__panel panel">
         <header>
           <div>
-            <button
-              className={mode === "rules" ? "is-active" : ""}
-              aria-pressed={mode === "rules"}
-              onClick={() => onMode("rules")}
-            >
-              Rules
-            </button>
-            <button
-              className={mode === "settings" ? "is-active" : ""}
-              aria-pressed={mode === "settings"}
-              onClick={() => onMode("settings")}
-            >
+            <button onClick={onGuide}>Guides</button>
+            <button className="is-active" aria-pressed="true">
               Settings
             </button>
           </div>
           <button
             className="icon-button"
             data-dialog-initial
-            aria-label="Close rules and settings"
+            aria-label="Close settings"
             onClick={onClose}
           >
             ×
           </button>
         </header>
-        {mode === "rules" ? (
-          <div className="rules-reference">
-            <p className="eyebrow">Known paths · private methods</p>
-            <h1>Blackwater field rules</h1>
-            <section>
-              <h2>Round</h2>
-              <ol>
-                <li>
-                  <b>Forecast</b> · platforms produce and sites replenish.
-                </li>
-                <li>
-                  <b>Open Water</b> · talk and program exactly three Pulses.
-                </li>
-                <li>
-                  <b>Resolution</b> · movement, detection, conflict, then
-                  projects.
-                </li>
-                <li>
-                  <b>Charter Check</b> · everyone who qualifies wins
-                  simultaneously.
-                </li>
-              </ol>
-            </section>
-            <section>
-              <h2>Progressive systems</h2>
-              <p>
-                <b>Round 1 · Explore and build.</b> Glide, Sprint, Survey,
-                Navigate, Develop, and Hold are always available. Harvest and
-                Analyze appear only when the selected submarine can actually use
-                them.
-              </p>
-              <p>
-                <b>Round 2 · Tactics online.</b> Open the Tactics drawer for
-                Deploy, Go Dark, Hunt, and Screen. Raid and Jam appear only when
-                you share a sector with a rival platform.
-              </p>
-              <p>
-                Hold any order for a quick hint, or use the visible Explain
-                button for its complete requirements and public consequences.
-              </p>
-            </section>
-            <section>
-              <h2>Victory Charters</h2>
-              <p>
-                <b>Network</b> · four connected active platforms across all
-                depths.
-              </p>
-              <p>
-                <b>Discovery</b> · three distinct analyzed types and an active
-                Lab.
-              </p>
-              <p>
-                <b>Dominion</b> · sealed Deep-Site control; qualifying assets
-                reveal only on success.
-              </p>
-            </section>
-            <section>
-              <h2>Evidence</h2>
-              <p>
-                Glide wakes show origins. Sprint wakes show routes. Survey and
-                Harvest expose activity. Sealed reports are reliable; Statements
-                may be entirely false.
-              </p>
-            </section>
-            <section>
-              <h2>Stopping a leader</h2>
-              <p>
-                Every player always has three Operations. Public infrastructure
-                makes a near-winner targetable. The TV labels them as a Leader
-                Threat, and the Commission rewards the first effective
-                intervention.
-              </p>
-            </section>
-          </div>
-        ) : (
-          <div className="settings-panel">
-            <p className="eyebrow">Instrument preferences</p>
-            <h1>Field console settings</h1>
-            <InstallConsole variant="settings" roomCode={roomCode} />
-            <ToggleRow
-              label="Sound & haptics"
-              detail="Phones remain quiet by default during shared events"
-              checked={settings.sound}
-              onChange={(sound) => {
-                onSettings({ ...settings, sound });
-                if (sound) void primeAudio();
-              }}
-            />
-            <ToggleRow
-              label="Reduced motion"
-              detail="Replace springs and travel with stable crossfades"
-              checked={settings.reducedMotion}
-              onChange={(reducedMotion) =>
-                onSettings({ ...settings, reducedMotion })
-              }
-            />
-            <ToggleRow
-              label="High contrast"
-              detail="Increase lines, labels, and tactical separation"
-              checked={settings.highContrast}
-              onChange={(highContrast) =>
-                onSettings({ ...settings, highContrast })
-              }
-            />
-            <button className="button-danger" onClick={onLeave}>
-              Release this seat
-            </button>
-          </div>
-        )}
+        <div className="settings-panel">
+          <p className="eyebrow">Instrument preferences</p>
+          <h1>Field console settings</h1>
+          <InstallConsole variant="settings" roomCode={roomCode} />
+          <ToggleRow
+            label="Sound & haptics"
+            detail="Phones remain quiet by default during shared events"
+            checked={settings.sound}
+            onChange={(sound) => {
+              onSettings({ ...settings, sound });
+              if (sound) void primeAudio();
+            }}
+          />
+          <ToggleRow
+            label="Reduced motion"
+            detail="Replace springs and travel with stable crossfades"
+            checked={settings.reducedMotion}
+            onChange={(reducedMotion) =>
+              onSettings({ ...settings, reducedMotion })
+            }
+          />
+          <ToggleRow
+            label="High contrast"
+            detail="Increase lines, labels, and tactical separation"
+            checked={settings.highContrast}
+            onChange={(highContrast) =>
+              onSettings({ ...settings, highContrast })
+            }
+          />
+          <button className="button-danger" onClick={onLeave}>
+            Release this seat
+          </button>
+        </div>
       </section>
     </div>
   );

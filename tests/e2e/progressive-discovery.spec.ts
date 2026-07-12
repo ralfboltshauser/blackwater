@@ -74,6 +74,24 @@ test.describe("progressive phone discovery", () => {
       await expect(
         phone.getByText("Program one simple step at a time"),
       ).toBeVisible();
+      await phone.getByRole("button", { name: "Guides" }).click();
+      const fieldGuide = phone.getByRole("dialog", {
+        name: "Blackwater field guide",
+      });
+      await expect(fieldGuide).toBeVisible();
+      await expect(
+        fieldGuide.getByRole("heading", {
+          name: "What you are trying to do",
+        }),
+      ).toBeVisible();
+      await fieldGuide.getByLabel("Search field guide").fill("commission");
+      await fieldGuide
+        .getByRole("button", { name: /Leader Threats and Commissions/ })
+        .click();
+      await expect(fieldGuide).toContainText("There is no Pressure resource");
+      await fieldGuide
+        .getByRole("button", { name: "Close field guide" })
+        .click();
       await phone.getByRole("button", { name: "SUB A", exact: true }).click();
       const core = phone.getByRole("group", { name: "Core orders" });
       await expect(core.locator("button")).toHaveCount(4);
@@ -114,20 +132,24 @@ test.describe("progressive phone discovery", () => {
       });
       await sprint.dispatchEvent("click", { detail: 1 });
       await expect(phone.locator(".pulse-editor h2")).toHaveText("Glide");
-      await phone
-        .getByRole("button", { name: "Close full operation guide" })
+      await holdGuide
+        .getByRole("button", { name: "Read full article" })
+        .click();
+      await expect(fieldGuide).toBeVisible();
+      await expect(
+        fieldGuide.getByRole("heading", { name: "Sprint", exact: true }),
+      ).toBeVisible();
+      await expect(fieldGuide).toContainText("legal two-edge destination");
+      await fieldGuide
+        .getByRole("button", { name: "Close field guide" })
         .click();
       await sprint.click();
       await expect(phone.locator(".pulse-editor h2")).toHaveText("Sprint");
       await phone.getByRole("button", { name: "Explain" }).click();
-      await expect(phone.locator("#selected-operation-guide")).toContainText(
-        /How Sprint works/i,
-      );
-      await expect(phone.locator("#selected-operation-guide")).toContainText(
-        "Tap a glowing two-edge destination",
-      );
-      await phone
-        .getByRole("button", { name: "Close operation explanation" })
+      await expect(fieldGuide).toBeVisible();
+      await expect(fieldGuide).toContainText("Move across both legs");
+      await fieldGuide
+        .getByRole("button", { name: "Close field guide" })
         .click();
 
       const map = phone.locator(".private-map .basin-map");
@@ -282,22 +304,43 @@ test.describe("progressive phone discovery", () => {
         .click();
       await phone.getByRole("button", { name: "Explain" }).click();
       const extractorGuide = phone.getByRole("dialog", {
-        name: "Extractor platform",
+        name: "Blackwater field guide",
       });
+      await expect(
+        extractorGuide.getByRole("heading", {
+          name: "Extractor platform",
+        }),
+      ).toBeVisible();
       await expect(extractorGuide).toContainText(
         "each active Extractor adds +1 Supply",
       );
       await expect(extractorGuide).toContainText(
-        "Network requires four connected active platforms",
+        "Network requires an Extractor",
       );
-      await expect(extractorGuide).toContainText(
-        "Rivals can Raid it into a contest or Jam it",
-      );
-      await phone
-        .getByRole("button", { name: "Close operation explanation" })
+      await expect(extractorGuide).toContainText("Raid can contest it");
+      await extractorGuide
+        .getByRole("button", { name: "Close field guide" })
         .click();
 
       await phone.setViewportSize({ width: 390, height: 844 });
+      await phone.getByRole("button", { name: "Guides" }).click();
+      await expect(fieldGuide).toBeVisible();
+      await fieldGuide.getByRole("button", { name: "Contents" }).click();
+      await fieldGuide.getByRole("button", { name: /^Submarine/ }).click();
+      await expect(
+        fieldGuide.getByRole("heading", { name: "Submarine", exact: true }),
+      ).toBeVisible();
+      const guideGeometry = await fieldGuide.evaluate((element) => ({
+        left: element.getBoundingClientRect().left,
+        right: element.getBoundingClientRect().right,
+        widthOverflow: element.scrollWidth - element.clientWidth,
+      }));
+      expect(guideGeometry.left).toBeGreaterThanOrEqual(0);
+      expect(guideGeometry.right).toBeLessThanOrEqual(390);
+      expect(guideGeometry.widthOverflow).toBeLessThanOrEqual(1);
+      await fieldGuide
+        .getByRole("button", { name: "Close field guide" })
+        .click();
       await expect(map).toBeVisible();
       await expect(
         phone.getByRole("button", { name: "Zoom in" }),

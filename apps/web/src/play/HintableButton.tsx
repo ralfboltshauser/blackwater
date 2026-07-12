@@ -12,6 +12,7 @@ const HOLD_MOVE_TOLERANCE_PX = 10;
 
 export type ContextHint = {
   id: string;
+  guideId: string;
   title: string;
   summary: string;
   trace: string;
@@ -25,6 +26,7 @@ type HintableButtonProps = Omit<
 > & {
   children: ReactNode;
   hintId: string;
+  hintGuideId: string;
   hintTitle: string;
   hintSummary: string;
   hintTrace: string;
@@ -38,6 +40,7 @@ type HintableButtonProps = Omit<
 export function HintableButton({
   children,
   hintId,
+  hintGuideId,
   hintTitle,
   hintSummary,
   hintTrace,
@@ -81,6 +84,7 @@ export function HintableButton({
     clearDismiss();
     onHint({
       id: hintId,
+      guideId: hintGuideId,
       title: hintTitle,
       summary: hintSummary,
       trace: hintTrace,
@@ -221,9 +225,11 @@ export function HintableButton({
 export function ContextHintDialog({
   hint,
   onClose,
+  onOpenGuide,
 }: {
   hint: ContextHint | null;
   onClose: () => void;
+  onOpenGuide: (guideId: string) => void;
 }) {
   const dialogRef = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -310,8 +316,15 @@ export function ContextHintDialog({
         </div>
         <footer>
           <p>Closing this guide does not select or change the order.</p>
-          <button type="button" className="button-primary" onClick={onClose}>
+          <button type="button" className="button-ghost" onClick={onClose}>
             Back to planning
+          </button>
+          <button
+            type="button"
+            className="button-primary"
+            onClick={() => onOpenGuide(hint.guideId)}
+          >
+            Read full article
           </button>
         </footer>
       </article>
