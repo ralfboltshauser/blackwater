@@ -564,6 +564,13 @@ const AcceptedCommandResultSchema = z
     phaseClosed: z.boolean().optional(),
   })
   .strict();
+const CommandRejectionIssueSchema = z
+  .object({
+    code: z.string().trim().min(1).max(64),
+    message: z.string().trim().min(1).max(240),
+    pulse: PulseNumberSchema.optional(),
+  })
+  .strict();
 const RejectedCommandResultSchema = z
   .object({
     status: z.literal("rejected"),
@@ -571,6 +578,8 @@ const RejectedCommandResultSchema = z
     code: CommandRejectionCodeSchema,
     retryable: z.boolean(),
     currentRelevantRevision: RevisionSchema.optional(),
+    message: z.string().trim().min(1).max(640).optional(),
+    issues: z.array(CommandRejectionIssueSchema).max(12).optional(),
   })
   .strict();
 export const CommandResultSchema = z.discriminatedUnion("status", [

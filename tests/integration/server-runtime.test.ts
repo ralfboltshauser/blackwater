@@ -1243,6 +1243,9 @@ describe("Blackwater server runtime", () => {
     expect(contractResult).toMatchObject({
       status: "rejected",
       code: "INVALID_INTENT",
+      message: expect.stringMatching(
+        /Conditional contracts are not available.*Binding Trade.*Breakable Handshake/i,
+      ),
     });
 
     const closed = await application.fastify.inject({
@@ -1472,6 +1475,21 @@ describe("Blackwater server runtime", () => {
       payload: { plan: privateEnvelope.payload.draft.plan },
     });
     expect(result).toMatchObject({ status: "accepted" });
+
+    const malformed = await emitAcknowledged<CommandResult>(player, "command", {
+      protocol: 1,
+      commandId: "socket-malformed-command",
+      type: "draft.unlock",
+      payload: {},
+    });
+    expect(malformed).toMatchObject({
+      status: "rejected",
+      code: "INVALID_INTENT",
+      message: expect.stringMatching(
+        /phone built a command.*server cannot read.*matchId.*reopen the PWA/i,
+      ),
+    });
+    expect(player.connected).toBe(true);
     expect(
       PlayerProjectionEnvelopeSchema.parse(await nextProjection).payload.draft
         .locked,

@@ -1006,6 +1006,7 @@ function FieldConsole({
     kind: "ok" | "error";
     message: string;
   } | null>(null);
+  const toastTimer = useRef<number | null>(null);
   const [now, setNow] = useState(Date.now());
   const phaseKey = `${projection.public.phase.phaseId}:${projection.public.phase.pulse ?? 0}`;
   const previousPhase = useRef(phaseKey);
@@ -1038,9 +1039,23 @@ function FieldConsole({
   }, [projection.public.lifecycle, projection.public.phase.kind]);
 
   const showToast = useCallback((kind: "ok" | "error", message: string) => {
+    if (toastTimer.current !== null) window.clearTimeout(toastTimer.current);
     setToast({ kind, message });
-    window.setTimeout(() => setToast(null), 3_600);
+    toastTimer.current = window.setTimeout(
+      () => {
+        setToast(null);
+        toastTimer.current = null;
+      },
+      kind === "error" ? 10_000 : 3_600,
+    );
   }, []);
+
+  useEffect(
+    () => () => {
+      if (toastTimer.current !== null) window.clearTimeout(toastTimer.current);
+    },
+    [],
+  );
 
   useEffect(() => {
     const round = projection.public.phase.round;
@@ -1059,7 +1074,7 @@ function FieldConsole({
       expected: unknown;
       payload: unknown;
     }): Promise<CommandResult> => {
-      const envelope = ClientCommandSchema.parse({
+      const parsedEnvelope = ClientCommandSchema.safeParse({
         protocol: PROTOCOL_VERSION,
         commandId: nextCommandId(bootstrap.commandPrefix),
         matchId: projection.public.matchId,
@@ -1069,9 +1084,14 @@ function FieldConsole({
         writerLeaseId: bootstrap.writerLeaseId,
         ...intent,
       });
+      if (!parsedEnvelope.success)
+        throw new Error(
+          localIntentError(intent.type, parsedEnvelope.error.issues),
+        );
+      const envelope = parsedEnvelope.data;
       const result = await sendCommand(envelope);
       if (result.status === "rejected")
-        throw new Error(friendlyCommandError(result.code));
+        throw new Error(friendlyCommandError(result));
       return result;
     },
     [
@@ -1267,8 +1287,23 @@ function FieldConsole({
         />
       )}
       {toast && (
-        <div className={`phone-toast phone-toast--${toast.kind}`} role="status">
-          {toast.message}
+        <div
+          className={`phone-toast phone-toast--${toast.kind}`}
+          role={toast.kind === "error" ? "alert" : "status"}
+        >
+          <div>
+            <strong>
+              {toast.kind === "error" ? "Action blocked" : "Saved"}
+            </strong>
+            <span>{toast.message}</span>
+          </div>
+          <button
+            type="button"
+            aria-label="Dismiss message"
+            onClick={() => setToast(null)}
+          >
+            ×
+          </button>
         </div>
       )}
       <div className="rotate-hint">
@@ -2813,7 +2848,7 @@ function IntelWorkspace({
       showToast(
         "error",
         reason instanceof Error
-          ? friendlyCommandError(reason.message)
+          ? reason.message
           : "Observation could not be sealed.",
       );
     } finally {
@@ -4511,24 +4546,56 @@ function bundleLabel(bundle: {
   ].filter(Boolean);
   return parts.join(" · ") || "Promise only";
 }
-function friendlyCommandError(code: string): string {
-  const normalized = code.toUpperCase();
-  if (normalized.includes("RATE_LIMITED"))
-    return "The field channel is busy. Wait a moment before sending another offer or report.";
-  if (normalized.includes("STALE_DRAFT"))
-    return "Your plan changed on the server. It has been resynchronized; review and try again.";
-  if (normalized.includes("STALE_OFFER"))
-    return "That offer changed or expired before you confirmed it.";
-  if (normalized.includes("INSUFFICIENT"))
-    return "A current plan or offer already reserves those resources.";
-  if (normalized.includes("PHASE_CLOSED"))
-    return "Open Water has closed. Your last valid plan remains in force.";
-  if (
-    normalized.includes("WRITER_LEASE") ||
-    normalized.includes("SESSION_REVOKED")
-  )
-    return "This phone no longer controls the seat. Resume or reclaim the player session.";
-  return code.replaceAll("_", " ").toLowerCase();
+function localIntentError(
+  action: string,
+  issues: ReadonlyArray<{ path: PropertyKey[]; message: string }>,
+): string {
+  const details = issues
+    .slice(0, 6)
+    .map((issue) => {
+      const field = issue.path.length
+        ? issue.path.map(String).join(" → ")
+        : "command";
+      return `${field}: ${issue.message}`;
+    })
+    .join("; ");
+  return `The ${action} controls produced invalid command data (${details}). Your current game state is unchanged. Refresh or fully close and reopen the PWA; if it repeats, tell the host which action you pressed.`;
+}
+
+function friendlyCommandError(
+  result: Extract<CommandResult, { status: "rejected" }>,
+): string {
+  const fallback: Record<typeof result.code, string> = {
+    RATE_LIMITED:
+      "This expedition has sent too many social actions this round. Wait briefly or continue next round.",
+    STALE_DRAFT:
+      "Your plan changed on the server. Review the newly synchronized plan before trying again.",
+    STALE_OFFER:
+      "That offer changed, was withdrawn, or expired. Reopen Deals and use the newest version.",
+    INSUFFICIENT_AVAILABLE_RESOURCE:
+      "Your saved plan or another commitment already reserves the required Supply or Signal. Reduce the cost or free resources first.",
+    PHASE_CLOSED:
+      "The round or phase changed before this action arrived. Your last accepted plan remains saved.",
+    PHASE_PAUSED:
+      "The host paused the game. Wait for play to resume, then try this action again.",
+    WRITER_LEASE_REVOKED:
+      "Another browser controls this expedition. Close it or reclaim this seat before sending actions.",
+    SESSION_REVOKED:
+      "This phone's player session was replaced or removed. Rejoin the room or reclaim the expedition.",
+    INVALID_INTENT:
+      "The server could not apply this action to the current game state. Reopen the editor and review every field before retrying.",
+    IDEMPOTENCY_KEY_REUSE:
+      "This action identifier was already used for different content. Refresh the PWA before retrying.",
+    NOT_AUTHORIZED:
+      "Only the expedition that owns this item can perform that action. Reopen the newest copy from your own console.",
+    INTERNAL_ERROR:
+      "The server hit an internal error. Your last accepted state is safe; retry once, then ask the host to restart if it repeats.",
+  };
+  const issueDetails = (result.issues ?? []).map(
+    (issue) =>
+      `${issue.pulse === undefined ? "Plan" : `Pulse ${issue.pulse}`} — ${issue.message}`,
+  );
+  return [result.message ?? fallback[result.code], ...issueDetails].join(" ");
 }
 
 createRoot(document.getElementById("root")!).render(<PlayerApp />);

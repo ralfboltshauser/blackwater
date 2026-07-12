@@ -756,6 +756,12 @@ export class MatchActor {
         command.commandId,
         resource ? "INSUFFICIENT_AVAILABLE_RESOURCE" : "INVALID_INTENT",
         false,
+        undefined,
+        {
+          message: resource
+            ? `The server could not reserve the resources for ${command.type}: ${message}`
+            : `The server could not apply ${command.type}: ${message}`,
+        },
       );
     }
   }
@@ -795,6 +801,15 @@ export class MatchActor {
           "INVALID_INTENT",
           false,
           current.revision,
+          {
+            message:
+              "Your three-Operation plan is not legal yet. Fix every listed issue, then save or lock it again.",
+            issues: validation.issues.map((issue) => ({
+              code: issue.code,
+              message: issue.message,
+              ...(issue.pulse === undefined ? {} : { pulse: issue.pulse }),
+            })),
+          },
         );
       }
       nextDraft.plan = command.payload.plan;
@@ -826,7 +841,10 @@ export class MatchActor {
         payload.mode === "contract" ||
         payload.term.kind === "conditional-payment"
       ) {
-        return rejected(command.commandId, "INVALID_INTENT", false);
+        return rejected(command.commandId, "INVALID_INTENT", false, undefined, {
+          message:
+            "Conditional contracts are not available in this ruleset. Choose Binding Trade for an immediate exchange or Breakable Handshake for a promise.",
+        });
       }
       if (payload.expiresAtPhaseId !== workflow.phase.phaseId) {
         return rejected(command.commandId, "PHASE_CLOSED", false);
@@ -835,7 +853,10 @@ export class MatchActor {
         payload.recipientSeatId === seatId ||
         !this.#seatExists(payload.recipientSeatId)
       ) {
-        return rejected(command.commandId, "INVALID_INTENT", false);
+        return rejected(command.commandId, "INVALID_INTENT", false, undefined, {
+          message:
+            "Choose a different active expedition as the recipient. You cannot send an offer to yourself or to a missing seat.",
+        });
       }
       const pendingBySeat = Object.values(workflow.offers).filter(
         (offer) =>
@@ -848,7 +869,10 @@ export class MatchActor {
         bundleEmpty(payload.give) &&
         bundleEmpty(payload.receive)
       ) {
-        return rejected(command.commandId, "INVALID_INTENT", false);
+        return rejected(command.commandId, "INVALID_INTENT", false, undefined, {
+          message:
+            "A Binding Trade must give or request at least one resource, report, or specimen. Add an item, or use a Breakable Handshake for a promise-only deal.",
+        });
       }
       const expectedDestinations = new Set(payload.receive.specimenIds);
       if (
@@ -858,7 +882,10 @@ export class MatchActor {
           (item) => !expectedDestinations.has(item.specimenId),
         )
       ) {
-        return rejected(command.commandId, "INVALID_INTENT", false);
+        return rejected(command.commandId, "INVALID_INTENT", false, undefined, {
+          message:
+            "Every specimen you requested needs exactly one destination submarine. Reopen the offer and assign each incoming specimen to one of your active submarines.",
+        });
       }
       const offerId = randomId("offer");
       workflow.offers[offerId] = {
@@ -906,7 +933,10 @@ export class MatchActor {
         (item) => !expectedDestinations.has(item.specimenId),
       )
     ) {
-      return rejected(command.commandId, "INVALID_INTENT", false);
+      return rejected(command.commandId, "INVALID_INTENT", false, undefined, {
+        message:
+          "Every incoming specimen needs exactly one destination submarine. Choose where each specimen will be stored before accepting the trade.",
+      });
     }
     let state = (
       this.#match.rulesState as { kind: "active"; state: RulesState }
@@ -1085,7 +1115,10 @@ export class MatchActor {
   ): CommandResult {
     this.#assertHostSession(session);
     if (this.#match.workflow.briefing.active && command.type !== "host.pause")
-      return rejected(command.commandId, "INVALID_INTENT", false);
+      return rejected(command.commandId, "INVALID_INTENT", false, undefined, {
+        message:
+          "The crew briefing is still covering the game. End the briefing before using phase controls.",
+      });
     if (command.expected.epoch !== this.#match.workflow.phase.epoch) {
       return rejected(
         command.commandId,
@@ -1106,8 +1139,15 @@ export class MatchActor {
       command.type === "host.closePlanning" ||
       command.type === "host.skipPresentation"
     )
-      return rejected(command.commandId, "INVALID_INTENT", false);
-    else return rejected(command.commandId, "INVALID_INTENT", false);
+      return rejected(command.commandId, "INVALID_INTENT", false, undefined, {
+        message:
+          "This phase transition must be triggered from the host dashboard so the server can finish it durably. Use Close planning or Skip presentation there.",
+      });
+    else
+      return rejected(command.commandId, "INVALID_INTENT", false, undefined, {
+        message:
+          "The host command is not supported in the current phase. Refresh the dashboard and use one of the controls currently shown.",
+      });
     return accepted(
       command.commandId,
       "phase",
@@ -1617,16 +1657,56 @@ function rejected(
   code: Extract<CommandResult, { status: "rejected" }>["code"],
   retryable: boolean,
   currentRelevantRevision?: number,
+  detail?: {
+    message: string;
+    issues?: NonNullable<
+      Extract<CommandResult, { status: "rejected" }>["issues"]
+    >;
+  },
 ): CommandResult {
   return {
     status: "rejected",
     commandId,
     code,
     retryable,
+    message: detail?.message ?? defaultRejectionMessage(code),
+    ...(detail?.issues?.length ? { issues: detail.issues } : {}),
     ...(currentRelevantRevision === undefined
       ? {}
       : { currentRelevantRevision }),
   };
+}
+
+function defaultRejectionMessage(
+  code: Extract<CommandResult, { status: "rejected" }>["code"],
+): string {
+  const messages: Record<typeof code, string> = {
+    PHASE_CLOSED:
+      "The round or phase changed before this action reached the server. Review the current screen; your last accepted plan remains saved.",
+    PHASE_PAUSED:
+      "The host paused the game, so player actions are temporarily blocked. Wait for the host to resume, then try again.",
+    STALE_DRAFT:
+      "This phone edited an older copy of your plan. The latest server copy is loading now; review it before trying again.",
+    STALE_OFFER:
+      "This offer changed, was withdrawn, or expired before you confirmed it. Reopen Deals and use the newest version.",
+    SESSION_REVOKED:
+      "This phone's player session was replaced or removed. Rejoin the room or reclaim the expedition from this device.",
+    WRITER_LEASE_REVOKED:
+      "Another browser now controls this expedition. Close the other controller or reclaim the seat on this phone before sending actions.",
+    INVALID_INTENT:
+      "The server could not apply this action to the current game state. Reopen the editor and review its fields; if the same action fails again, refresh the PWA.",
+    INSUFFICIENT_AVAILABLE_RESOURCE:
+      "Your saved plan or another pending commitment already reserves the required Supply or Signal. Reduce the new cost or free resources first.",
+    IDEMPOTENCY_KEY_REUSE:
+      "This action identifier was already used for different content. Refresh the PWA before retrying so it can create a fresh command.",
+    NOT_AUTHORIZED:
+      "Only the expedition that owns this offer, report, or control can perform that action. Reopen the latest item from your own console.",
+    RATE_LIMITED:
+      "This expedition sent too many social actions in the current round. Wait briefly or continue after the next round begins.",
+    INTERNAL_ERROR:
+      "The server could not finish this action because of an internal failure. Your last accepted state is safe; retry once, then ask the host to restart if it repeats.",
+  };
+  return messages[code];
 }
 
 function toProgram(

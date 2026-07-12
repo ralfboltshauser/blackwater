@@ -435,16 +435,18 @@ export async function createApplication(
           const command = parseCommandMessage(raw);
           acknowledge(await subscription.actor.handleCommand(session, command));
         } catch (error) {
+          const message = commandFailureMessage(error);
+          const sessionFailure = /subscription required|session expired/i.test(
+            message,
+          );
           acknowledge({
             status: "rejected",
             commandId: commandIdFrom(raw),
-            code: "INVALID_INTENT",
+            code: sessionFailure ? "SESSION_REVOKED" : "INVALID_INTENT",
             retryable: false,
+            message,
           });
-          socket.emit("session:error", {
-            message:
-              error instanceof Error ? error.message : "Command rejected",
-          });
+          if (sessionFailure) socket.emit("session:error", { message });
         }
       },
     );
@@ -963,6 +965,24 @@ function classifyExpectedError(
   if (/extension must/i.test(message))
     return { status: 400, code: "INVALID_REQUEST" };
   return null;
+}
+
+function commandFailureMessage(error: unknown): string {
+  if (error instanceof z.ZodError) {
+    const details = error.issues
+      .slice(0, 6)
+      .map((issue) => {
+        const field = issue.path.length ? issue.path.join(" → ") : "command";
+        return `${field}: ${issue.message}`;
+      })
+      .join("; ");
+    return `This phone built a command the server cannot read (${details}). Refresh or fully close and reopen the PWA so its controls match the server.`.slice(
+      0,
+      640,
+    );
+  }
+  if (error instanceof Error) return error.message;
+  return "The server rejected the command for an unknown reason. Refresh the PWA and retry the action once.";
 }
 
 export function configFromEnvironment(): ServerConfig {

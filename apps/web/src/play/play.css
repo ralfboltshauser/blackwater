@@ -2690,18 +2690,51 @@
   right: max(0.55rem, env(safe-area-inset-right));
   bottom: max(0.55rem, env(safe-area-inset-bottom));
   z-index: 100;
-  max-width: min(28rem, calc(100vw - 1.1rem));
-  padding: 0.55rem 0.75rem;
+  width: min(38rem, calc(100vw - 1.1rem));
+  max-height: min(52dvh, 18rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 34px;
+  align-items: start;
+  gap: 0.7rem;
+  overflow: auto;
+  padding: 0.65rem 0.7rem 0.7rem 0.8rem;
   border: 1px solid var(--success);
   border-radius: var(--radius-xs);
   background: rgba(4, 38, 37, 0.96);
   box-shadow: var(--shadow-deep);
-  font: 0.56rem var(--font-mono);
+  font: 0.62rem var(--font-mono);
+  line-height: 1.45;
+}
+.phone-toast > div {
+  min-width: 0;
+  display: grid;
+  gap: 0.22rem;
+}
+.phone-toast strong {
+  color: var(--success);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.phone-toast span {
+  overflow-wrap: anywhere;
+}
+.phone-toast > button {
+  width: 34px;
+  min-height: 34px;
+  padding: 0;
+  color: currentColor;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-xs);
 }
 .phone-toast--error {
   color: #ffd9cf;
   border-color: var(--danger);
   background: rgba(50, 15, 12, 0.97);
+}
+.phone-toast--error strong {
+  color: var(--danger);
 }
 .empty-state {
   min-height: 130px;
