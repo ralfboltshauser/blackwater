@@ -86,7 +86,7 @@ function DisplayApp() {
       briefingActive &&
       previousBriefingRevision.current !== realtime.briefing.revision
     )
-      playFeedback("select");
+      playFeedback("tap");
     previousBriefingRevision.current = realtime.briefing.revision;
   }, [briefingActive, realtime.briefing.revision]);
 

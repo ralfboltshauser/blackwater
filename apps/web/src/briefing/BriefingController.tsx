@@ -5,7 +5,6 @@ import {
   type BriefingState,
 } from "@blackwater/protocol";
 import { apiFetch } from "../shared/api";
-import { playFeedback } from "../shared/feedback";
 import { BRIEFING_SLIDES } from "./content";
 
 export function BriefingController({
@@ -28,7 +27,6 @@ export function BriefingController({
     async (action: BriefingControlRequest["action"], targetSlide?: number) => {
       if (busy) return;
       setBusy(true);
-      playFeedback(action === "close" ? "tap" : "select");
       try {
         await apiFetch(`/api/v1/matches/${roomCode}/host/briefing`, {
           method: "POST",

@@ -8,7 +8,6 @@ import { AiBadge } from "../shared/AiBadge";
 import { Brand } from "../shared/Brand";
 import { apiFetch, useRealtimeProjection } from "../shared/api";
 import { formatClock } from "../shared/bootstrap";
-import { playFeedback } from "../shared/feedback";
 import "../shared/bootstrap";
 import "./host.css";
 
@@ -174,7 +173,6 @@ function CreateGame({
   const [error, setError] = useState<string | null>(null);
 
   const create = async () => {
-    playFeedback("select");
     setCreating(true);
     setError(null);
     try {
@@ -188,7 +186,6 @@ function CreateGame({
           factionsEnabled,
         }),
       });
-      playFeedback("commit");
       onCreated(created);
     } catch (reason) {
       setError(
@@ -418,14 +415,12 @@ function LobbyConsole({
   }, [activeJoinUrl]);
 
   const start = async () => {
-    playFeedback("select");
     setBusy(true);
     try {
       await apiFetch(`/api/v1/matches/${roomCode}/start`, {
         method: "POST",
         body: JSON.stringify({ protocol: PROTOCOL_VERSION }),
       });
-      playFeedback("pulse");
     } catch (reason) {
       onError(reason instanceof Error ? reason.message : "Could not start");
     } finally {
@@ -435,7 +430,6 @@ function LobbyConsole({
 
   const configureBots = async (targetBotCount: number) => {
     setBotsBusy(true);
-    playFeedback("tap");
     try {
       const snapshot = await apiFetch<LobbySnapshot>(
         `/api/v1/matches/${roomCode}/bots`,
@@ -448,7 +442,6 @@ function LobbyConsole({
         },
       );
       onLobbyChange(snapshot);
-      playFeedback("commit");
     } catch (reason) {
       onError(
         reason instanceof Error ? reason.message : "Could not change AI rivals",
@@ -461,7 +454,6 @@ function LobbyConsole({
   const removePlayer = async (seatId: string, displayName: string) => {
     if (!window.confirm(`Remove ${displayName} from this expedition?`)) return;
     setRemovingSeatId(seatId);
-    playFeedback("tap");
     try {
       const snapshot = await apiFetch<LobbySnapshot>(
         `/api/v1/matches/${roomCode}/players`,
@@ -474,7 +466,6 @@ function LobbyConsole({
         },
       );
       onLobbyChange(snapshot);
-      playFeedback("commit");
     } catch (reason) {
       onError(
         reason instanceof Error ? reason.message : "Could not remove player",
@@ -671,7 +662,6 @@ function OperationsPanel({
     : null;
 
   const control = async (action: string, body: object = {}) => {
-    playFeedback("tap");
     await apiFetch(`/api/v1/matches/${roomCode}/host/${action}`, {
       method: "POST",
       body: JSON.stringify({ protocol: PROTOCOL_VERSION, ...body }),

@@ -23,7 +23,7 @@ const cuePaths: Record<FeedbackCue, string> = {
   victory: "/audio/victory.mp3",
 };
 const cueVolumes: Record<FeedbackCue, number> = {
-  tap: 0.28,
+  tap: 0.14,
   select: 0.34,
   commit: 0.44,
   unlock: 0.36,
