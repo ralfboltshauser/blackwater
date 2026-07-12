@@ -20,6 +20,15 @@ const phaseLabel: Record<string, string> = {
   "game-over": "Expedition Complete",
 };
 
+const PHASE_STEPS = [
+  ["forecast", "Forecast", "forecast"],
+  ["open-water", "Plan", "plan"],
+  ["pulse-1", "Pulse 1", "1"],
+  ["pulse-2", "Pulse 2", "2"],
+  ["pulse-3", "Pulse 3", "3"],
+  ["claim-check", "Charter", "charter"],
+] as const;
+
 function DisplayApp() {
   const [roomCode, setRoomCode] = useState(roomFromLocation());
   const [now, setNow] = useState(Date.now());
@@ -103,6 +112,19 @@ function DisplayApp() {
   const railSplit = Math.ceil(projection.expeditions.length / 2);
   const leftExpeditions = projection.expeditions.slice(0, railSplit);
   const rightExpeditions = projection.expeditions.slice(railSplit);
+  const phaseStep =
+    projection.phase.kind === "forecast"
+      ? 0
+      : projection.phase.kind === "open-water"
+        ? 1
+        : projection.phase.kind === "resolution"
+          ? projection.phase.pulse === null
+            ? 5
+            : projection.phase.pulse + 1
+          : projection.phase.kind === "claim-check" ||
+              projection.phase.kind === "game-over"
+            ? 5
+            : 0;
 
   return (
     <>
@@ -241,22 +263,16 @@ function DisplayApp() {
 
         <footer className="display-footer">
           <div className="pulse-track">
-            {[
-              ["forecast", "Forecast"],
-              ["open-water", "Plan"],
-              ["pulse-1", "Pulse 1"],
-              ["pulse-2", "Pulse 2"],
-              ["pulse-3", "Pulse 3"],
-              ["claim-check", "Charter check"],
-            ].map(([key, label], index) => {
-              const active =
-                projection.phase.kind === key ||
-                (projection.phase.kind === "resolution" &&
-                  (projection.phase.pulse === index - 1 ||
-                    (key === "claim-check" &&
-                      projection.phase.pulse === null)));
+            {PHASE_STEPS.map(([key, label, icon], index) => {
+              const active = index === phaseStep;
+              const complete = index < phaseStep;
               return (
-                <div key={key} className={active ? "is-active" : ""}>
+                <div
+                  key={key}
+                  className={`${active ? "is-active" : ""} ${complete ? "is-complete" : ""}`}
+                  aria-current={active ? "step" : undefined}
+                >
+                  <PhaseStepIcon kind={icon} complete={complete} />
                   <span>{label}</span>
                 </div>
               );
@@ -288,6 +304,40 @@ function DisplayApp() {
         <BriefingExit slideIndex={lastBriefingSlide.current} />
       )}
     </>
+  );
+}
+
+function PhaseStepIcon({
+  kind,
+  complete,
+}: {
+  kind: string;
+  complete: boolean;
+}) {
+  if (complete)
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m6.5 12.5 3.4 3.4 7.7-8" />
+      </svg>
+    );
+  if (/^[123]$/.test(kind)) return <b aria-hidden="true">{kind}</b>;
+  if (kind === "forecast")
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="3.5" />
+        <path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4" />
+      </svg>
+    );
+  if (kind === "plan")
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 7h10M7 12h10M7 17h7" />
+      </svg>
+    );
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M7 20V4m0 1h10l-2.5 3L17 11H7" />
+    </svg>
   );
 }
 

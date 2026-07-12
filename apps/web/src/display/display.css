@@ -486,35 +486,84 @@ html,
 .pulse-track {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
+  align-items: stretch;
+  padding-inline: 0.45rem;
 }
 .pulse-track div {
   position: relative;
-  display: grid;
+  z-index: 0;
+  display: flex;
   place-items: center;
-  padding-inline: 0.35rem;
+  justify-content: center;
+  gap: 0.42rem;
+  min-width: 0;
+  padding-inline: 0.3rem;
   color: var(--paper-muted);
-  font: 600 0.75rem var(--font-display);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
+  font: 600 0.66rem var(--font-display);
+  letter-spacing: 0.055em;
 }
 .pulse-track div:not(:last-child)::after {
-  content: "›";
+  content: "";
   position: absolute;
-  right: -0.18rem;
-  color: var(--line-strong);
-  font-size: 1.3rem;
+  z-index: -1;
+  top: 50%;
+  left: calc(50% + 18px);
+  width: calc(100% - 36px);
+  height: 1px;
+  background: var(--line-strong);
+}
+.pulse-track div.is-complete:not(:last-child)::after {
+  background: color-mix(in srgb, var(--cyan), transparent 45%);
+}
+.pulse-track div > svg,
+.pulse-track div > b {
+  flex: 0 0 25px;
+  width: 25px;
+  height: 25px;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: #031519;
+}
+.pulse-track div > svg {
+  padding: 5px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.pulse-track div > b {
+  font: 600 0.68rem var(--font-mono);
+}
+.pulse-track div > span {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  padding: 0.18rem 0.25rem;
+  background: #031519;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.pulse-track div.is-complete {
+  color: color-mix(in srgb, var(--cyan), var(--paper-muted) 38%);
+}
+.pulse-track div.is-complete > svg,
+.pulse-track div.is-complete > b {
+  border-color: color-mix(in srgb, var(--cyan), transparent 35%);
 }
 .pulse-track div.is-active {
   color: var(--cyan);
-  background: rgba(75, 216, 221, 0.075);
 }
-.pulse-track div.is-active::before {
-  content: "";
-  position: absolute;
-  inset: auto 18% 8px;
-  height: 2px;
+.pulse-track div.is-active > svg,
+.pulse-track div.is-active > b {
+  color: #031519;
+  border-color: var(--cyan);
   background: var(--cyan);
-  box-shadow: 0 0 8px var(--cyan);
+  box-shadow: 0 0 14px rgba(75, 216, 221, 0.55);
 }
 .display-footer__event,
 .display-footer__forecast {
