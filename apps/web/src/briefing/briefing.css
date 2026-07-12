@@ -1583,9 +1583,9 @@
   left: 6%;
   color: var(--cyan);
 }
-.briefing-contest__asset.is-amber {
+.briefing-contest__asset.is-violet {
   right: 6%;
-  color: var(--amber);
+  color: #9f8bff;
 }
 .briefing-contest__asset img {
   display: block;
@@ -1595,8 +1595,16 @@
   filter: drop-shadow(0 9px 6px #000);
 }
 .briefing-contest__asset b {
+  display: block;
   font: 600 16px var(--font-display);
   letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.briefing-contest__asset small {
+  display: block;
+  margin-top: 5px;
+  color: var(--paper-muted);
+  font: 500 9px var(--font-mono);
   text-transform: uppercase;
 }
 .briefing-contest__force {
@@ -1628,12 +1636,12 @@
 }
 .briefing-contest__force strong {
   grid-column: 1 / -1;
-  color: var(--danger);
+  color: var(--success);
   font: 600 8px var(--font-mono);
 }
 .briefing-contest__tools {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 7px;
   margin-top: 10px;
 }

@@ -521,30 +521,32 @@ function ContestVisual() {
   return (
     <div className="briefing-visual briefing-contest" aria-hidden="true">
       <div className="briefing-contest__arena">
-        <span className="briefing-contest__sector">Sector 09</span>
+        <span className="briefing-contest__sector">
+          Sector 09 · both submarines are really here
+        </span>
         <div className="briefing-contest__asset is-cyan">
           <img src="/sprites/submarine-dir00.webp" alt="" />
-          <b>Hunt</b>
+          <b>Cyan · Hunt Violet</b>
+          <small>1 base + 2 Signal</small>
         </div>
-        <div className="briefing-contest__asset is-amber">
-          <img src="/sprites/ark-dir00.webp" alt="" />
-          <b>Screen</b>
+        <div className="briefing-contest__asset is-violet">
+          <img src="/sprites/submarine-dir00.webp" alt="" />
+          <b>Violet · Screen Cyan</b>
+          <small>1 base + 1 Screen</small>
         </div>
         <div className="briefing-contest__force">
           <small>FORCE</small>
           <b>3</b>
           <i>vs</i>
-          <b>3</b>
-          <strong>TIE · EXPOSED</strong>
+          <b>2</b>
+          <strong>CYAN WINS BY 1</strong>
         </div>
       </div>
       <div className="briefing-contest__tools">
         {[
-          ["Hunt", "sub"],
-          ["Raid", "platform"],
-          ["Jam", "module"],
-          ["Screen", "protect"],
-          ["Deploy", "trap"],
+          ["Hit", "Violet loses 1 Integrity"],
+          ["Retreat", "Violet moves one location away"],
+          ["Miss?", "No fight; Cyan still spends Signal"],
         ].map(([name, detail]) => (
           <span key={name}>
             <b>{name}</b>

@@ -91,7 +91,7 @@ test.describe("host-led crew briefing", () => {
           className: "is-platform",
         },
         {
-          slide: 9,
+          slide: 14,
           title: "Devices shape what rivals know and where they dare to move.",
           className: "is-devices",
         },

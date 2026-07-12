@@ -74,6 +74,15 @@ describe("crew briefing content", () => {
       dossiers.find((slide) => slide.id === "devices-dossier")!.callout,
     ).toMatch(/Tag tracks.*Spill stops.*Decoy lies/i);
 
+    const contest = BRIEFING_SLIDES.find((slide) => slide.id === "contest")!;
+    expect(BRIEFING_SLIDES.indexOf(contest)).toBe(8);
+    expect(contest.title).toMatch(/only when an attack finds a real target/i);
+    expect(contest.lead).toMatch(/Sector 09.*Hunt.*2 Signal.*Screen/i);
+    expect(contest.callout).toMatch(/Force 3.*Force 2.*loses 1 Integrity/i);
+    expect(contest.speakerNotes.join(" ")).toMatch(
+      /wrong location.*no public fight.*still spends/i,
+    );
+
     const finalSlide = BRIEFING_SLIDES.at(-1)!;
     expect(finalSlide.lead).toMatch(/Round 1 is setup/i);
     expect(finalSlide.lead).not.toMatch(/win in (?:the )?first round/i);
