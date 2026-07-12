@@ -33,29 +33,29 @@ test.describe("host-led crew briefing", () => {
         .click();
       await expect(
         displayPage.getByRole("heading", {
-          name: "You have landed on Neris.",
+          name: "A new ocean world has been detected.",
         }),
       ).toBeVisible();
       await expect(
-        displayPage.getByLabel("Crew briefing slide 1 of 13"),
+        displayPage.getByLabel("Crew briefing slide 1 of 14"),
       ).toBeVisible();
       await expect(
         hostPage.getByRole("heading", {
-          name: "You have landed on Neris.",
+          name: "A new ocean world has been detected.",
         }),
       ).toBeVisible();
 
       await hostPage.getByRole("button", { name: "Next" }).click();
       await expect(
         displayPage.getByRole("heading", {
-          name: "Prove the basin one of three ways.",
+          name: "Four expeditions enter the same basin.",
         }),
       ).toBeVisible();
 
       await displayPage.reload();
       await expect(
         displayPage.getByRole("heading", {
-          name: "Prove the basin one of three ways.",
+          name: "Four expeditions enter the same basin.",
         }),
       ).toBeVisible();
 

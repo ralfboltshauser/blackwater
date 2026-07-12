@@ -21,6 +21,73 @@
   }
 }
 
+.briefing-stage.is-cinematic::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 7, 10, 0.94) 0%,
+      rgba(0, 7, 10, 0.78) 27%,
+      rgba(0, 7, 10, 0.18) 58%,
+      rgba(0, 7, 10, 0.08) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(0, 7, 10, 0.42) 0%,
+      transparent 23%,
+      transparent 70%,
+      rgba(0, 7, 10, 0.72) 100%
+    );
+}
+
+.briefing-stage__cinematic {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  animation: briefing-cinematic-drift 18s var(--ease-in-out) both;
+}
+
+@keyframes briefing-cinematic-drift {
+  from {
+    transform: scale(1.015);
+  }
+  to {
+    transform: scale(1.055);
+  }
+}
+
+.briefing-stage.is-cinematic .briefing-stage__water {
+  display: none;
+}
+
+.briefing-stage.is-cinematic .briefing-stage__body {
+  grid-template-columns: minmax(390px, 0.72fr) minmax(0, 1.28fr);
+}
+
+.briefing-stage.is-cinematic .briefing-stage__copy {
+  align-self: end;
+  max-width: 790px;
+  margin-bottom: clamp(18px, 4vh, 64px);
+  text-shadow: 0 3px 22px rgba(0, 4, 7, 0.94);
+}
+
+.briefing-stage.is-cinematic .briefing-stage__copy h1 {
+  max-width: 12ch;
+  font-size: clamp(54px, 5.7vw, 106px);
+}
+
+.briefing-stage.is-cinematic .briefing-stage__copy > p:last-child {
+  max-width: 39ch;
+  color: #eadbc7;
+}
+
 .briefing-stage__water {
   position: absolute;
   inset: 0;
@@ -1477,6 +1544,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .briefing-stage,
+  .briefing-stage__cinematic,
   .briefing-stage__water::before,
   .briefing-arrival__signal span,
   .briefing-arrival__ark,

@@ -1,7 +1,8 @@
 import { BRIEFING_SLIDE_COUNT } from "@blackwater/protocol";
 
 export type BriefingVisual =
-  | "arrival"
+  | "detection"
+  | "landfall"
   | "charters"
   | "truth"
   | "expedition"
@@ -28,16 +29,31 @@ export interface BriefingSlide {
 
 export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
   {
-    id: "arrival",
-    chapter: "Arrival",
+    id: "detection",
+    chapter: "The signal",
     depth: "core",
-    title: "You have landed on Neris.",
-    lead: "An ocean planet hidden beneath permanent cloud. Your expedition has one short window to understand its newly calm basin.",
-    visual: "arrival",
-    callout: "Build the map. Sell the truth. Reach the deep first.",
+    title: "A new ocean world has been detected.",
+    lead: "Neris was invisible beneath permanent cloud—until one calm basin opened and answered our survey pulse. Four organizations launched before the signal was even confirmed.",
+    visual: "detection",
+    callout: "One world. One brief window. Four expeditions.",
     speakerNotes: [
-      "Everyone leads a civilian research expedition entering the same unexplored basin.",
-      "You cooperate because information and access are scarce. You compete because only complete scientific proof wins.",
+      "Neris is not a settled world or a battlefield. It is a scientific first contact with an ocean nobody understands.",
+      "The permanent storms have opened one basin for only a few hours. Four civilian research organizations reached it at the same time.",
+      "Each player will command one of those expeditions. The colors identify rivals, not fixed teams.",
+    ],
+  },
+  {
+    id: "landfall",
+    chapter: "Landfall",
+    depth: "core",
+    title: "Four expeditions enter the same basin.",
+    lead: "You command one of them. Map what lies below, build lasting research infrastructure, and turn uncertain evidence into a complete scientific claim before a rival does.",
+    visual: "landfall",
+    callout: "Understand Neris first: Network · Discovery · Dominion.",
+    speakerNotes: [
+      "You are not conquering Neris. You are racing to produce the first complete, defensible understanding of its calm basin.",
+      "Everyone needs access, resources, and information, so cooperation is useful. Only complete proof earns a Charter, so every partner remains a rival.",
+      "Your infrastructure persists and your information can be traded, hidden, or falsified. The next slide defines the three exact ways to win.",
     ],
   },
   {

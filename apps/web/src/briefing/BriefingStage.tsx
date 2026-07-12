@@ -8,14 +8,22 @@ export function BriefingStage({ slideIndex }: { slideIndex: number }) {
     Math.min(BRIEFING_SLIDES.length - 1, slideIndex),
   );
   const slide = BRIEFING_SLIDES[safeIndex]!;
+  const cinematic = cinematicVisual(slide.visual);
   return (
     <main
-      className="briefing-stage"
+      className={`briefing-stage ${cinematic ? "is-cinematic" : ""}`}
       data-visual={slide.visual}
       aria-live="polite"
       aria-label={`Crew briefing slide ${safeIndex + 1} of ${BRIEFING_SLIDES.length}`}
     >
       <div className="briefing-stage__water" aria-hidden="true" />
+      {cinematic && (
+        <img
+          className="briefing-stage__cinematic"
+          src={cinematic.src}
+          alt={cinematic.alt}
+        />
+      )}
       <header className="briefing-stage__header">
         <Brand className="briefing-stage__brand" />
         <div className="briefing-stage__chapter">
@@ -35,7 +43,7 @@ export function BriefingStage({ slideIndex }: { slideIndex: number }) {
           <h1>{slide.title}</h1>
           <p>{slide.lead}</p>
         </div>
-        <BriefingVisualView visual={slide.visual} />
+        {!cinematic && <BriefingVisualView visual={slide.visual} />}
       </section>
 
       <footer className="briefing-stage__footer">
@@ -57,10 +65,27 @@ export function BriefingStage({ slideIndex }: { slideIndex: number }) {
   );
 }
 
+function cinematicVisual(visual: BriefingVisual) {
+  if (visual === "detection") {
+    return {
+      src: "/briefing/neris-detected-v1.webp",
+      alt: "Four civilian expedition ships converging on the newly detected ocean planet Neris.",
+    };
+  }
+  if (visual === "landfall") {
+    return {
+      src: "/briefing/neris-landfall-v1.webp",
+      alt: "Four rival research expeditions establishing themselves around the same alien ocean basin.",
+    };
+  }
+  return null;
+}
+
 function BriefingVisualView({ visual }: { visual: BriefingVisual }) {
   switch (visual) {
-    case "arrival":
-      return <ArrivalVisual />;
+    case "detection":
+    case "landfall":
+      return null;
     case "charters":
       return <ChartersVisual />;
     case "truth":
@@ -86,31 +111,6 @@ function BriefingVisualView({ visual }: { visual: BriefingVisual }) {
     case "round":
       return <RoundVisual />;
   }
-}
-
-function ArrivalVisual() {
-  return (
-    <div className="briefing-visual briefing-arrival" aria-hidden="true">
-      <div className="briefing-arrival__planet" />
-      <div className="briefing-arrival__clouds" />
-      <div className="briefing-arrival__signal">
-        <span />
-        <span />
-        <span />
-      </div>
-      <img
-        className="briefing-arrival__ark"
-        src="/sprites/ark-dir00.webp"
-        alt=""
-      />
-      <img
-        className="briefing-arrival__sub"
-        src="/sprites/submarine-dir00.webp"
-        alt=""
-      />
-      <span className="briefing-arrival__label">Neris · Basin 01</span>
-    </div>
-  );
 }
 
 function ChartersVisual() {

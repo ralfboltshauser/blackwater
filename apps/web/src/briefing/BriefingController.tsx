@@ -98,7 +98,7 @@ export function BriefingController({
             private information, Pulses, deals, and conflict.
           </p>
           <div className="host-briefing__facts">
-            <span>13 slides</span>
+            <span>{BRIEFING_SLIDES.length} slides</span>
             <span>Presenter notes</span>
             <span>About 7 minutes</span>
           </div>

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { PROTOCOL_VERSION, RevisionSchema } from "./primitives";
 
 /** Keep this aligned with the authored deck in apps/web/src/briefing/content.ts. */
-export const BRIEFING_SLIDE_COUNT = 13;
+export const BRIEFING_SLIDE_COUNT = 14;
 
 export const BriefingStateSchema = z
   .object({

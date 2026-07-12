@@ -18,6 +18,14 @@ describe("crew briefing content", () => {
   });
 
   it("teaches the implemented Charter requirements and Round-1 setup honestly", () => {
+    const detection = BRIEFING_SLIDES[0]!;
+    const landfall = BRIEFING_SLIDES[1]!;
+    expect(detection.id).toBe("detection");
+    expect(detection.lead).toMatch(/Four organizations/i);
+    expect(landfall.id).toBe("landfall");
+    expect(landfall.speakerNotes.join(" ")).toMatch(/not conquering Neris/i);
+    expect(landfall.callout).toMatch(/Network.*Discovery.*Dominion/i);
+
     const charters = BRIEFING_SLIDES.find((slide) => slide.id === "charters")!;
     expect(charters.speakerNotes.join(" ")).toMatch(
       /exactly four connected active platforms/i,
