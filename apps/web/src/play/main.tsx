@@ -357,6 +357,7 @@ function JoinScreen({
   const [name, setName] = useState(localStorage.getItem(NAME_KEY) ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(externalError);
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   const join = async () => {
     if (room.length !== 6 || !name.trim()) return;
@@ -432,11 +433,17 @@ function JoinScreen({
               inputMode="text"
               autoCapitalize="characters"
               autoComplete="off"
+              enterKeyHint="next"
               value={room}
               onChange={(event) => {
                 const value = normalizeRoom(event.target.value);
                 setRoom(value);
                 onRoomChange(value);
+              }}
+              onKeyDown={(event) => {
+                if (event.key !== "Enter") return;
+                event.preventDefault();
+                nameInputRef.current?.focus();
               }}
               placeholder="ABC234"
             />
@@ -445,6 +452,9 @@ function JoinScreen({
                 setRoom(code);
                 onRoomChange(code);
                 setError(null);
+                window.requestAnimationFrame(() =>
+                  nameInputRef.current?.focus(),
+                );
               }}
             />
           </div>
@@ -452,11 +462,18 @@ function JoinScreen({
         <label className="field-label">
           Your name
           <input
+            ref={nameInputRef}
             className="field"
             maxLength={24}
             autoComplete="nickname"
+            enterKeyHint="done"
             value={name}
             onChange={(event) => setName(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key !== "Enter") return;
+              event.preventDefault();
+              event.currentTarget.blur();
+            }}
             placeholder="What should the crew call you?"
           />
         </label>

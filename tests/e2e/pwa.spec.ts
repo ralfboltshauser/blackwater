@@ -50,6 +50,15 @@ test.describe("installable field console", () => {
     const origin = baseURL ?? "http://127.0.0.1:8796";
 
     await page.goto(origin + "/play");
+    const roomInput = page.getByLabel("Room code");
+    const nameInput = page.getByLabel("Your name");
+    await expect(roomInput).toHaveAttribute("enterkeyhint", "next");
+    await expect(nameInput).toHaveAttribute("enterkeyhint", "done");
+    await roomInput.focus();
+    await roomInput.press("Enter");
+    await expect(nameInput).toBeFocused();
+    await nameInput.press("Enter");
+    await expect(nameInput).not.toBeFocused();
     await page.getByRole("button", { name: "Scan room QR code" }).click();
     const scanner = page.getByRole("dialog", {
       name: "Scan Blackwater room code",
