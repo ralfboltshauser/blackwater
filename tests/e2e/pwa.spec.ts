@@ -227,6 +227,12 @@ test.describe("installable field console", () => {
       await page.getByRole("button", { name: "Join the survey" }).click();
       await expect(page.locator(".lobby-phone")).toBeVisible();
       await page.getByRole("button", { name: "Close calibration" }).click();
+      await expect(page.locator(".lobby-color-picker button")).toHaveCount(6);
+      await page.getByRole("button", { name: "chalk" }).click();
+      await expect(page.locator(".lobby-phone")).toHaveAttribute(
+        "data-seat",
+        "chalk",
+      );
 
       await page.route(
         "**/api/v1/sessions/resume",

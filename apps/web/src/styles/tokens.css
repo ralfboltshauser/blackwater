@@ -34,21 +34,21 @@
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 }
 
-[data-seat="cyan"] {
+:root [data-seat="cyan"] {
   --seat: var(--cyan);
 }
-[data-seat="amber"] {
+:root [data-seat="amber"] {
   --seat: var(--amber);
 }
-[data-seat="violet"] {
+:root [data-seat="violet"] {
   --seat: var(--violet);
 }
-[data-seat="lime"] {
+:root [data-seat="lime"] {
   --seat: var(--lime);
 }
-[data-seat="coral"] {
+:root [data-seat="coral"] {
   --seat: var(--coral);
 }
-[data-seat="chalk"] {
+:root [data-seat="chalk"] {
   --seat: var(--chalk);
 }

@@ -441,6 +441,38 @@ export class MatchActor {
     });
   }
 
+  public setLobbyColor(
+    session: SessionRecord,
+    color: WorkflowState["seats"][number]["color"],
+  ): Promise<LobbySnapshot> {
+    return this.run(() => {
+      this.#assertPlayerSession(session);
+      if (this.#match.lifecycle !== "lobby") throw new Error("Lobby is closed");
+      const workflow = structuredClone(this.#match.workflow);
+      const seat = workflow.seats.find(
+        (candidate) => candidate.seatId === session.seatId,
+      );
+      if (!seat || seat.displayName === null)
+        throw new Error("Seat is missing");
+      if (seat.color === color) return this.lobby();
+
+      const currentOwner = workflow.seats.find(
+        (candidate) => candidate.color === color,
+      );
+      if (currentOwner && currentOwner.displayName !== null) {
+        throw new Error("That expedition color is already claimed");
+      }
+
+      // Open seats do not reserve colors. Swap their placeholder identity so
+      // every workflow color remains unique and the released color is usable.
+      if (currentOwner) currentOwner.color = seat.color;
+      seat.color = color;
+      this.#commitWorkflow(workflow);
+      this.#publish();
+      return this.lobby();
+    });
+  }
+
   public removeLobbyPlayer(
     session: SessionRecord,
     seatId: string,

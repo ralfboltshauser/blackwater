@@ -670,6 +670,81 @@ describe("Blackwater server runtime", () => {
     );
   });
 
+  it("lets players claim any unclaimed expedition color without collisions", async () => {
+    const application = await openApplication(await testConfig());
+    const created = await application.fastify.inject({
+      method: "POST",
+      url: "/api/v1/matches",
+      payload: {
+        protocol: 1,
+        playerCount: 3,
+        botCount: 0,
+        planningSeconds: 60,
+        factionsEnabled: false,
+      },
+    });
+    const room = created.json<{ roomCode: string }>();
+
+    const join = async (displayName: string, clientInstanceId: string) => {
+      const response = await application.fastify.inject({
+        method: "POST",
+        url: `/api/v1/matches/${room.roomCode}/join`,
+        payload: {
+          protocol: 1,
+          roomCode: room.roomCode,
+          displayName,
+          clientInstanceId,
+        },
+      });
+      expect(response.statusCode).toBe(200);
+      return {
+        bootstrap: PlayerSessionBootstrapSchema.parse(response.json()),
+        cookie: cookieFrom(response.headers["set-cookie"]),
+      };
+    };
+    const alice = await join("Alice", "alice-color-phone");
+
+    const choose = (cookie: string, clientInstanceId: string, color: string) =>
+      application.fastify.inject({
+        method: "PATCH",
+        url: `/api/v1/matches/${room.roomCode}/color`,
+        headers: { cookie },
+        payload: { protocol: 1, color, clientInstanceId },
+      });
+
+    const aliceLime = await choose(alice.cookie, "alice-color-phone", "lime");
+    expect(aliceLime.statusCode).toBe(200);
+    expect(
+      aliceLime
+        .json<{ seats: Array<{ seatId: string; color: string }> }>()
+        .seats.find((seat) => seat.seatId === alice.bootstrap.seatId),
+    ).toMatchObject({ color: "lime" });
+
+    const bob = await join("Bob", "bob-color-phone");
+    expect(
+      (await choose(bob.cookie, "bob-color-phone", "cyan")).statusCode,
+    ).toBe(200);
+    const collision = await choose(bob.cookie, "bob-color-phone", "lime");
+    expect(collision.statusCode).toBe(409);
+    expect(collision.json()).toMatchObject({ code: "COLOR_CLAIMED" });
+
+    const swapOpenPlaceholder = await choose(
+      alice.cookie,
+      "alice-color-phone",
+      "violet",
+    );
+    expect(swapOpenPlaceholder.statusCode).toBe(200);
+    const colors = swapOpenPlaceholder
+      .json<{ seats: Array<{ color: string }> }>()
+      .seats.map((seat) => seat.color);
+    expect(new Set(colors).size).toBe(colors.length);
+    expect(colors).toContain("lime");
+
+    expect((await choose("", "intruder-color-phone", "chalk")).statusCode).toBe(
+      401,
+    );
+  });
+
   it("runs a complete one-human expedition with persisted server bots", async () => {
     const config = await testConfig();
     let application = await openApplication(config);

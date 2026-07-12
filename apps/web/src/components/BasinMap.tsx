@@ -44,6 +44,7 @@ type BasinMapProps = {
   compact?: boolean;
   privateView?: boolean;
   interactiveCamera?: boolean;
+  inspectAllSectors?: boolean;
   onSectorSelect?: (sectorId: number) => void;
 };
 
@@ -184,6 +185,7 @@ export function BasinMap({
   compact = false,
   privateView = false,
   interactiveCamera = false,
+  inspectAllSectors = false,
   onSectorSelect,
 }: BasinMapProps) {
   const sectorsById = useMemo(
@@ -740,6 +742,7 @@ export function BasinMap({
               const p = toCanvas(sector);
               const selected = selectedSectorId === sector.id;
               const reachable = reachableSectorIds.includes(sector.id);
+              const selectable = inspectAllSectors || reachable;
               return (
                 <g
                   key={sector.id}
@@ -783,7 +786,7 @@ export function BasinMap({
                       <button
                         type="button"
                         className="basin-map__sector-hit"
-                        disabled={!reachable}
+                        disabled={!selectable}
                         onClick={() => onSectorSelect(sector.id)}
                         aria-pressed={selected}
                         aria-label={`Sector ${sector.id}, ${sector.name}${sector.deepSite ? ", Deep Site" : ""}${sector.dominionObjective ? ", Dominion objective" : ""}`}

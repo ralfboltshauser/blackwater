@@ -19,6 +19,7 @@ import {
   CreateLobbyRequestSchema,
   JoinLobbyRequestSchema,
   RemoveLobbyPlayerRequestSchema,
+  SetLobbyColorRequestSchema,
   PROTOCOL_VERSION,
   ResumeSessionRequestSchema,
   parseCommandMessage,
@@ -649,6 +650,23 @@ function registerApiRoutes(
     },
   );
 
+  fastify.patch<{ Params: { roomCode: string } }>(
+    "/api/v1/matches/:roomCode/color",
+    async (request, reply) => {
+      const input = SetLobbyColorRequestSchema.parse(request.body);
+      const actor = manager.byRoom(request.params.roomCode);
+      const session = requestSession(request, store);
+      if (!actor) return reply.code(404).send({ error: "Room not found" });
+      if (
+        !session ||
+        session.role !== "player" ||
+        session.matchId !== actor.matchId
+      )
+        return reply.code(401).send({ error: "Player session required" });
+      return actor.setLobbyColor(session, input.color);
+    },
+  );
+
   fastify.post("/api/v1/sessions/resume", async (request, reply) => {
     const body = ResumeSessionRequestSchema.parse(request.body);
     const session = requestSession(request, store);
@@ -935,6 +953,8 @@ function classifyExpectedError(
     return { status: 409, code: "LOBBY_NOT_READY" };
   if (/bot count must leave room/i.test(message))
     return { status: 409, code: "BOT_COUNT_CONFLICT" };
+  if (/color is already claimed/i.test(message))
+    return { status: 409, code: "COLOR_CLAIMED" };
   if (/AI seats use the AI controls|seat is open/i.test(message))
     return { status: 409, code: "SEAT_NOT_REMOVABLE" };
   if (/briefing/i.test(message)) return { status: 409, code: "BRIEFING_STATE" };

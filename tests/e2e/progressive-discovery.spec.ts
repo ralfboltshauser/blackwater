@@ -122,6 +122,20 @@ test.describe("progressive phone discovery", () => {
 
       const map = phone.locator(".private-map .basin-map");
       await expect(map).toHaveAttribute("role", "region");
+      await phone
+        .locator(".private-map .basin-map__sector-hit")
+        .first()
+        .dispatchEvent("click");
+      const sectorDossier = phone.getByRole("dialog", {
+        name: /Shelf Break/,
+      });
+      await expect(sectorDossier).toBeVisible();
+      await expect(sectorDossier).toContainText("Public right now");
+      await expect(sectorDossier).toContainText("What could be hidden");
+      await expect(sectorDossier).toContainText(
+        "an empty public list never proves the sector is empty",
+      );
+      await phone.getByRole("button", { name: "Close sector details" }).click();
       await expect(
         phone.getByRole("button", { name: "Zoom in" }),
       ).toBeVisible();
@@ -188,7 +202,7 @@ test.describe("progressive phone discovery", () => {
       const mapBounds = await map.boundingBox();
       expect(mapBounds).not.toBeNull();
       const enabledTargets = map.locator(
-        ".basin-map__sector-hit:not(:disabled)",
+        ".basin-map__node.is-reachable .basin-map__sector-hit",
       );
       let target = enabledTargets.first();
       for (let index = 0; index < (await enabledTargets.count()); index += 1) {
@@ -205,7 +219,10 @@ test.describe("progressive phone discovery", () => {
           break;
         }
       }
+      await phone.waitForTimeout(450);
       await target.click();
+      await expect(phone.getByRole("dialog")).toBeVisible();
+      await phone.getByRole("button", { name: "Close sector details" }).click();
       await expect(map.locator(".basin-map__node.is-selected")).toHaveCount(1);
       const selectedBeforeDrag = await map
         .locator(".basin-map__node.is-selected")

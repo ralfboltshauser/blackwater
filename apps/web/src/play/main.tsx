@@ -35,6 +35,7 @@ import {
 } from "../shared/feedback";
 import { getClientInstanceId, nextCommandId } from "../shared/identity";
 import { playerProjectionToBasin } from "../shared/projection";
+import type { BasinView } from "../shared/view-model";
 import { parseDealIds, specimenDestinationIssue, toggleLimited } from "./deals";
 import { QrRoomScanner } from "./QrRoomScanner";
 import {
@@ -79,6 +80,14 @@ const NAME_KEY = "blackwater.player-name";
 const SETTINGS_KEY = "blackwater.player-settings";
 const AUTO_RESUME_KEY = "blackwater.player-auto-resume";
 const SUPPRESS_RESUME_KEY = "blackwater.player-suppress-resume";
+const LOBBY_COLORS = [
+  "cyan",
+  "amber",
+  "violet",
+  "lime",
+  "coral",
+  "chalk",
+] as const;
 
 const phaseNames: Record<string, string> = {
   lobby: "Crew Assembly",
@@ -530,6 +539,7 @@ function AuthenticatedPlayer({
   );
   const [calibrationStep, setCalibrationStep] = useState(0);
   const [readyBusy, setReadyBusy] = useState(false);
+  const [colorBusy, setColorBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -603,6 +613,33 @@ function AuthenticatedPlayer({
     }
   };
 
+  const setColor = async (color: (typeof LOBBY_COLORS)[number]) => {
+    setColorBusy(true);
+    setError(null);
+    try {
+      const snapshot = await apiFetch<LobbySnapshot>(
+        `/api/v1/matches/${bootstrap.roomCode}/color`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            protocol: PROTOCOL_VERSION,
+            color,
+            clientInstanceId: bootstrap.clientInstanceId,
+          }),
+        },
+      );
+      setLobby(snapshot);
+      playFeedback("select");
+    } catch (reason) {
+      playFeedback("warning");
+      setError(
+        reason instanceof Error ? reason.message : "Color did not save.",
+      );
+    } finally {
+      setColorBusy(false);
+    }
+  };
+
   const finishCalibration = () => {
     sessionStorage.setItem(
       `blackwater.calibrated.${bootstrap.matchId}`,
@@ -623,9 +660,11 @@ function AuthenticatedPlayer({
         lobby={lobby}
         ownReady={Boolean(ownSeat?.ready)}
         busy={readyBusy}
+        colorBusy={colorBusy}
         error={error}
         connected={realtime.connected}
         onReady={setReady}
+        onColor={setColor}
         onCalibration={() => setCalibrationOpen(true)}
         onLeave={onLeave}
       >
@@ -692,9 +731,11 @@ function LobbyScreen({
   lobby,
   ownReady,
   busy,
+  colorBusy,
   error,
   connected,
   onReady,
+  onColor,
   onCalibration,
   onLeave,
   children,
@@ -703,9 +744,11 @@ function LobbyScreen({
   lobby: LobbySnapshot;
   ownReady: boolean;
   busy: boolean;
+  colorBusy: boolean;
   error: string | null;
   connected: boolean;
   onReady: (ready: boolean) => void;
+  onColor: (color: (typeof LOBBY_COLORS)[number]) => void;
   onCalibration: () => void;
   onLeave: () => void;
   children?: ReactNode;
@@ -739,6 +782,43 @@ function LobbyScreen({
           </small>
         </div>
         <strong>{lobby.roomCode}</strong>
+      </section>
+      <section
+        className="lobby-phone__colors panel"
+        aria-labelledby="expedition-color-title"
+      >
+        <div>
+          <p className="eyebrow">Expedition signal</p>
+          <h2 id="expedition-color-title">Choose your color</h2>
+        </div>
+        <div className="lobby-color-picker">
+          {LOBBY_COLORS.map((color) => {
+            const claimedBy = lobby.seats.find(
+              (seat) => seat.claimed && seat.color === color,
+            );
+            const selected = own?.color === color;
+            const unavailable = Boolean(claimedBy && !selected);
+            return (
+              <button
+                key={color}
+                type="button"
+                data-seat={color}
+                className={selected ? "is-selected" : ""}
+                disabled={colorBusy || unavailable}
+                aria-label={
+                  unavailable
+                    ? `${color}, claimed by ${claimedBy?.displayName}`
+                    : `${color}${selected ? ", selected" : ""}`
+                }
+                aria-pressed={selected}
+                onClick={() => onColor(color)}
+              >
+                <span aria-hidden="true" />
+                <small>{color}</small>
+              </button>
+            );
+          })}
+        </div>
       </section>
       <section className="lobby-phone__seats">
         {lobby.seats.map((seat, index) => (
@@ -1202,6 +1282,184 @@ function FieldConsole({
   );
 }
 
+function InspectableBasinMap({
+  basin,
+  selectedSectorId = null,
+  reachableSectorIds = [],
+  focusSectorId = null,
+  compact = false,
+  privateView = false,
+  interactiveCamera = false,
+  onSectorSelect,
+}: {
+  basin: BasinView;
+  selectedSectorId?: number | null;
+  reachableSectorIds?: number[];
+  focusSectorId?: number | null;
+  compact?: boolean;
+  privateView?: boolean;
+  interactiveCamera?: boolean;
+  onSectorSelect?: (sectorId: number) => void;
+}) {
+  const [inspectedSectorId, setInspectedSectorId] = useState<number | null>(
+    null,
+  );
+  const inspectedSector = basin.sectors.find(
+    (sector) => sector.id === inspectedSectorId,
+  );
+
+  return (
+    <>
+      <BasinMap
+        basin={basin}
+        compact={compact}
+        privateView={privateView}
+        interactiveCamera={interactiveCamera}
+        selectedSectorId={inspectedSectorId ?? selectedSectorId}
+        reachableSectorIds={reachableSectorIds}
+        focusSectorId={focusSectorId}
+        inspectAllSectors
+        onSectorSelect={(sectorId) => {
+          setInspectedSectorId(sectorId);
+          onSectorSelect?.(sectorId);
+          playFeedback("select");
+        }}
+      />
+      {inspectedSector && (
+        <SectorDossier
+          basin={basin}
+          sectorId={inspectedSector.id}
+          onClose={() => setInspectedSectorId(null)}
+        />
+      )}
+    </>
+  );
+}
+
+function SectorDossier({
+  basin,
+  sectorId,
+  onClose,
+}: {
+  basin: BasinView;
+  sectorId: number;
+  onClose: () => void;
+}) {
+  const sector = basin.sectors.find((candidate) => candidate.id === sectorId)!;
+  const neighbours = basin.connections
+    .flatMap(([a, b]) => (a === sectorId ? [b] : b === sectorId ? [a] : []))
+    .sort((a, b) => a - b);
+  const publicEntities = basin.entities.filter(
+    (entity) => entity.sectorId === sectorId && !entity.private,
+  );
+  const evidence = basin.evidence.filter(
+    (item) =>
+      item.sectorId === sectorId ||
+      item.fromSectorId === sectorId ||
+      item.toSectorId === sectorId,
+  );
+  const visibleFacts = [
+    ...publicEntities.map((entity) =>
+      entity.kind === "site"
+        ? (entity.label ?? "Deep Site marker")
+        : (entity.label ?? entity.kind),
+    ),
+    ...evidence.map((item) => {
+      if (item.kind === "identified") return "Identified expedition contact";
+      if (item.kind === "contact") return "Unidentified sonar contact";
+      if (item.kind === "wake") return "Public movement wake";
+      return "Signal disturbance or jam evidence";
+    }),
+  ];
+  const regionName =
+    sector.region === "blackwater" ? "deep water" : sector.region;
+
+  return (
+    <div className="sector-dossier" role="presentation" onClick={onClose}>
+      <article
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sector-dossier-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <header>
+          <div className="sector-dossier__code">
+            S{String(sector.id).padStart(2, "0")}
+          </div>
+          <div>
+            <p className="eyebrow">Public sector file · {regionName}</p>
+            <h2 id="sector-dossier-title">{sector.name}</h2>
+          </div>
+          <button
+            type="button"
+            className="icon-button"
+            aria-label="Close sector details"
+            onClick={onClose}
+          >
+            ×
+          </button>
+        </header>
+
+        <div className="sector-dossier__grid">
+          <section>
+            <h3>Public right now</h3>
+            {visibleFacts.length ? (
+              <ul>
+                {[...new Set(visibleFacts)].map((fact) => (
+                  <li key={fact}>{fact}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>
+                No Ark, platform, salvage, or public evidence is recorded here.
+              </p>
+            )}
+            <small>
+              Connected to {neighbours.map((id) => `S${id}`).join(", ")}.
+            </small>
+          </section>
+
+          <section>
+            <h3>What this location means</h3>
+            <ul>
+              <li>
+                {sector.region === "shelf"
+                  ? "Shelf is one of the three regions used by the Network mission."
+                  : sector.region === "rift"
+                    ? "Rift is one of the three regions used by the Network mission."
+                    : "Deep water is one of the three regions used by the Network mission."}
+              </li>
+              <li>Region depth does not change the basic movement cost.</li>
+              {sector.deepSite && (
+                <li>
+                  Deep Site: specimens can appear here and a submarine can
+                  Harvest one when the public marker says it is available.
+                </li>
+              )}
+              {sector.dominionObjective && (
+                <li>
+                  Dominion objective: sole active control at the Charter Check
+                  counts; a rival presence contests it.
+                </li>
+              )}
+            </ul>
+          </section>
+
+          <section className="sector-dossier__unknown">
+            <h3>What could be hidden</h3>
+            <p>
+              A submarine, snare, or decoy may be here without appearing
+              publicly. Survey and later public evidence can narrow that
+              uncertainty—but an empty public list never proves the sector is
+              empty.
+            </p>
+          </section>
+        </div>
+      </article>
+    </div>
+  );
+}
+
 function PlanningWorkspace({
   projection,
   connected,
@@ -1534,7 +1792,7 @@ function PlanningWorkspace({
     return (
       <section className="locked-plan">
         <div className="locked-plan__map panel">
-          <BasinMap
+          <InspectableBasinMap
             basin={basin}
             compact
             privateView
@@ -1589,7 +1847,7 @@ function PlanningWorkspace({
           ))}
         </div>
         <div className="private-map__canvas">
-          <BasinMap
+          <InspectableBasinMap
             basin={basin}
             compact
             privateView
@@ -1603,7 +1861,6 @@ function PlanningWorkspace({
                   ...current,
                   targetSectorId: sectorId,
                 }));
-                playFeedback("select");
               }
             }}
           />
@@ -3775,7 +4032,7 @@ function ResolutionWorkspace({ projection }: { projection: PlayerProjection }) {
   return (
     <section className="resolution-workspace">
       <div className="resolution-map panel">
-        <BasinMap
+        <InspectableBasinMap
           basin={basin}
           privateView
           interactiveCamera

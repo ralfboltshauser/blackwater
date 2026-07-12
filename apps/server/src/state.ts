@@ -187,6 +187,14 @@ export const WorkflowStateSchema = z
   .strict()
   .superRefine((workflow, context) => {
     const seatIds = new Set(workflow.seats.map((seat) => seat.seatId));
+    const colors = workflow.seats.map((seat) => seat.color);
+    if (new Set(colors).size !== colors.length) {
+      context.addIssue({
+        code: "custom",
+        path: ["seats"],
+        message: "Expedition colors must be unique",
+      });
+    }
     const botSeatIds = Object.keys(workflow.bots);
     if (botSeatIds.length >= workflow.playerCount) {
       context.addIssue({

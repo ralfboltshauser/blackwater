@@ -250,10 +250,16 @@ test.describe("one-screen game night", () => {
       diagnosticPages.push({ label: "display", page: displayPage });
       await displayPage.goto(`${origin}/display/${roomCode}`);
       await expect(
-        displayPage.getByRole("heading", { name: "Opening the basin" }),
+        displayPage.getByRole("heading", { name: "Expeditions assembling" }),
       ).toBeVisible();
-      await expect(displayPage.locator(".display-wait")).toContainText(
-        `Room ${roomCode}`,
+      await expect(
+        displayPage.locator(".display-lobby__expeditions article"),
+      ).toHaveCount(3);
+      await expect(displayPage.locator(".display-lobby__footer")).toContainText(
+        roomCode,
+      );
+      await expect(displayPage.locator(".display-lobby__footer")).toContainText(
+        "3 / 3 expeditions arrived",
       );
       await expect(
         hostPage.locator(".health-row", { hasText: "Public display" }),
@@ -338,7 +344,7 @@ test.describe("one-screen game night", () => {
       ).toContainText("Pulse 3", { timeout: 8_000 });
       await expect(
         displayPage.locator(".pulse-track .is-active"),
-      ).toContainText("Charter check", { timeout: 8_000 });
+      ).toContainText("Charter", { timeout: 8_000 });
       await expect(metric(displayPage, "Round")).toHaveText("2 / 7", {
         timeout: 8_000,
       });

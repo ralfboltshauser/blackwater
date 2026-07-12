@@ -1,11 +1,11 @@
 import { createRoot } from "react-dom/client";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import type { PublicProjection } from "@blackwater/protocol";
+import type { LobbySnapshot, PublicProjection } from "@blackwater/protocol";
 import { BriefingStage } from "../briefing/BriefingStage";
 import { BasinMap } from "../components/BasinMap";
 import { AiBadge } from "../shared/AiBadge";
 import { Brand } from "../shared/Brand";
-import { useRealtimeProjection } from "../shared/api";
+import { apiFetch, useRealtimeProjection } from "../shared/api";
 import { formatClock, roomFromLocation } from "../shared/bootstrap";
 import {
   isAudioReady,
@@ -42,6 +42,7 @@ function DisplayApp() {
   const [roomCode, setRoomCode] = useState(roomFromLocation());
   const [now, setNow] = useState(Date.now());
   const realtime = useRealtimeProjection<PublicProjection>("public", roomCode);
+  const [lobby, setLobby] = useState<LobbySnapshot | null>(null);
   const briefingActive = realtime.briefing.active;
   const lastBriefingSlide = useRef(realtime.briefing.slideIndex);
   const wasBriefingActive = useRef(briefingActive);
@@ -70,6 +71,27 @@ function DisplayApp() {
     const timer = window.setInterval(() => setNow(Date.now()), 250);
     return () => window.clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    if (!roomCode || realtime.projection) return;
+    let active = true;
+    const loadLobby = async () => {
+      try {
+        const snapshot = await apiFetch<LobbySnapshot>(
+          `/api/v1/matches/${roomCode}/lobby`,
+        );
+        if (active) setLobby(snapshot);
+      } catch {
+        // Realtime connection errors remain the authoritative error surface.
+      }
+    };
+    void loadLobby();
+    const timer = window.setInterval(loadLobby, 1_000);
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+    };
+  }, [roomCode, realtime.projection]);
 
   const musicScene = roomCode
     ? briefingActive || !realtime.projection
@@ -146,26 +168,32 @@ function DisplayApp() {
   if (!realtime.projection) {
     return (
       <>
-        <main className="display-wait">
-          <Brand className="display-wait__brand" />
-          <div className="sonar-loader" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </div>
-          <h1>{realtime.error ? "Signal unavailable" : "Opening the basin"}</h1>
-          <p>
-            {realtime.error ?? `Room ${roomCode} · waiting for public state`}
-          </p>
-          {realtime.error && (
-            <button
-              className="button-secondary"
-              onClick={() => setRoomCode(null)}
-            >
-              Change room
-            </button>
-          )}
-        </main>
+        {lobby?.lifecycle === "lobby" ? (
+          <LobbyDisplay lobby={lobby} connected={realtime.connected} />
+        ) : (
+          <main className="display-wait">
+            <Brand className="display-wait__brand" />
+            <div className="sonar-loader" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </div>
+            <h1>
+              {realtime.error ? "Signal unavailable" : "Opening the ocean map"}
+            </h1>
+            <p>
+              {realtime.error ?? `Room ${roomCode} · establishing public state`}
+            </p>
+            {realtime.error && (
+              <button
+                className="button-secondary"
+                onClick={() => setRoomCode(null)}
+              >
+                Change room
+              </button>
+            )}
+          </main>
+        )}
         {briefingExiting && (
           <BriefingExit slideIndex={lastBriefingSlide.current} />
         )}
@@ -385,6 +413,95 @@ function DisplayApp() {
       )}
       <DisplayAudioControl />
     </>
+  );
+}
+
+function LobbyDisplay({
+  lobby,
+  connected,
+}: {
+  lobby: LobbySnapshot;
+  connected: boolean;
+}) {
+  const expeditions = lobby.seats.filter((seat) => seat.claimed);
+  const readyCount = expeditions.filter((seat) => seat.ready).length;
+  return (
+    <main className="display-lobby">
+      <header className="display-lobby__header">
+        <Brand className="display-lobby__brand" />
+        <div className={`display-lobby__signal ${connected ? "is-live" : ""}`}>
+          <span aria-hidden="true" />
+          {connected ? "Arrival channel live" : "Restoring arrival channel"}
+        </div>
+      </header>
+
+      <section className="display-lobby__hero">
+        <div className="display-lobby__sonar" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+          <b />
+        </div>
+        <p className="eyebrow">Neris arrival window · crew assembly</p>
+        <h1>Expeditions assembling</h1>
+        <p>
+          Each color is one rival organization. Phones can choose any unclaimed
+          signal color before launch.
+        </p>
+      </section>
+
+      <section
+        className="display-lobby__expeditions"
+        aria-label="Joined expeditions"
+      >
+        {expeditions.length === 0 ? (
+          <div className="display-lobby__empty">
+            <div className="sonar-loader" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </div>
+            <strong>Waiting for the first expedition</strong>
+          </div>
+        ) : (
+          expeditions.map((seat, index) => (
+            <article key={seat.seatId} data-seat={seat.color}>
+              <div className="display-lobby__emblem">
+                <span>{index + 1}</span>
+              </div>
+              <div>
+                <small>Expedition {String(index + 1).padStart(2, "0")}</small>
+                <h2>{seat.displayName}</h2>
+                <p>{seat.color} signal</p>
+              </div>
+              {seat.controller === "bot" ? (
+                <AiBadge strategy={seat.botStrategy} />
+              ) : (
+                <span
+                  className={`display-lobby__status is-${seat.ready ? "ready" : seat.presence}`}
+                >
+                  {seat.ready ? "Ready" : seat.presence}
+                </span>
+              )}
+            </article>
+          ))
+        )}
+      </section>
+
+      <footer className="display-lobby__footer">
+        <div>
+          <small>Join room</small>
+          <strong>{lobby.roomCode}</strong>
+        </div>
+        <p>
+          <b>{expeditions.length}</b> / {lobby.playerCount} expeditions arrived
+        </p>
+        <p>
+          <b>{readyCount}</b> / {lobby.playerCount} launch ready
+        </p>
+        <span>{lobby.playerCount - expeditions.length} signals open</span>
+      </footer>
+    </main>
   );
 }
 
