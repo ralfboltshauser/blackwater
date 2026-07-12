@@ -100,7 +100,7 @@ export function BriefingController({
           <div className="host-briefing__facts">
             <span>{BRIEFING_SLIDES.length} slides</span>
             <span>Presenter notes</span>
-            <span>About 7 minutes</span>
+            <span>About 9 minutes</span>
           </div>
           <button
             className="button-primary host-briefing__open"

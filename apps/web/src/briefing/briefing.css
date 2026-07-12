@@ -748,6 +748,281 @@
 }
 
 /* Expedition */
+/* Asset dossiers */
+.briefing-dossier {
+  --dossier-accent: var(--cyan);
+  display: grid;
+  grid-template:
+    "header header" 52px
+    "subject capabilities" minmax(0, 1fr)
+    "telemetry telemetry" 48px /
+    minmax(0, 1.08fr) minmax(290px, 0.92fr);
+  background:
+    linear-gradient(90deg, rgba(75, 216, 221, 0.045) 1px, transparent 1px),
+    linear-gradient(rgba(75, 216, 221, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 30% 47%, #0b4b52, #03171b 58%, #010b0e);
+  background-size:
+    42px 42px,
+    42px 42px,
+    auto;
+}
+
+.briefing-dossier.is-submarine {
+  --dossier-accent: #9f8bff;
+  background:
+    linear-gradient(90deg, rgba(159, 139, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(rgba(159, 139, 255, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 30% 47%, #263e55, #071b25 58%, #010b0e);
+  background-size:
+    42px 42px,
+    42px 42px,
+    auto;
+}
+
+.briefing-dossier.is-platform {
+  --dossier-accent: var(--amber);
+  background:
+    linear-gradient(90deg, rgba(240, 179, 82, 0.045) 1px, transparent 1px),
+    linear-gradient(rgba(240, 179, 82, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 30% 47%, #514326, #201b12 58%, #0c0904);
+  background-size:
+    42px 42px,
+    42px 42px,
+    auto;
+}
+
+.briefing-dossier.is-devices {
+  --dossier-accent: var(--coral);
+  background:
+    linear-gradient(90deg, rgba(238, 112, 100, 0.045) 1px, transparent 1px),
+    linear-gradient(rgba(238, 112, 100, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 30% 47%, #4d2e31, #211317 58%, #0d0709);
+  background-size:
+    42px 42px,
+    42px 42px,
+    auto;
+}
+
+.briefing-dossier__header {
+  grid-area: header;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  color: var(--paper-muted);
+  background: rgba(1, 10, 13, 0.72);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--dossier-accent), transparent 62%);
+  font: 600 10px var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.briefing-dossier__header b {
+  color: var(--dossier-accent);
+}
+
+.briefing-dossier__subject {
+  position: relative;
+  grid-area: subject;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-right: 1px solid
+    color-mix(in srgb, var(--dossier-accent), transparent 78%);
+}
+
+.briefing-dossier__subject::before {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 50%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--dossier-accent),
+    transparent
+  );
+  box-shadow: 0 0 18px var(--dossier-accent);
+  opacity: 0.32;
+}
+
+.briefing-dossier__reticle {
+  position: absolute;
+  width: min(72%, 390px);
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--dossier-accent), transparent 75%);
+  border-radius: 50%;
+}
+
+.briefing-dossier__reticle::before,
+.briefing-dossier__reticle::after,
+.briefing-dossier__reticle i {
+  content: "";
+  position: absolute;
+  border: 1px solid color-mix(in srgb, var(--dossier-accent), transparent 82%);
+  border-radius: 50%;
+}
+
+.briefing-dossier__reticle::before {
+  inset: 14%;
+}
+
+.briefing-dossier__reticle::after {
+  inset: 32%;
+}
+
+.briefing-dossier__reticle i:nth-child(1) {
+  left: 50%;
+  top: -6px;
+  width: 11px;
+  height: 11px;
+  background: var(--dossier-accent);
+  box-shadow: 0 0 14px var(--dossier-accent);
+}
+
+.briefing-dossier__reticle i:nth-child(2) {
+  inset: -8%;
+  border-style: dashed;
+  animation: briefing-reticle-spin 22s linear infinite;
+}
+
+.briefing-dossier__reticle i:nth-child(3) {
+  inset: 45%;
+  background: var(--dossier-accent);
+  box-shadow: 0 0 25px var(--dossier-accent);
+}
+
+@keyframes briefing-reticle-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.briefing-dossier__sprites {
+  position: relative;
+  z-index: 1;
+  width: 88%;
+  height: 72%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3%;
+}
+
+.briefing-dossier__sprites img {
+  width: 84%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 24px 18px rgba(0, 0, 0, 0.72))
+    drop-shadow(
+      0 0 17px color-mix(in srgb, var(--dossier-accent), transparent 68%)
+    );
+  animation: briefing-float 4s var(--ease-in-out) infinite alternate;
+}
+
+.briefing-dossier.is-submarine .briefing-dossier__sprites img {
+  width: 72%;
+}
+
+.briefing-dossier.is-platform .briefing-dossier__sprites img {
+  width: 64%;
+}
+
+.briefing-dossier.is-devices .briefing-dossier__sprites img {
+  width: 44%;
+}
+
+.briefing-dossier.is-devices .briefing-dossier__sprites img:last-child {
+  animation-delay: -2s;
+}
+
+.briefing-dossier__subject > span {
+  position: absolute;
+  left: 18px;
+  bottom: 15px;
+  color: color-mix(in srgb, var(--dossier-accent), var(--paper) 25%);
+  font: 600 9px var(--font-mono);
+  letter-spacing: 0.11em;
+}
+
+.briefing-dossier__capabilities {
+  grid-area: capabilities;
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  gap: 10px;
+  padding: clamp(18px, 2.5vw, 38px);
+}
+
+.briefing-dossier__capabilities > small {
+  margin-bottom: 4px;
+  color: var(--dossier-accent);
+  font: 600 10px var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.briefing-dossier__capabilities article {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 13px;
+  background: rgba(1, 11, 14, 0.68);
+  border: 1px solid color-mix(in srgb, var(--dossier-accent), transparent 78%);
+  border-radius: 4px;
+}
+
+.briefing-dossier__capabilities article > span {
+  color: var(--dossier-accent);
+  font: 600 17px var(--font-display);
+}
+
+.briefing-dossier__capabilities h2,
+.briefing-dossier__capabilities p {
+  margin: 0;
+}
+
+.briefing-dossier__capabilities h2 {
+  color: var(--paper);
+  font: 600 14px var(--font-display);
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.briefing-dossier__capabilities p {
+  margin-top: 4px;
+  color: var(--paper-muted);
+  font: 10px/1.35 var(--font-mono);
+}
+
+.briefing-dossier__telemetry {
+  grid-area: telemetry;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  background: rgba(1, 10, 13, 0.86);
+  border-top: 1px solid
+    color-mix(in srgb, var(--dossier-accent), transparent 70%);
+}
+
+.briefing-dossier__telemetry span {
+  color: var(--paper);
+  font: 600 9px var(--font-mono);
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.briefing-dossier__telemetry span + span {
+  border-left: 1px solid
+    color-mix(in srgb, var(--dossier-accent), transparent 78%);
+}
+
 .briefing-expedition {
   display: grid;
   grid-template-rows: 1fr auto;
@@ -1664,6 +1939,8 @@
   .briefing-stage,
   .briefing-stage__cinematic,
   .briefing-stage__water::before,
+  .briefing-dossier__reticle i:nth-child(2),
+  .briefing-dossier__sprites img,
   .briefing-arrival__signal span,
   .briefing-arrival__ark,
   .briefing-arrival__sub {

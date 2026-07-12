@@ -41,6 +41,25 @@ describe("crew briefing content", () => {
       /uniquely controlling every marked Dominion/i,
     );
 
+    const dossiers = BRIEFING_SLIDES.filter((slide) =>
+      slide.id.endsWith("-dossier"),
+    );
+    expect(dossiers.map((slide) => slide.id)).toEqual([
+      "ark-dossier",
+      "submarine-dossier",
+      "platform-dossier",
+      "devices-dossier",
+    ]);
+    expect(dossiers.find((slide) => slide.id === "ark-dossier")!.lead).toMatch(
+      /build platforms.*second submarine.*repair/i,
+    );
+    expect(
+      dossiers.find((slide) => slide.id === "platform-dossier")!.callout,
+    ).toMatch(/never an extra Operation/i);
+    expect(
+      dossiers.find((slide) => slide.id === "devices-dossier")!.callout,
+    ).toMatch(/Tag tracks.*Spill stops.*Decoy lies/i);
+
     const finalSlide = BRIEFING_SLIDES.at(-1)!;
     expect(finalSlide.lead).toMatch(/Round 1 is setup/i);
     expect(finalSlide.lead).not.toMatch(/win in (?:the )?first round/i);

@@ -90,8 +90,14 @@ function BriefingVisualView({ visual }: { visual: BriefingVisual }) {
       return <ChartersVisual />;
     case "truth":
       return <TruthVisual />;
-    case "expedition":
-      return <ExpeditionVisual />;
+    case "ark-dossier":
+      return <AssetDossierVisual kind="ark" />;
+    case "submarine-dossier":
+      return <AssetDossierVisual kind="submarine" />;
+    case "platform-dossier":
+      return <AssetDossierVisual kind="platform" />;
+    case "devices-dossier":
+      return <AssetDossierVisual kind="devices" />;
     case "basin":
       return <BasinVisual />;
     case "program":
@@ -185,37 +191,97 @@ function TruthVisual() {
   );
 }
 
-function ExpeditionVisual() {
-  const assets = [
-    ["ark-dir00.webp", "Ark", "Public · mobile · uncapturable"],
-    ["submarine-dir00.webp", "Submarine", "Hidden · cargo · Silence"],
-    ["platform.webp", "Platform", "Public · persistent · productive"],
-    ["snare-armed.webp", "Devices", "Hidden snares and decoys"],
-  ] as const;
+function AssetDossierVisual({
+  kind,
+}: {
+  kind: "ark" | "submarine" | "platform" | "devices";
+}) {
+  const dossiers = {
+    ark: {
+      code: "ARK-01 · COMMAND ASSET",
+      visibility: "PUBLIC POSITION",
+      sprites: ["ark-dir00.webp"],
+      capabilities: [
+        ["Navigate", "Move one visible connection"],
+        ["Develop", "Build, commission, or repair"],
+        ["Forecast", "+2 Supply · +1 Signal"],
+      ],
+      telemetry: ["UNCAPTURABLE", "MOBILE", "BUILDER"],
+    },
+    submarine: {
+      code: "SUB-A · FIELD ASSET",
+      visibility: "PRIVATE POSITION",
+      sprites: ["submarine-dir00.webp"],
+      capabilities: [
+        ["Explore", "Move, Survey, and Harvest"],
+        ["Carry", "Transport up to two specimens"],
+        ["Operate", "Deploy, Hunt, Raid, and Jam"],
+      ],
+      telemetry: ["INTEGRITY 2", "CARGO 0/2", "SILENCE 2"],
+    },
+    platform: {
+      code: "PLATFORM · INFRASTRUCTURE",
+      visibility: "PUBLIC · PERSISTENT",
+      sprites: ["platform.webp"],
+      capabilities: [
+        ["Extractor", "Produces public Supply"],
+        ["Sonar", "Produces Signal and can Survey"],
+        ["Laboratory", "Analyzes carried specimens"],
+      ],
+      telemetry: ["ONE PER LOCATION", "COST 3", "NO EXTRA ACTION"],
+    },
+    devices: {
+      code: "FIELD KIT · INFORMATION WARFARE",
+      visibility: "HIDDEN UNTIL REVEALED",
+      sprites: ["snare-armed.webp", "decoy-deployed.webp"],
+      capabilities: [
+        ["Tag snare", "Identify and track an intruder"],
+        ["Spill snare", "Stop movement and drop cargo"],
+        ["Decoy", "Create a believable false route"],
+      ],
+      telemetry: ["DEPLOY BY SUB", "TWO-DEVICE CAP", "SURVEY COUNTERS"],
+    },
+  } as const;
+  const dossier = dossiers[kind];
   return (
-    <div className="briefing-visual briefing-expedition" aria-hidden="true">
-      <div className="briefing-expedition__assets">
-        {assets.map(([sprite, title, detail]) => (
+    <div
+      className={`briefing-visual briefing-dossier is-${kind}`}
+      aria-hidden="true"
+    >
+      <header className="briefing-dossier__header">
+        <span>{dossier.code}</span>
+        <b>{dossier.visibility}</b>
+      </header>
+      <div className="briefing-dossier__subject">
+        <div className="briefing-dossier__reticle">
+          <i />
+          <i />
+          <i />
+        </div>
+        <div className="briefing-dossier__sprites">
+          {dossier.sprites.map((sprite) => (
+            <img key={sprite} src={`/sprites/${sprite}`} alt="" />
+          ))}
+        </div>
+        <span>AUTHORIZED FIELD PROFILE</span>
+      </div>
+      <div className="briefing-dossier__capabilities">
+        <small>Primary capabilities</small>
+        {dossier.capabilities.map(([title, detail], index) => (
           <article key={title}>
-            <img src={`/sprites/${sprite}`} alt="" />
+            <span>{String(index + 1).padStart(2, "0")}</span>
             <div>
-              <strong>{title}</strong>
-              <small>{detail}</small>
+              <h2>{title}</h2>
+              <p>{detail}</p>
             </div>
           </article>
         ))}
       </div>
-      <div className="briefing-expedition__resources">
-        <span>
-          <i className="is-supply" /> <b>Supply</b> Public construction
-        </span>
-        <span>
-          <i className="is-signal" /> <b>Signal</b> Private commitment
-        </span>
-        <span>
-          <i className="is-silence" /> <b>Silence</b> Per-sub stealth
-        </span>
-      </div>
+      <footer className="briefing-dossier__telemetry">
+        {dossier.telemetry.map((item) => (
+          <span key={item}>{item}</span>
+        ))}
+      </footer>
     </div>
   );
 }

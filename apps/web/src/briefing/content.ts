@@ -5,7 +5,10 @@ export type BriefingVisual =
   | "landfall"
   | "charters"
   | "truth"
-  | "expedition"
+  | "ark-dossier"
+  | "submarine-dossier"
+  | "platform-dossier"
+  | "devices-dossier"
   | "basin"
   | "program"
   | "resolution"
@@ -86,17 +89,59 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     ],
   },
   {
-    id: "expedition",
-    chapter: "Your expedition",
+    id: "ark-dossier",
+    chapter: "Asset dossier · Ark",
     depth: "core",
-    title: "One Ark. Hidden submarines. Persistent infrastructure.",
-    lead: "Your public Ark moves and builds. Submarines explore in secret. Platforms stay on the map and make your plan stronger—but never give extra turns.",
-    visual: "expedition",
-    callout: "Every player always programs exactly three Operations.",
+    title: "Your Ark is your public command ship.",
+    lead: "Everyone always knows where it is. Navigate it one connection, then use it to build platforms, commission a second submarine, or repair a damaged one.",
+    visual: "ark-dossier",
+    callout: "Public · produces resources · cannot be destroyed or captured.",
     speakerNotes: [
-      "Supply is public and pays for construction. Signal is private and powers scans, commitments, and interference. Silence hides submarine movement.",
-      "The Ark cannot be destroyed or captured. You begin with one submarine, 4 Supply, 2 Signal, 2 Silence, a snare, and a decoy.",
-      "At each later Forecast, the Ark produces 2 Supply and 1 Signal. Extractors and Sonars can each add up to 2 more of their resource.",
+      "The Ark is the only asset that can Develop. It builds at its current location, so positioning it determines where your infrastructure can grow.",
+      "Navigate moves it one visible connection. Its route is always public, and the Ark cannot be destroyed or captured.",
+      "At every Forecast after setup, the Ark produces 2 Supply and 1 Signal. It still consumes one of your three Operations when it acts.",
+    ],
+  },
+  {
+    id: "submarine-dossier",
+    chapter: "Asset dossier · Submarine",
+    depth: "core",
+    title: "Your submarine does the secret fieldwork.",
+    lead: "Its exact location stays on your phone. It surveys, carries specimens, deploys devices, and interferes with rivals—while managing cargo, Integrity, and Silence.",
+    visual: "submarine-dossier",
+    callout: "Hidden position · two cargo spaces · two Integrity.",
+    speakerNotes: [
+      "A submarine can Glide, Sprint, Survey, Harvest, Analyze, Deploy, Hunt, Raid, Jam, Go Dark, Screen, or Hold when the situation permits.",
+      "Ordinary movement leaves evidence. Spending Silence on Glide hides the ordinary wake; Sprint is faster but leaves evidence along both legs.",
+      "A disabled submarine drops its cargo and returns to its Ark. You can later repair it; no player is eliminated.",
+    ],
+  },
+  {
+    id: "platform-dossier",
+    chapter: "Asset dossier · Platform",
+    depth: "core",
+    title: "Platforms turn a location into lasting advantage.",
+    lead: "Your Ark builds one public platform in its current location. Choose an Extractor, Sonar, or Laboratory; it stays on the map and strengthens a mission.",
+    visual: "platform-dossier",
+    callout: "Persistent and public—but never an extra Operation.",
+    speakerNotes: [
+      "An Extractor produces Supply. A Sonar produces Signal, passively observes nearby evidence, and can actively Survey. A Laboratory analyzes specimens carried to it.",
+      "Only one platform fits in a location. Platforms help Network, Discovery, and Dominion, so choosing where and what to build is your long-term strategy.",
+      "Rivals can contest a platform with Raid or temporarily suppress its module with Jam. They do not permanently delete it.",
+    ],
+  },
+  {
+    id: "devices-dossier",
+    chapter: "Asset dossier · Devices",
+    depth: "core",
+    title: "Devices shape what rivals know and where they dare to move.",
+    lead: "A submarine secretly deploys a snare in its current location, or sends a decoy along a short route to create convincing false contacts.",
+    visual: "devices-dossier",
+    callout: "Tag tracks · Spill stops · Decoy lies.",
+    speakerNotes: [
+      "A Tag snare identifies and tracks the first hostile submarine entering. A Spill snare stops it and forces one cargo drop.",
+      "A decoy follows its programmed route for two rounds and creates plausible contact evidence without being a real submarine.",
+      "You begin with one snare and one decoy. Survey can find and disarm a snare, but movement triggers it before Survey in the same Pulse.",
     ],
   },
   {

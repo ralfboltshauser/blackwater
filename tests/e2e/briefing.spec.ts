@@ -37,7 +37,7 @@ test.describe("host-led crew briefing", () => {
         }),
       ).toBeVisible();
       await expect(
-        displayPage.getByLabel("Crew briefing slide 1 of 14"),
+        displayPage.getByLabel("Crew briefing slide 1 of 17"),
       ).toBeVisible();
       await expect(
         hostPage.getByRole("heading", {
@@ -73,6 +73,41 @@ test.describe("host-led crew briefing", () => {
           name: "Complete one mission shown on the TV.",
         }),
       ).toBeVisible();
+
+      for (const dossier of [
+        {
+          slide: 5,
+          title: "Your Ark is your public command ship.",
+          className: "is-ark",
+        },
+        {
+          slide: 6,
+          title: "Your submarine does the secret fieldwork.",
+          className: "is-submarine",
+        },
+        {
+          slide: 7,
+          title: "Platforms turn a location into lasting advantage.",
+          className: "is-platform",
+        },
+        {
+          slide: 8,
+          title: "Devices shape what rivals know and where they dare to move.",
+          className: "is-devices",
+        },
+      ]) {
+        await hostPage
+          .getByRole("button", {
+            name: new RegExp(`Go to slide ${dossier.slide}:`),
+          })
+          .click();
+        await expect(
+          displayPage.getByRole("heading", { name: dossier.title }),
+        ).toBeVisible();
+        await expect(
+          displayPage.locator(`.briefing-dossier.${dossier.className}`),
+        ).toBeVisible();
+      }
 
       await hostPage.evaluate(() =>
         (document.activeElement as HTMLElement)?.blur(),
