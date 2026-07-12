@@ -154,10 +154,16 @@ test.describe("progressive phone discovery", () => {
 
       const map = phone.locator(".private-map .basin-map");
       await expect(map).toHaveAttribute("role", "region");
-      await phone
+      const firstSectorTarget = phone
         .locator(".private-map .basin-map__sector-hit")
-        .first()
-        .dispatchEvent("click");
+        .first();
+      await expect(firstSectorTarget).toBeVisible();
+      await expect
+        .poll(() =>
+          firstSectorTarget.evaluate((element) => element.namespaceURI),
+        )
+        .toBe("http://www.w3.org/1999/xhtml");
+      await firstSectorTarget.tap();
       const sectorDossier = phone.getByRole("dialog", {
         name: /Shelf Break/,
       });
@@ -252,7 +258,7 @@ test.describe("progressive phone discovery", () => {
         }
       }
       await phone.waitForTimeout(450);
-      await target.click();
+      await target.tap();
       await expect(phone.getByRole("dialog")).toBeVisible();
       await phone.getByRole("button", { name: "Close sector details" }).click();
       await expect(map.locator(".basin-map__node.is-selected")).toHaveCount(1);

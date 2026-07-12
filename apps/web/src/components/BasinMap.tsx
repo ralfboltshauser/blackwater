@@ -742,7 +742,6 @@ export function BasinMap({
               const p = toCanvas(sector);
               const selected = selectedSectorId === sector.id;
               const reachable = reachableSectorIds.includes(sector.id);
-              const selectable = inspectAllSectors || reachable;
               return (
                 <g
                   key={sector.id}
@@ -775,29 +774,33 @@ export function BasinMap({
                       d="M-4-18h8l4 7-4 7h-8l-4-7Z"
                     />
                   )}
-                  {onSectorSelect && (
-                    <foreignObject
-                      x="-57"
-                      y="-10"
-                      width="114"
-                      height="74"
-                      className="basin-map__sector-fo"
-                    >
-                      <button
-                        type="button"
-                        className="basin-map__sector-hit"
-                        disabled={!selectable}
-                        onClick={() => onSectorSelect(sector.id)}
-                        aria-pressed={selected}
-                        aria-label={`Sector ${sector.id}, ${sector.name}${sector.deepSite ? ", Deep Site" : ""}${sector.dominionObjective ? ", Dominion objective" : ""}`}
-                      />
-                    </foreignObject>
-                  )}
                 </g>
               );
             })}
           </g>
         </svg>
+        {onSectorSelect && (
+          <div className="basin-map__sector-targets">
+            {basin.sectors.map((sector) => {
+              const position = overlayPosition(sector);
+              const selected = selectedSectorId === sector.id;
+              const reachable = reachableSectorIds.includes(sector.id);
+              const selectable = inspectAllSectors || reachable;
+              return (
+                <button
+                  key={sector.id}
+                  type="button"
+                  className="basin-map__sector-hit"
+                  style={{ left: position.x, top: position.y }}
+                  disabled={!selectable}
+                  onClick={() => onSectorSelect(sector.id)}
+                  aria-pressed={selected}
+                  aria-label={`Sector ${sector.id}, ${sector.name}${sector.deepSite ? ", Deep Site" : ""}${sector.dominionObjective ? ", Dominion objective" : ""}`}
+                />
+              );
+            })}
+          </div>
+        )}
         <div className="basin-map__labels" aria-hidden="true">
           {basin.sectors.map((sector) => (
             <div

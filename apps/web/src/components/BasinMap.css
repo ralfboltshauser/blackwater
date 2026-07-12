@@ -118,15 +118,33 @@
   stroke-width: 2;
   filter: drop-shadow(0 0 5px rgba(245, 167, 18, 0.52));
 }
-.basin-map__sector-fo {
-  overflow: visible;
+.basin-map__sector-targets {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  width: 1000px;
+  height: 640px;
+  pointer-events: none;
 }
 .basin-map__sector-hit {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  width: 56px;
+  height: 56px;
   padding: 0;
-  border: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
   background: transparent;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(var(--camera-inverse-scale, 1));
+  transform-origin: center;
+}
+.basin-map__sector-hit:active:not(:disabled) {
+  border-color: rgba(75, 216, 221, 0.65);
+  background: rgba(75, 216, 221, 0.12);
+}
+.basin-map__sector-hit:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
 }
 
 .basin-map__labels {
