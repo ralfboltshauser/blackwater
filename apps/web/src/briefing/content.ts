@@ -37,7 +37,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     chapter: "The signal",
     depth: "core",
     title: "A new ocean world has been detected.",
-    lead: "Neris was invisible beneath permanent cloud—until one calm patch of ocean opened and answered our survey pulse. Four organizations launched before the signal was even confirmed.",
+    lead: "Neris answered one survey pulse beneath permanent cloud. Four organizations launched before the signal was confirmed.",
     visual: "detection",
     callout: "One world. One brief window. Four expeditions.",
     speakerNotes: [
@@ -51,7 +51,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     chapter: "Landfall",
     depth: "core",
     title: "Four expeditions reach the same calm waters.",
-    lead: "This connected area is called the Neris Basin. In plain language: it is the shared ocean map on the TV. You command one expedition exploring it.",
+    lead: "The Neris Basin is the shared ocean map on the TV. You command one expedition exploring it.",
     visual: "landfall",
     callout: "Understand Neris first: Network · Discovery · Dominion.",
     speakerNotes: [
@@ -66,7 +66,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     chapter: "The objective",
     depth: "core",
     title: "Complete one mission shown on the TV.",
-    lead: "Network, Discovery, and Dominion are the three public win conditions across the top of the game screen. Complete any one at the end of a round to win.",
+    lead: "The top of the game screen shows three public missions. Complete Network, Discovery, or Dominion to win.",
     visual: "charters",
     callout: "Watch the top bar: everyone can see who is close.",
     speakerNotes: [
@@ -80,7 +80,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     chapter: "The table",
     depth: "core",
     title: "The TV is shared truth. Your phone is leverage.",
-    lead: "Everyone sees the same ocean map, infrastructure, Charter threats, and public evidence. Only you see your hidden routes, Signal, cargo, traps, and reports.",
+    lead: "The TV shows the shared map and public evidence. Your phone keeps routes, Signal, cargo, traps, and reports private.",
     visual: "truth",
     callout: "Point at the TV. Bargain from your phone.",
     speakerNotes: [
@@ -94,7 +94,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     chapter: "Asset dossier · Ark",
     depth: "core",
     title: "The Ark is your large construction ship on the TV.",
-    lead: "Move it to the location where you want to build next. From there, it can build a platform, create your second submarine, or repair a damaged submarine.",
+    lead: "Move it to the location where you want to build. There it can build a platform, create a second submarine, or repair one.",
     visual: "ark-dossier",
     callout: "Move the Ark first. Build at its current location later.",
     speakerNotes: [
@@ -109,7 +109,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     chapter: "Expedition stores",
     depth: "core",
     title: "Your expedition manages three resources.",
-    lead: "Supply builds lasting assets. Signal powers scans and conflict. Silence lets a submarine move without leaving its ordinary wake. Your current amounts stay private on your phone.",
+    lead: "Supply builds. Signal powers scans and conflict. Silence hides submarine movement. All three stay private on your phone.",
     visual: "resources",
     callout: "Supply builds · Signal acts · Silence hides.",
     speakerNotes: [
@@ -124,7 +124,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     chapter: "Asset dossier · Submarine",
     depth: "core",
     title: "Your submarine does the secret fieldwork.",
-    lead: "Its exact location stays on your phone. It surveys, carries specimens, deploys devices, and interferes with rivals—while managing cargo, Integrity, and Silence.",
+    lead: "Its location stays private. It explores, carries specimens, deploys devices, and interferes with rivals.",
     visual: "submarine-dossier",
     callout: "Hidden position · two cargo spaces · two Integrity.",
     speakerNotes: [
@@ -138,7 +138,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     chapter: "Asset dossier · Platform",
     depth: "core",
     title: "Build a platform when you want to invest in one location.",
-    lead: "Move your Ark to a useful location, save 3 Supply, then build one permanent structure there. Choose what your plan needs next: more Supply, more information, or a place to analyze specimens.",
+    lead: "Move your Ark, save 3 Supply, then build one permanent structure. Choose more Supply, better information, or specimen analysis.",
     visual: "platform-dossier",
     callout:
       "Extractor = build more · Sonar = know more · Laboratory = complete Discovery.",
@@ -155,7 +155,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     chapter: "Worked example · A Hunt",
     depth: "core",
     title: "A fight starts only when an attack finds a real target.",
-    lead: "Example: Cyan suspects Violet's submarine is in Sector 09. Both submarines really are there. Cyan programs Hunt and spends 2 Signal; Violet programs Screen without extra Signal.",
+    lead: "In Sector 09, Cyan uses Hunt with 2 Signal. Violet is really there and uses Screen. Now a fight happens.",
     visual: "contest",
     callout:
       "Cyan Force 3 beats Violet Force 2: Violet loses 1 Integrity and retreats.",
@@ -172,7 +172,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     chapter: "The basin",
     depth: "core",
     title: "Move along connections. Fight over meaningful sectors.",
-    lead: "The graph runs from Shelf through Rift into Blackwater. Deep Sites hold specimens and may also be the locations required for Dominion.",
+    lead: "Move along the lines from Shelf through Rift into Blackwater. Deep Sites hold specimens and Dominion territory.",
     visual: "basin",
     callout: "A route is a promise about where you can act next.",
     speakerNotes: [
@@ -186,7 +186,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     chapter: "Open Water",
     depth: "core",
     title: "Secretly program three causal Pulses.",
-    lead: "Choose one Operation for Pulse 1, 2, and 3 while everyone talks. Your phone checks routes and reserves costs before you lock.",
+    lead: "Choose one Operation for each of three Pulses. Your phone checks the plan before you lock it.",
     visual: "program",
     callout: "Glide → Survey → Harvest is one coherent plan.",
     speakerNotes: [
@@ -199,7 +199,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     chapter: "Resolution",
     depth: "core",
     title: "Everyone’s Pulse resolves together.",
-    lead: "The server reveals Pulse 1, then 2, then 3. Outcomes are deterministic: timing, position, commitments, and other plans—not combat dice—decide what happens.",
+    lead: "Pulse 1, 2, and 3 resolve in order. Timing, position, and commitments—not combat dice—decide the outcome.",
     visual: "resolution",
     callout: "A plan can be valid now and still be disrupted later.",
     speakerNotes: [
@@ -212,7 +212,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     chapter: "Growing power",
     depth: "deeper",
     title: "Discover, carry, analyze, build.",
-    lead: "Survey a Deep Site, Harvest its specimen, bring it to an active Laboratory, then Analyze it. Or invest Supply in productive platforms and a second submarine.",
+    lead: "Survey a Deep Site, Harvest its specimen, deliver it to a Laboratory, then Analyze it.",
     visual: "discover",
     callout: "What you build persists. What you analyze cannot be stolen.",
     speakerNotes: [
@@ -226,7 +226,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     chapter: "Asset dossier · Devices",
     depth: "deeper",
     title: "Devices shape what rivals know and where they dare to move.",
-    lead: "A submarine secretly deploys a snare in its current location, or sends a decoy along a short route to create convincing false contacts.",
+    lead: "A submarine can hide a snare in its location or send a decoy along a false route.",
     visual: "devices-dossier",
     callout: "Tag tracks · Spill stops · Decoy lies.",
     speakerNotes: [
@@ -240,7 +240,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     chapter: "Information",
     depth: "deeper",
     title: "Truth can be sealed, sold, redacted—or invented.",
-    lead: "Verified observations can become sealed reports or verified redactions. Statements are explicitly unverified and may be completely false.",
+    lead: "Reports carry verified observations. Statements are unverified and may be completely false.",
     visual: "intel",
     callout: "The game proves provenance, not honesty.",
     speakerNotes: [
@@ -254,7 +254,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     chapter: "Negotiation",
     depth: "deeper",
     title: "Deals have different kinds of teeth.",
-    lead: "Trades are atomic and binding. Handshakes are recorded but breakable, leaving a public breach receipt. Verbal promises are whatever the table makes of them.",
+    lead: "Trades are binding. Handshakes can be broken publicly. Verbal promises rely entirely on trust.",
     visual: "deals",
     callout: "Talk first. Record only the conclusion that matters.",
     speakerNotes: [
@@ -269,7 +269,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     depth: "deeper",
     title:
       "The leader keeps their progress—but rivals can delay the final step.",
-    lead: "Example: Cyan has three connected platforms and can build the fourth next round. The Charter bar marks Cyan as a threat, and the TV footer shows LEADER THREAT with a one-round Commission.",
+    lead: "Cyan has three connected platforms and can build the fourth. The TV marks Cyan as a Leader Threat and opens a Commission.",
     visual: "comeback",
     callout:
       "Contest or Jam a key platform · disable a cargo submarine · block a required location.",
@@ -288,7 +288,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     chapter: "Ready to dive",
     depth: "core",
     title: "Forecast. Plan and talk. Resolve. Check the claim.",
-    lead: "That loop repeats for at most seven rounds. Round 1 is setup: no Charter is reachable yet. From Round 2 onward, one or several expeditions can qualify together.",
+    lead: "Repeat for at most seven rounds. Round 1 is setup. From Round 2 onward, any expedition can win.",
     visual: "round",
     callout: "Keep your phone private. Keep your eyes on the TV. Keep talking.",
     speakerNotes: [
