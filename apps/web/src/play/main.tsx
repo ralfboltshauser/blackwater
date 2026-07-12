@@ -36,6 +36,7 @@ import {
 import { getClientInstanceId, nextCommandId } from "../shared/identity";
 import { playerProjectionToBasin } from "../shared/projection";
 import { parseDealIds, specimenDestinationIssue, toggleLimited } from "./deals";
+import { QrRoomScanner } from "./QrRoomScanner";
 import {
   OPERATION_META,
   blankEditor,
@@ -422,22 +423,32 @@ function JoinScreen({
           <span>01</span>
         </header>
         <InstallConsole variant="join" roomCode={room} />
-        <label className="field-label">
-          Room code
-          <input
-            className="field mono join-card__code"
-            inputMode="text"
-            autoCapitalize="characters"
-            autoComplete="off"
-            value={room}
-            onChange={(event) => {
-              const value = normalizeRoom(event.target.value);
-              setRoom(value);
-              onRoomChange(value);
-            }}
-            placeholder="ABC234"
-          />
-        </label>
+        <div className="field-label">
+          <label htmlFor="join-room-code">Room code</label>
+          <div className="join-card__code-row">
+            <input
+              id="join-room-code"
+              className="field mono join-card__code"
+              inputMode="text"
+              autoCapitalize="characters"
+              autoComplete="off"
+              value={room}
+              onChange={(event) => {
+                const value = normalizeRoom(event.target.value);
+                setRoom(value);
+                onRoomChange(value);
+              }}
+              placeholder="ABC234"
+            />
+            <QrRoomScanner
+              onScan={(code) => {
+                setRoom(code);
+                onRoomChange(code);
+                setError(null);
+              }}
+            />
+          </div>
+        </div>
         <label className="field-label">
           Your name
           <input

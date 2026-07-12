@@ -43,6 +43,7 @@
     "@fontsource/ibm-plex-mono": "5.2.7",
     "@fontsource/ibm-plex-sans": "5.2.8",
     "@fontsource/ibm-plex-sans-condensed": "5.2.8",
+    "@zxing/browser": "0.1.5",
     "better-sqlite3": "^12.11.1",
     "fastify": "^5.10.0",
     "ipaddr.js": "2.4.0",

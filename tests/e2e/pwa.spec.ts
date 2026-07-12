@@ -50,6 +50,16 @@ test.describe("installable field console", () => {
     const origin = baseURL ?? "http://127.0.0.1:8796";
 
     await page.goto(origin + "/play");
+    await page.getByRole("button", { name: "Scan room QR code" }).click();
+    const scanner = page.getByRole("dialog", {
+      name: "Scan Blackwater room code",
+    });
+    await expect(scanner).toBeVisible();
+    await expect(scanner).toContainText(
+      /secure HTTPS app|camera could not start/i,
+    );
+    await scanner.getByRole("button", { name: "Close QR scanner" }).click();
+    await expect(scanner).toBeHidden();
     await expect(page.locator('link[rel="manifest"]')).toHaveAttribute(
       "href",
       "/manifest.webmanifest",
