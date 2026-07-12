@@ -112,6 +112,21 @@ function DisplayApp() {
   const railSplit = Math.ceil(projection.expeditions.length / 2);
   const leftExpeditions = projection.expeditions.slice(0, railSplit);
   const rightExpeditions = projection.expeditions.slice(railSplit);
+  const openCommission = projection.commissions[0];
+  const activeAgreement = projection.agreements.find(
+    (agreement) => agreement.status === "active",
+  );
+  const publicNotice = openCommission
+    ? {
+        label: "Leader threat",
+        text: `Commission · +${openCommission.rewardSupply} Supply against ${projection.expeditions.find((expedition) => expedition.seatId === openCommission.targetSeatId)?.displayName ?? "the leader"}`,
+      }
+    : activeAgreement
+      ? {
+          label: "Recorded agreement",
+          text: "Active Handshake terms in force",
+        }
+      : { label: "Basin status", text: "No leader threat or recorded terms" };
   const phaseStep =
     projection.phase.kind === "forecast"
       ? 0
@@ -279,16 +294,8 @@ function DisplayApp() {
             })}
           </div>
           <div className="display-footer__event">
-            <span className="eyebrow">Public pressure</span>
-            <strong>
-              {projection.commissions[0]
-                ? `Open commission · +${projection.commissions[0].rewardSupply} Supply against ${projection.expeditions.find((expedition) => expedition.seatId === projection.commissions[0]?.targetSeatId)?.displayName ?? "the leader"}`
-                : projection.agreements.find(
-                      (agreement) => agreement.status === "active",
-                    )
-                  ? "Active Handshake terms in force"
-                  : "Open water · no recorded terms"}
-            </strong>
+            <span className="eyebrow">{publicNotice.label}</span>
+            <strong>{publicNotice.text}</strong>
           </div>
           <div className="display-footer__forecast">
             <span className="eyebrow">Room</span>

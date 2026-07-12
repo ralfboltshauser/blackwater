@@ -90,6 +90,9 @@ describe("crew briefing content", () => {
       /Commission is a bonus, not the attack itself/i,
     );
     expect(comeback.speakerNotes.join(" ")).toMatch(
+      /no separate resource or action called Public Pressure/i,
+    );
+    expect(comeback.speakerNotes.join(" ")).toMatch(
       /Jam.*does not earn the Commission reward/i,
     );
 

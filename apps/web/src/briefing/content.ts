@@ -80,7 +80,7 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     chapter: "The table",
     depth: "core",
     title: "The TV is shared truth. Your phone is leverage.",
-    lead: "Everyone sees the same ocean map, infrastructure, pressure, and public evidence. Only you see your hidden routes, Signal, cargo, traps, and reports.",
+    lead: "Everyone sees the same ocean map, infrastructure, Charter threats, and public evidence. Only you see your hidden routes, Signal, cargo, traps, and reports.",
     visual: "truth",
     callout: "Point at the TV. Bargain from your phone.",
     speakerNotes: [
@@ -269,12 +269,13 @@ export const BRIEFING_SLIDES: readonly BriefingSlide[] = [
     depth: "deeper",
     title:
       "The leader keeps their progress—but rivals can delay the final step.",
-    lead: "Example: Cyan has three connected platforms and can build the fourth next round. The TV marks Cyan as a Network threat and opens a one-round Commission against them.",
+    lead: "Example: Cyan has three connected platforms and can build the fourth next round. The Charter bar marks Cyan as a threat, and the TV footer shows LEADER THREAT with a one-round Commission.",
     visual: "comeback",
     callout:
       "Contest or Jam a key platform · disable a cargo submarine · block a required location.",
     speakerNotes: [
-      "Cyan does not lose already analyzed specimens, buildings, or turns. Comeback pressure delays the move that would complete a Charter; it does not reset the leader.",
+      "There is no separate resource or action called Public Pressure. The TV simply labels a near-winner as a Leader Threat and may offer rivals a Commission reward for interfering.",
+      "Cyan does not lose already analyzed specimens, buildings, or turns. Rivals can delay the move that would complete a Charter; this does not reset the leader.",
       "For Network, Amber can Raid one of Cyan's connected platforms. A successful Raid makes that platform contested and therefore inactive, breaking the chain until Cyan answers it. Jam also temporarily deactivates a platform, but does not earn the Commission reward.",
       "For Discovery, rivals can Jam or Raid Cyan's Laboratory. They can also Hunt a submarine carrying the final specimen: disabling it makes the specimen drop into the ocean. Previously analyzed specimens remain safe.",
       "For Dominion, occupy or contest one required Deep Site so Cyan is no longer its unique controller. Dominion threats do not currently open a Commission, but the public map shows where control can be challenged.",

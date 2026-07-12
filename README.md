@@ -22,7 +22,7 @@ without knocking anyone out. Solo and mixed groups can fill empty seats with AI.
     <td width="34%"><img src="docs/images/gameplay-phone.webp" alt="A private Blackwater phone controller" /></td>
   </tr>
   <tr>
-    <td align="center"><sub>Shared map, public pressure, known victory Charters</sub></td>
+    <td align="center"><sub>Shared map, visible leader threats, known victory Charters</sub></td>
     <td align="center"><sub>Private routes, intel, deals, and programmed Pulses</sub></td>
   </tr>
 </table>

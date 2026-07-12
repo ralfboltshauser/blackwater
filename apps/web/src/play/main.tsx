@@ -4076,11 +4076,12 @@ function ReferenceSheet({
               </p>
             </section>
             <section>
-              <h2>Comeback pressure</h2>
+              <h2>Stopping a leader</h2>
               <p>
                 Every player always has three Operations. Public infrastructure
-                makes the leader targetable, and the Open Commission rewards the
-                first effective intervention.
+                makes a near-winner targetable. The TV labels them as a Leader
+                Threat, and the Commission rewards the first effective
+                intervention.
               </p>
             </section>
           </div>
